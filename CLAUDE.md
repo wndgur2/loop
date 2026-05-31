@@ -3,7 +3,7 @@
 이 파일은 이 저장소에서 작업하는 coding agent(Claude Code 등)를 위한 안내서입니다.
 사람과 에이전트 모두 작업을 시작하기 전에 이 문서를 먼저 읽습니다.
 
-> 상세 제품 요구사항은 [PRD-draft.md](PRD-draft.md)를 참조하세요.
+> 상세 제품 요구사항은 [documents/PRD-draft.md](documents/PRD-draft.md), 브랜드 정체성은 [documents/branding.md](documents/branding.md)를 참조하세요.
 > 이 문서는 "무엇을 만드는가"보다 "어떻게 작업하는가"에 집중합니다.
 
 ---
@@ -40,7 +40,7 @@
 ```
 loop/
 ├── CLAUDE.md            # 이 문서
-├── PRD-draft.md         # 제품 요구사항
+├── documents/           # PRD, 브랜딩 등 제품·브랜드 문서
 ├── app/                 # Expo Router 화면 (파일 기반 라우팅)
 ├── src/
 │   ├── components/      # 재사용 UI 컴포넌트
