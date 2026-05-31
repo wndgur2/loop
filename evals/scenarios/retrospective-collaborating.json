@@ -1,0 +1,21 @@
+{
+  "id": "retrospective-collaborating",
+  "mode": "retrospective",
+  "description": "하위목표(collaborating) 단위 회고 — 미내재화 피드백을 되짚어 done/internalized 갱신을 유도하는지 검증",
+  "sub_goal": "collaborating",
+  "existing_feedbacks": [
+    {
+      "title": "회의에서 의견을 못 냄",
+      "internalized": false,
+      "importance": "high",
+      "takeaways": ["다음 회의 전 의견 3개를 메모해 가기"]
+    }
+  ],
+  "user_turns": [
+    "지난번 회의 때 다짐했던 거, 그 뒤로 한 번 시도해봤어요."
+  ],
+  "expect": {
+    "should_review_uninternalized": true,
+    "may_update_internalization": true
+  }
+}

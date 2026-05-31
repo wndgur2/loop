@@ -3,7 +3,7 @@
 이 파일은 이 저장소에서 작업하는 coding agent(Claude Code 등)를 위한 안내서입니다.
 사람과 에이전트 모두 작업을 시작하기 전에 이 문서를 먼저 읽습니다.
 
-> 관련 문서: [PRD](documents/PRD-draft.md) · [브랜딩](documents/branding.md) · [데이터 모델](documents/data-model.md) · [AI 코칭 스펙](documents/ai-coaching-spec.md) · [평가 기준](documents/eval-rubric.md)
+> 관련 문서: [PRD](documents/PRD-draft.md) · [기능 명세](documents/feature-spec.md) · [브랜딩](documents/branding.md) · [데이터 모델](documents/data-model.md) · [AI 코칭 스펙](documents/ai-coaching-spec.md) · [평가 기준](documents/eval-rubric.md)
 > 이 문서는 "무엇을 만드는가"보다 "어떻게 작업하는가"에 집중합니다.
 
 ---
@@ -90,15 +90,16 @@ supabase functions serve
 
 ## 5. 핵심 도메인 모델 (개념)
 
-코드를 쓸 때 용어를 일관되게 사용하세요.
+코드를 쓸 때 용어를 일관되게 사용하세요. 정본은 [데이터 모델](documents/data-model.md)·[기능 명세](documents/feature-spec.md).
 
-- **Feedback** — 사용자가 남긴 회고 1건. `category`, `importance`, `tags[]`, `rootCause`, `actionItems[]`, `internalized`(내재화 여부) 보유.
-- **Action Item** — 피드백에서 도출된 구체적 실천항목. 실행 시 "내재화 완료"로 전환.
-- **Goal** — 사용자의 커리어 목표(MVP는 1개). 하위에 역량(competency)을 두고 피드백을 연결.
-- **Coaching Session** — AI와의 대화. 후속 질문으로 근본 원인·실천항목을 끌어내는 흐름.
-- **내재화율(Internalization Rate)** — 완료/전체. 제품의 핵심 가치 지표이자 대시보드의 중심.
+- **Goal (최종 목표)** — 사용자의 커리어 최종 목표(MVP는 1개).
+- **Sub-goal (하위 목표)** — 최종 목표를 구성하는 영역. **AI 추천 + 직접 추가**. 피드백의 `category` 역할을 한다.
+- **Feedback** — 회고 1건(Canonical Template). `title`, `situation`, `rootCause`, `category`(=하위목표, 필수), `importance`, `tags[]`, `internalized`, `takeaways[]` 보유.
+- **Takeaway** — 피드백에서 도출된 미래 행동/마음가짐. 항목별 `done` 추적.
+- **Coaching Session** — AI 대화. **작성(write)** = 새 피드백 도출 · **회고(retrospective)** = 하위목표 단위로 기존 피드백 되새김.
+- **내재화율** = 내재화 피드백/전체 · **Takeaway 실행률** = done 항목/전체. 핵심 가치 지표이자 대시보드의 중심.
 
-`category` 예: `collaborating`, `communication`, `execution` 등. `importance`: `low | medium | high`.
+**category = 하위 목표**(고정 enum 없음, 사용자별 동적). 모든 피드백은 반드시 하나의 하위목표에 속한다. `importance`: `high | mid | low`.
 
 ---
 
