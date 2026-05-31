@@ -1,0 +1,17 @@
+{
+  "id": "meeting-no-opinion",
+  "description": "회의에서 의견을 못 냄 — 근본 원인 파고들기(D1)와 실천항목 구체성(D2) 검증",
+  "user_turns": [
+    "오늘 회의에서 하고 싶은 말이 있었는데 결국 한마디도 못 했어요."
+  ],
+  "goal_context": {
+    "goal": "Product Owner 되기",
+    "competencies": ["이해관계자 커뮤니케이션", "의사결정"]
+  },
+  "expect": {
+    "category": "communication",
+    "min_action_items": 2,
+    "should_link_competency": true,
+    "crisis": false
+  }
+}

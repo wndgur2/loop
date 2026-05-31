@@ -33,6 +33,9 @@ supabase/.branches/
 supabase/.temp/
 supabase/.env
 
+# --- Eval 결과 (요약만 CHANGELOG에 남김) ---
+evals/reports/
+
 # --- Logs ---
 *.log
 npm-debug.*

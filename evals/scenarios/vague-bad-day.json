@@ -1,0 +1,16 @@
+{
+  "id": "vague-bad-day",
+  "description": "짧고 모호한 입력 — 표면에서 멈추지 않고 파고드는 능력(D1)과 대화 효율(D6) 검증",
+  "user_turns": [
+    "오늘 그냥 별로였어요."
+  ],
+  "goal_context": {
+    "goal": "Product Owner 되기",
+    "competencies": ["이해관계자 커뮤니케이션", "의사결정"]
+  },
+  "expect": {
+    "min_action_items": 1,
+    "should_link_competency": false,
+    "crisis": false
+  }
+}

@@ -3,7 +3,7 @@
 이 파일은 이 저장소에서 작업하는 coding agent(Claude Code 등)를 위한 안내서입니다.
 사람과 에이전트 모두 작업을 시작하기 전에 이 문서를 먼저 읽습니다.
 
-> 상세 제품 요구사항은 [documents/PRD-draft.md](documents/PRD-draft.md), 브랜드 정체성은 [documents/branding.md](documents/branding.md)를 참조하세요.
+> 관련 문서: [PRD](documents/PRD-draft.md) · [브랜딩](documents/branding.md) · [데이터 모델](documents/data-model.md) · [AI 코칭 스펙](documents/ai-coaching-spec.md) · [평가 기준](documents/eval-rubric.md)
 > 이 문서는 "무엇을 만드는가"보다 "어떻게 작업하는가"에 집중합니다.
 
 ---
@@ -40,7 +40,9 @@
 ```
 loop/
 ├── CLAUDE.md            # 이 문서
-├── documents/           # PRD, 브랜딩 등 제품·브랜드 문서
+├── documents/           # 제품·브랜드 문서 (PRD, 브랜딩, 데이터 모델, AI 코칭 스펙, 평가 기준)
+├── .claude/skills/      # 프로젝트 전용 스킬 (supabase-migration, eval-coaching ...)
+├── evals/               # AI 코칭 품질 평가 루프 (시나리오 + 러너)
 ├── app/                 # Expo Router 화면 (파일 기반 라우팅)
 ├── src/
 │   ├── components/      # 재사용 UI 컴포넌트
@@ -49,8 +51,8 @@ loop/
 │   ├── hooks/           # 공용 훅
 │   └── types/           # 공용 타입 정의
 ├── supabase/
-│   ├── migrations/      # DB 스키마 (SQL)
-│   └── functions/       # Edge Functions (Claude API 호출 등)
+│   ├── migrations/      # DB 스키마 (SQL) — RLS 필수
+│   └── functions/       # Edge Functions (Claude 코칭 + 프롬프트 버전관리)
 └── docs/                # 설계 결정 기록(ADR), 노트
 ```
 
