@@ -1,8 +1,30 @@
-import type { Session } from '@supabase/supabase-js';
+import { type Session, type SupabaseClient } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 import { getSupabase } from '@/lib/supabase';
+
+/**
+ * 저장돼 있던 리프레시 토큰이 서버에서 무효(만료·회전·DB 리셋·유저 삭제)가 됐을 때
+ * supabase-js 가 내는 에러. 기능적으로는 "그냥 로그아웃 상태"이므로 조용히 회복한다.
+ */
+function isInvalidRefreshTokenError(error: unknown): boolean {
+  if (!error) return false;
+  const message = error instanceof Error ? error.message : String(error);
+  return /refresh token/i.test(message);
+}
+
+/**
+ * 무효 리프레시 토큰을 만나면 storage 에 남은 stale 세션을 비운다(scope: 'local').
+ * 정리하지 않으면 다음 실행마다 같은 토큰으로 갱신을 재시도해 에러가 반복된다.
+ */
+async function clearStaleSession(supabase: SupabaseClient): Promise<void> {
+  try {
+    await supabase.auth.signOut({ scope: 'local' });
+  } catch {
+    // storage 정리는 best-effort — 실패해도 로그아웃 상태로 진행한다.
+  }
+}
 
 /**
  * 이메일 확인 링크가 돌아올 리다이렉트 URL.
@@ -52,12 +74,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = getSupabase();
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setLoading(false);
-    });
+    // 시작 시 storage 의 세션을 복구한다. 리프레시 토큰이 무효면 supabase-js 가
+    // 갱신을 시도하다 error 를 돌려준다 → stale 세션을 비우고 로그아웃 상태로 떨어진다.
+    supabase.auth
+      .getSession()
+      .then(async ({ data, error }) => {
+        if (!mounted) return;
+        if (error && isInvalidRefreshTokenError(error)) {
+          await clearStaleSession(supabase);
+          if (!mounted) return;
+          setSession(null);
+        } else {
+          setSession(data.session);
+        }
+        setLoading(false);
+      })
+      .catch(async (error: unknown) => {
+        // getSession 이 throw 하는 경로(무효 토큰 등)도 동일하게 회복한다.
+        if (isInvalidRefreshTokenError(error)) await clearStaleSession(supabase);
+        if (!mounted) return;
+        setSession(null);
+        setLoading(false);
+      });
 
+    // 백그라운드 자동 갱신 실패는 SIGNED_OUT(next=null)으로 들어온다 → 그대로 반영.
     const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next);
     });
