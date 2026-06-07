@@ -1,9 +1,10 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
 
-import { Button, Card, ComposerEntry, Icon, type IconName, LoopText, Ring, Screen } from '@/components/ui';
+import { Button, Card, Icon, type IconName, LoopText, Ring, Screen, TabHeader } from '@/components/ui';
 import { LoopColors } from '@/constants/loop-theme';
+import { TabComposer } from '@/features/chat/tab-composer';
 import { useFeedbacks } from '@/features/feedback/queries';
 import { useSubGoals } from '@/features/goals/queries';
 import { buildRetroCards, type RetroCard } from '@/features/reflect/recommendations';
@@ -31,27 +32,25 @@ export default function ReflectScreen() {
 
   return (
     <Screen edges={['top']}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 16 }} showsVerticalScrollIndicator={false}>
-        <View style={{ paddingHorizontal: 22, paddingTop: 6, paddingBottom: 14 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
-            <LoopText variant="title">{t('reflect.title')}</LoopText>
-            <Icon name="loop" size={21} color={LoopColors.warm} />
-          </View>
-          <LoopText variant="bodyTight" color="ink3" style={{ marginTop: 6 }}>
+      <TabHeader title={t('reflect.title')} action={<Icon name="loop" size={22} color={LoopColors.warm} />} />
+
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={8}>
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 22, paddingBottom: 16 }} showsVerticalScrollIndicator={false}>
+          <LoopText variant="bodyTight" color="ink3" style={{ marginBottom: 16 }}>
             {t('reflect.subtitle')}
           </LoopText>
-        </View>
 
-        <View style={{ paddingHorizontal: 22, gap: 14 }}>
-          {cards.map((card, i) => (
-            <RetroCardView key={i} card={card} subGoalName={subGoalName} onPress={startReflect} />
-          ))}
-          {cards.length === 0 && !isLoading && <EmptyReflect />}
-        </View>
-      </ScrollView>
+          <View style={{ gap: 14 }}>
+            {cards.map((card, i) => (
+              <RetroCardView key={i} card={card} subGoalName={subGoalName} onPress={startReflect} />
+            ))}
+            {cards.length === 0 && !isLoading && <EmptyReflect />}
+          </View>
+        </ScrollView>
 
-      <ComposerEntry placeholder={t('reflect.composer')} onPress={startReflect} />
-      <View style={{ height: 6 }} />
+        <TabComposer mode="reflect" placeholder={t('reflect.composer')} />
+        <View style={{ height: 6 }} />
+      </KeyboardAvoidingView>
     </Screen>
   );
 }

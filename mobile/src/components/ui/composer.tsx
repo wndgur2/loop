@@ -3,7 +3,6 @@ import { Pressable, TextInput, View } from 'react-native';
 import { LoopColors, LoopRadius, LoopShadow } from '@/constants/loop-theme';
 
 import { Icon } from './icon';
-import { LoopText } from './text';
 
 const SHELL = {
   flexDirection: 'row' as const,
@@ -27,27 +26,7 @@ const SEND = {
   justifyContent: 'center' as const,
 };
 
-/**
- * 입장용 컴포저 — 입력처럼 보이지만 누르면 채팅으로 진입(home/reflect 하단).
- * demo .lp-composer 의 entry 형태.
- */
-export function ComposerEntry({ placeholder, onPress }: { placeholder: string; onPress: () => void }) {
-  return (
-    <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
-      <Pressable onPress={onPress} style={({ pressed }) => [SHELL, { opacity: pressed ? 0.92 : 1 }]}>
-        <Icon name="sparkle" size={19} color={LoopColors.warm} />
-        <LoopText variant="body" color="ink4" style={{ flex: 1 }} numberOfLines={1}>
-          {placeholder}
-        </LoopText>
-        <View style={[SEND, { backgroundColor: LoopColors.warm }]}>
-          <Icon name="send" size={20} color={LoopColors.white} />
-        </View>
-      </Pressable>
-    </View>
-  );
-}
-
-/** 라이브 입력 컴포저 — 채팅 화면 하단. value/onChangeText/onSend 제어. */
+/** 라이브 입력 컴포저 — 탭 하단·채팅 화면 공통. value/onChangeText/onSend 제어. */
 export function ComposerInput({
   value,
   onChangeText,

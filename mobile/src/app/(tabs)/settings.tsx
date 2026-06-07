@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
 
-import { Button, Card, Icon, LoopText, Screen } from '@/components/ui';
+import { Button, Card, Icon, LoopText, Screen, TabHeader } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
 import {
@@ -74,12 +74,9 @@ export default function SettingsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <ScrollView contentContainerStyle={{ padding: 22, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
-        <LoopText variant="title" style={{ marginBottom: 18 }}>
-          {t('settings.title')}
-        </LoopText>
-
-        <SectionTitle>{t('settings.section.account')}</SectionTitle>
+      <TabHeader title={t('settings.title')} />
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 22, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
+        <SectionTitle first>{t('settings.section.account')}</SectionTitle>
         <Card radius={20} style={{ padding: 16, gap: 4 }}>
           {!!displayName && <LoopText variant="cardTitle">{displayName}</LoopText>}
           <LoopText variant="bodyTight" color="ink3">
@@ -203,9 +200,9 @@ function LangPill({ label, active, onPress }: { label: string; active: boolean; 
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
+function SectionTitle({ children, first }: { children: React.ReactNode; first?: boolean }) {
   return (
-    <LoopText variant="eyebrow" color="ink4" style={{ marginTop: 24, marginBottom: 11 }}>
+    <LoopText variant="eyebrow" color="ink4" style={{ marginTop: first ? 4 : 24, marginBottom: 11 }}>
       {children}
     </LoopText>
   );

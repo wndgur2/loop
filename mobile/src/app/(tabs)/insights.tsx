@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { Card, Icon, LoopText, Ring, Screen } from '@/components/ui';
+import { Card, Icon, LoopText, Ring, Screen, TabHeader } from '@/components/ui';
 import { LoopColors } from '@/constants/loop-theme';
 import { computeStats } from '@/features/dashboard/stats';
 import { useFeedbacks } from '@/features/feedback/queries';
@@ -25,11 +25,8 @@ export default function InsightsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <ScrollView contentContainerStyle={{ padding: 22, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
-        <LoopText variant="title" style={{ marginBottom: 18 }}>
-          {t('dash.title')}
-        </LoopText>
-
+      <TabHeader title={t('dash.title')} />
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 22, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
         {stats.total === 0 && !isLoading ? (
           <Card radius={22} style={{ padding: 24, alignItems: 'center' }}>
             <Icon name="chart" size={28} color={LoopColors.warm} />

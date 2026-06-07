@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -22,7 +22,7 @@ function impLabelKey(imp: Importance): TKey {
 }
 
 export default function LoopiChatScreen() {
-  const { mode } = useLocalSearchParams<{ mode: UiMode }>();
+  const { mode, initial } = useLocalSearchParams<{ mode: UiMode; initial?: string }>();
   const uiMode: UiMode = mode === 'reflect' ? 'reflect' : 'write';
   const serverMode: SessionMode = uiMode === 'reflect' ? 'retrospective' : 'write';
 
@@ -46,13 +46,12 @@ export default function LoopiChatScreen() {
     setMessages((cur) => [...cur, { role: 'assistant', content }]);
   }
 
-  async function send() {
-    const content = input.trim();
-    if (!content || sending) return;
-    setInput('');
+  async function sendText(content: string) {
+    const trimmed = content.trim();
+    if (!trimmed || sending) return;
     setProposal(null);
 
-    const next: LoopiMessage[] = [...messages, { role: 'user', content }];
+    const next: LoopiMessage[] = [...messages, { role: 'user', content: trimmed }];
     setMessages(next);
     setSending(true);
 
@@ -63,7 +62,7 @@ export default function LoopiChatScreen() {
         /* 영속 실패해도 대화는 진행 */
       }
     }
-    if (sessionIdRef.current) void saveMessage(sessionIdRef.current, 'user', content);
+    if (sessionIdRef.current) void saveMessage(sessionIdRef.current, 'user', trimmed);
 
     try {
       const res = await invokeLoopi({ mode: serverMode, messages: next });
@@ -76,6 +75,24 @@ export default function LoopiChatScreen() {
       setSending(false);
     }
   }
+
+  function send() {
+    if (!input.trim()) return;
+    const content = input;
+    setInput('');
+    void sendText(content);
+  }
+
+  // 탭 하단 input에서 넘어온 첫 메시지를 한 번 자동 전송.
+  const autoSentRef = useRef(false);
+  useEffect(() => {
+    if (!autoSentRef.current && typeof initial === 'string' && initial.trim()) {
+      autoSentRef.current = true;
+      void sendText(initial);
+    }
+    // 최초 1회만 — initial은 진입 시 고정.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initial]);
 
   async function acceptWrite(p: FeedbackProposal) {
     const match =

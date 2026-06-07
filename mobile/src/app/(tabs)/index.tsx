@@ -1,16 +1,17 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { FlatList, Pressable, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 
-import { ComposerEntry, Icon, LoopText, Screen } from '@/components/ui';
+import { Icon, LoopText, Screen, TabHeader } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { computeStats } from '@/features/dashboard/stats';
+import { TabComposer } from '@/features/chat/tab-composer';
 import { FeedbackRow } from '@/features/feedback/components';
 import { useFeedbacks } from '@/features/feedback/queries';
 import { useSubGoals } from '@/features/goals/queries';
 import { useT } from '@/lib/i18n';
 
-/** 피드백 홈 — demo home B(Quiet list): 큰 타이틀 + 슬림 내재화 바 + dense 행 목록. */
+/** 피드백 홈 — 공통 레이아웃(헤더+본문) + 하단 작성 채팅 input. 목록은 demo B(Quiet list). */
 export default function FeedbackHomeScreen() {
   const router = useRouter();
   const t = useT();
@@ -27,39 +28,39 @@ export default function FeedbackHomeScreen() {
 
   return (
     <Screen edges={['top']}>
-      <FlatList
-        data={feedbacks}
-        keyExtractor={(f) => f.id}
-        contentContainerStyle={{ paddingHorizontal: 22, paddingTop: 8, paddingBottom: 16 }}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <View style={{ paddingBottom: 10 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
-              <LoopText variant="title">{t('tab.feedback')}</LoopText>
-              <Pressable
-                onPress={() => router.push('/feedback/new')}
-                style={{
-                  marginLeft: 'auto',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 5,
-                  paddingHorizontal: 12,
-                  height: 34,
-                  borderRadius: LoopRadius.full,
-                  borderWidth: 1,
-                  borderColor: LoopColors.line,
-                  backgroundColor: LoopColors.surface,
-                }}
-              >
-                <Icon name="plus" size={16} color={LoopColors.warmDeep} />
-                <LoopText variant="label" color="warmDeep">
-                  {t('home.directWrite')}
-                </LoopText>
-              </Pressable>
-            </View>
+      <TabHeader
+        title={t('tab.feedback')}
+        action={
+          <Pressable
+            onPress={() => router.push('/feedback/new')}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 5,
+              paddingHorizontal: 12,
+              height: 34,
+              borderRadius: LoopRadius.full,
+              borderWidth: 1,
+              borderColor: LoopColors.line,
+              backgroundColor: LoopColors.surface,
+            }}
+          >
+            <Icon name="plus" size={16} color={LoopColors.warmDeep} />
+            <LoopText variant="label" color="warmDeep">
+              {t('home.directWrite')}
+            </LoopText>
+          </Pressable>
+        }
+      />
 
-            {/* 슬림 내재화 바 */}
-            <View>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={8}>
+        <FlatList
+          data={feedbacks}
+          keyExtractor={(f) => f.id}
+          contentContainerStyle={{ paddingHorizontal: 22, paddingBottom: 12 }}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <View style={{ paddingBottom: 6 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 7 }}>
                 <LoopText variant="eyebrow" color="ink4">
                   {t('home.internalizedOf', { done: stats.internalized, total: stats.total })}
@@ -72,21 +73,21 @@ export default function FeedbackHomeScreen() {
                 <View style={{ width: `${pct}%`, height: '100%', borderRadius: 9999, backgroundColor: LoopColors.warm }} />
               </View>
             </View>
-          </View>
-        }
-        renderItem={({ item, index }) => (
-          <FeedbackRow
-            feedback={item}
-            subGoalName={subGoalName(item.subGoalId)}
-            first={index === 0}
-            onPress={() => router.push(`/feedback/${item.id}`)}
-          />
-        )}
-        ListEmptyComponent={!isLoading ? <EmptyState /> : null}
-      />
+          }
+          renderItem={({ item, index }) => (
+            <FeedbackRow
+              feedback={item}
+              subGoalName={subGoalName(item.subGoalId)}
+              first={index === 0}
+              onPress={() => router.push(`/feedback/${item.id}`)}
+            />
+          )}
+          ListEmptyComponent={!isLoading ? <EmptyState /> : null}
+        />
 
-      <ComposerEntry placeholder={t('home.composer')} onPress={() => router.push('/chat/write')} />
-      <View style={{ height: 6 }} />
+        <TabComposer mode="write" placeholder={t('home.composer')} />
+        <View style={{ height: 6 }} />
+      </KeyboardAvoidingView>
     </Screen>
   );
 }
