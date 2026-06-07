@@ -13,7 +13,7 @@ function LoopDemo() {
       </GallerySection>
 
       <GallerySection
-        title="AI coaching chat"
+        title="Chat with Loopi"
         subtitle="Write flow in progress — same engine, one tool · 3 interaction takes">
         <GalleryFrame label="A · Warm bubbles + quick replies"><ChatBubbles /></GalleryFrame>
         <GalleryFrame label="B · Draft emerging + confirm chips"><ChatDraft /></GalleryFrame>

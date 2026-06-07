@@ -1,0 +1,44 @@
+# Supabase 로컬 설정 (supabase CLI). 옵션: https://supabase.com/docs/guides/cli/config
+# CLI 버전에 따라 키가 다를 수 있다. 불일치 시 `supabase init`으로 재생성 후 project_id만 맞춰도 된다.
+project_id = "loop"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.pooler]
+enabled = false
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+
+[auth]
+enabled = true
+# 모바일 딥링크(scheme=loop). 매직링크/소셜 리다이렉트가 앱으로 돌아오게 한다.
+site_url = "loop://"
+additional_redirect_urls = ["loop://", "exp://"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+# 로컬 개발 편의: 이메일 확인 비활성(운영에선 true 권장)
+enable_confirmations = false
+
+# Edge Functions — Loopi(작성/회고). 플랫폼이 JWT를 먼저 검증.
+[functions.chat]
+enabled = true
+verify_jwt = true

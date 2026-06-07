@@ -9,7 +9,7 @@
 ## 결정
 
 1. **플랫폼별 디렉토리 분리** — 앱 코드는 `mobile/`(Expo), 루트에는 문서·공유 백엔드만.
-   - `supabase/`(백엔드)·`evals/`(코칭 평가)·`documents/`는 모든 플랫폼 공유 → 루트 유지.
+   - `supabase/`(백엔드)·`evals/`(Loopi 평가)·`documents/`는 모든 플랫폼 공유 → 루트 유지.
    - 이후 다른 플랫폼(web 등)은 같은 `supabase/`를 쓰는 형제 디렉토리로 추가.
 2. **Expo 기본 템플릿(default)** 사용 — Expo Router(파일 기반 라우팅) + TypeScript strict 포함.
    - 버전: Expo SDK 56 / React 19.2 / React Native 0.85 / TypeScript 6.0 (템플릿 핀 버전 유지).
@@ -32,4 +32,4 @@
 
 ## 다음
 
-CLAUDE.md §10의 ☐ 항목 — Supabase 연결·마이그레이션(RLS), 코칭 Edge Function 골격, 인증/화면.
+CLAUDE.md §10의 ☐ 항목 — Supabase 연결·마이그레이션(RLS), Loopi Edge Function 골격, 인증/화면.

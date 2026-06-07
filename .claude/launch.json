@@ -6,6 +6,12 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8123", "--directory", "demo"],
       "port": 8123
+    },
+    {
+      "name": "loop-web",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd mobile && npm run web"],
+      "port": 8081
     }
   ]
 }
