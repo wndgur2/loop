@@ -42,3 +42,8 @@ enable_confirmations = false
 [functions.chat]
 enabled = true
 verify_jwt = true
+
+# 계정 삭제 — 본인 인증(JWT) 후 service_role admin API로 auth.users 삭제(연쇄 삭제).
+[functions.delete-account]
+enabled = true
+verify_jwt = true

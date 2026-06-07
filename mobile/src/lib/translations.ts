@@ -185,6 +185,21 @@ const ko = {
     '이 하위 목표에 연결된 피드백이 있어요. 먼저 피드백의 하위 목표를 옮겨 주세요.',
   'settings.signout.title': '로그아웃',
   'settings.signout.msg': '로그아웃할까요?',
+
+  // 계정 상세
+  'account.title': '계정',
+  'account.section.profile': '프로필',
+  'account.email': '이메일',
+  'account.name': '이름',
+  'account.namePlaceholder': '이름을 입력하세요',
+  'account.nameSave': '이름 저장',
+  'account.nameSaveFail': '이름을 변경하지 못했어요. 잠시 후 다시 시도해 주세요.',
+  'account.signout': '로그아웃',
+  'account.delete': '계정 삭제',
+  'account.delete.title': '계정을 삭제할까요?',
+  'account.delete.msg': '계정과 모든 피드백·목표·대화가 영구히 삭제돼요. 되돌릴 수 없어요.',
+  'account.delete.confirm': '삭제',
+  'account.delete.fail': '계정을 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.',
 } as const;
 
 export type TKey = keyof typeof ko;
@@ -359,6 +374,21 @@ const en: Record<TKey, string> = {
     'This sub-goal has linked feedback. Move that feedback to another sub-goal first.',
   'settings.signout.title': 'Log out',
   'settings.signout.msg': 'Log out?',
+
+  'account.title': 'Account',
+  'account.section.profile': 'Profile',
+  'account.email': 'Email',
+  'account.name': 'Name',
+  'account.namePlaceholder': 'Enter your name',
+  'account.nameSave': 'Save name',
+  'account.nameSaveFail': "Couldn't update your name. Please try again.",
+  'account.signout': 'Log out',
+  'account.delete': 'Delete account',
+  'account.delete.title': 'Delete your account?',
+  'account.delete.msg':
+    'Your account and all feedback, goals, and conversations will be permanently deleted. This cannot be undone.',
+  'account.delete.confirm': 'Delete',
+  'account.delete.fail': "Couldn't delete your account. Please try again.",
 };
 
 export const translations: Record<Lang, Record<TKey, string>> = { ko, en };
