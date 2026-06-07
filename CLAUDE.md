@@ -3,7 +3,7 @@
 이 파일은 이 저장소에서 작업하는 coding agent(Claude Code 등)를 위한 안내서입니다.
 사람과 에이전트 모두 작업을 시작하기 전에 이 문서를 먼저 읽습니다.
 
-> 관련 문서: [PRD](documents/PRD-draft.md) · [기능 명세](documents/feature-spec.md) · [브랜딩](documents/branding.md) · [데이터 모델](documents/data-model.md) · [AI 코칭 스펙](documents/ai-coaching-spec.md) · [평가 기준](documents/eval-rubric.md)
+> 관련 문서: [PRD](documents/PRD.md) · [기능 명세](documents/feature-spec.md) · [브랜딩](documents/branding.md) · [데이터 모델](documents/data-model.md) · [AI 코칭 스펙](documents/ai-coaching-spec.md) · [평가 기준](documents/eval-rubric.md)
 > 이 문서는 "무엇을 만드는가"보다 "어떻게 작업하는가"에 집중합니다.
 
 ---

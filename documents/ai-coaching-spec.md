@@ -1,11 +1,12 @@
 # Loop — AI 코칭 스펙
 
-작성일: 2026-05-31 · 상태: Draft v0.2
-관련: [PRD-draft.md](PRD-draft.md) · [feature-spec.md](feature-spec.md) · [data-model.md](data-model.md) · [eval-rubric.md](eval-rubric.md) · [branding.md](branding.md)
+작성일: 2026-05-31 · 최종 수정: 2026-06-07 · 상태: Draft v0.3
+관련: [PRD.md](PRD.md) · [feature-spec.md](feature-spec.md) · [data-model.md](data-model.md) · [eval-rubric.md](eval-rubric.md) · [branding.md](branding.md)
 
 > Loop의 핵심 차별점인 "대화형 코칭"의 명세. 프롬프트·대화 흐름·구조화 출력의 단일 진실원(source of truth).
 > 프롬프트 실파일은 `supabase/functions/coaching/prompts/`에 버전 관리하고, 이 문서는 그 **의도와 계약**을 정의합니다.
 > 코칭에는 두 모드가 있다: **작성(write)** = 새 피드백 도출 · **회고(retrospective)** = 기존 피드백 되새김(§9).
+> 두 모드는 **같은 채팅 엔진**이고, 차이는 *시스템 프롬프트 + 에이전트가 쥐는 툴(모드당 1개)*뿐이다. **컨텍스트는 둘 다 사용자의 전체 피드백.** (구조: [feature-spec.md](feature-spec.md) "코칭 채팅 구조")
 
 ---
 
@@ -50,9 +51,9 @@ PRD 핵심: AI가 대화로 **(1) 근본 원인**과 **(2) 구체적 Takeaways 2
 
 ---
 
-## 4. 구조화 출력 계약 (Structured Output)
+## 4. 구조화 출력 계약 (Structured Output) = 작성 모드 툴 `피드백 생성`
 
-대화가 [5]에 도달하면, 모델은 **반드시 아래 JSON 스키마**로 결과를 낸다(Claude tool use / structured output 사용). [feature-spec.md](feature-spec.md)의 Canonical Template, [data-model.md](data-model.md)의 `feedbacks`/`takeaways`와 1:1 대응.
+작성(write) 모드의 **유일한 툴이 `피드백 생성`**이고, 그 입력 스키마가 아래다. 대화가 [5]에 도달하면 모델은 이 툴을 호출해 결과를 낸다(Claude tool use). [feature-spec.md](feature-spec.md)의 Canonical Template, [data-model.md](data-model.md)의 `feedbacks`/`takeaways`와 1:1 대응.
 
 ```jsonc
 {
@@ -88,6 +89,8 @@ supabase/functions/coaching/
     └── CHANGELOG.md         # 프롬프트 변경 이력 (eval 점수와 함께 기록)
 ```
 
+- **툴(모드당 1개)**: 작성 = `피드백 생성`(§4 스키마) · 회고 = `회고`(피드백 수정 — `internalized`/takeaway `done`/다짐 텍스트). `index.ts`가 mode에 따라 **프롬프트와 툴셋을 함께 분기**한다.
+- **컨텍스트**: 두 모드 모두 사용자의 **전체 피드백**을 컨텍스트로 주입한다(별도 검색 툴 없음). → 규모가 커지면 요약/필터링 검토, 캐싱으로 비용 완화.
 - 프롬프트는 **코드처럼 버전 관리**한다. 변경 시 `evals`로 회귀 검증하고 `CHANGELOG.md`에 점수 변화를 남긴다.
 - 시스템 프롬프트와 대화 히스토리에 **프롬프트 캐싱**을 적용해 비용/지연을 줄인다(빌트인 `claude-api` 스킬 참조).
 
@@ -120,9 +123,12 @@ supabase/functions/coaching/
 
 ## 9. 대화 흐름 — 회고(retrospective) 모드
 
-**목적**: 기존 피드백을 되짚어 내재화를 촉진한다(작성과 별개 모드).
+**목적**: 기존 피드백을 되짚어 내재화를 촉진한다. 작성과 **같은 채팅 엔진**, 툴만 `회고`(피드백 수정).
 
-- **하위 목표 단위로 진행**: 사용자가 하위 목표 하나를 고르면, 그 그룹의 피드백(특히 **미내재화·high importance**)을 대상으로 대화한다. 피드백을 통합 관리하지 않는다.
-- 흐름(잠정): 대상 피드백 환기 → "그 뒤로 비슷한 상황이 있었나요?" → 실행 여부 확인 → **Takeaway `done` / 피드백 `internalized` 갱신** 또는 새 피드백 파생.
+- **컨텍스트 = 전체 피드백**: 하위 목표로 스코프하지 않는다(이전 안 폐기). 모델이 전체 피드백을 보므로 **같은 상황의 반복을 직접 감지**해 옛 다짐을 끌어온다.
+- **진입**: 추천 회고 카드(서버 쿼리: 미내재화·high·반복·영역) 탭 또는 자유 입력 → 같은 회고 채팅으로 합류([feature-spec.md] F9).
+- 흐름(잠정): 대상 피드백 환기 → "그 뒤로 비슷한 상황이 있었나요?" → 실행 여부 확인 → `회고` 툴로 **Takeaway `done` / 피드백 `internalized` 갱신** 또는 **다짐 다듬기**(안 먹힌 Takeaway 텍스트 수정).
+- **회고 툴(`회고`)**: 단일 툴이 파라미터로 세 가지를 처리 — ① `internalized` 표시 ② takeaway `done` 토글 ③ takeaway 텍스트 수정/추가. **새 피드백 생성은 회고 범위 밖**(새 상황은 작성 모드에서).
+- **변경은 확인 후 커밋**: 툴이 변경을 제안하면 확인 칩으로 띄우고 사용자가 누를 때 반영한다(조용한 변경 금지, [../CLAUDE.md](../CLAUDE.md) §6).
 - 페르소나·톤은 §2 공유. 압박·죄책감 없이 부드럽게 환기(브랜딩 리마인더 톤).
-- ⚠️ 그룹 내 대상 선정 로직(미내재화/오래된 것/importance 가중)은 미확정([feature-spec.md] F9).
+- ⚠️ 추천 카드 랭킹(미내재화/오래됨/importance/반복 가중)은 미확정([feature-spec.md] F9).
