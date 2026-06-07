@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { Button, Icon, ImportanceDots, LoopText, Screen } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
@@ -95,19 +95,19 @@ export default function FeedbackFormScreen() {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 }}>
-        <Pressable onPress={() => router.back()} hitSlop={8} style={{ padding: 4 }}>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.headerBack}>
           <Icon name="close" size={24} color={LoopColors.ink2} />
         </Pressable>
-        <LoopText variant="heading2" style={{ marginLeft: 8 }}>
+        <LoopText variant="heading2" style={styles.headerTitle}>
           {isEdit ? t('form.edit') : t('form.new')}
         </LoopText>
       </View>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={{ padding: 22, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <FieldLabel>{t('form.label.title')}</FieldLabel>
-          <TextInput value={title} onChangeText={setTitle} placeholder={t('form.ph.title')} placeholderTextColor={LoopColors.ink4} style={input} />
+          <TextInput value={title} onChangeText={setTitle} placeholder={t('form.ph.title')} placeholderTextColor={LoopColors.ink4} style={styles.input} />
 
           <FieldLabel>{t('form.label.subgoal')}</FieldLabel>
           {subGoals.length === 0 ? (
@@ -115,14 +115,14 @@ export default function FeedbackFormScreen() {
               {t('form.nosubgoal')}
             </LoopText>
           ) : (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {subGoals.map((s) => {
-                const on = s.id === subGoalId;
+            <View style={styles.chipsWrap}>
+              {subGoals.map((sg) => {
+                const on = sg.id === subGoalId;
                 return (
-                  <Pressable key={s.id} onPress={() => setSubGoalId(s.id)}>
-                    <View style={[selChip, on && { backgroundColor: LoopColors.warm, borderColor: LoopColors.warm }]}>
+                  <Pressable key={sg.id} onPress={() => setSubGoalId(sg.id)}>
+                    <View style={[styles.selChip, on && styles.selChipOn]}>
                       <LoopText variant="label" color={on ? 'white' : 'ink2'}>
-                        {s.name}
+                        {sg.name}
                       </LoopText>
                     </View>
                   </Pressable>
@@ -132,18 +132,12 @@ export default function FeedbackFormScreen() {
           )}
 
           <FieldLabel>{t('form.label.importance')}</FieldLabel>
-          <View style={{ flexDirection: 'row', gap: 8 }}>
+          <View style={styles.impRow}>
             {IMPORTANCE_VALUES.map((lv) => {
               const on = lv === importance;
               return (
-                <Pressable key={lv} onPress={() => setImportance(lv)} style={{ flex: 1 }}>
-                  <View
-                    style={[
-                      selChip,
-                      { flexDirection: 'row', justifyContent: 'center', gap: 7 },
-                      on && { backgroundColor: LoopColors.warmSoft, borderColor: LoopColors.warmLine },
-                    ]}
-                  >
+                <Pressable key={lv} onPress={() => setImportance(lv)} style={styles.flex}>
+                  <View style={[styles.selChip, styles.impChip, on && styles.impChipOn]}>
                     <ImportanceDots level={lv} />
                     <LoopText variant="label" color={on ? 'warmDeep' : 'ink3'}>
                       {t(impLabelKey(lv))}
@@ -161,7 +155,7 @@ export default function FeedbackFormScreen() {
             placeholder={t('form.ph.situation')}
             placeholderTextColor={LoopColors.ink4}
             multiline
-            style={[input, multiline]}
+            style={[styles.input, styles.multiline]}
           />
 
           <FieldLabel>{t('form.label.rootcause')}</FieldLabel>
@@ -171,27 +165,27 @@ export default function FeedbackFormScreen() {
             placeholder={t('form.ph.rootcause')}
             placeholderTextColor={LoopColors.ink4}
             multiline
-            style={[input, multiline]}
+            style={[styles.input, styles.multiline]}
           />
 
           <FieldLabel>{t('form.label.takeaways')}</FieldLabel>
           {takeaways.map((val, i) => (
-            <View key={i} style={{ flexDirection: 'row', gap: 8, alignItems: 'center', marginBottom: 8 }}>
+            <View key={i} style={styles.takeawayRow}>
               <TextInput
                 value={val}
                 onChangeText={(v) => setTakeaways((cur) => cur.map((x, j) => (j === i ? v : x)))}
                 placeholder={t('form.ph.takeaway', { n: i + 1 })}
                 placeholderTextColor={LoopColors.ink4}
-                style={[input, { flex: 1, marginBottom: 0 }]}
+                style={[styles.input, styles.takeawayInput]}
               />
               {takeaways.length > 1 && (
-                <Pressable onPress={() => setTakeaways((cur) => cur.filter((_, j) => j !== i))} hitSlop={8} style={{ padding: 6 }}>
+                <Pressable onPress={() => setTakeaways((cur) => cur.filter((_, j) => j !== i))} hitSlop={8} style={styles.takeawayRemove}>
                   <Icon name="close" size={18} color={LoopColors.ink4} />
                 </Pressable>
               )}
             </View>
           ))}
-          <Pressable onPress={() => setTakeaways((cur) => [...cur, ''])} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 6 }}>
+          <Pressable onPress={() => setTakeaways((cur) => [...cur, ''])} style={styles.addRow}>
             <Icon name="plus" size={18} color={LoopColors.warmDeep} />
             <LoopText variant="label" color="warmDeep">
               {t('form.addTakeaway')}
@@ -205,16 +199,16 @@ export default function FeedbackFormScreen() {
             placeholder={t('form.ph.tags')}
             placeholderTextColor={LoopColors.ink4}
             autoCapitalize="none"
-            style={input}
+            style={styles.input}
           />
 
           {error && (
-            <LoopText variant="caption" color="warmDeep" style={{ marginTop: 6 }}>
+            <LoopText variant="caption" color="warmDeep" style={styles.error}>
               {t(error)}
             </LoopText>
           )}
 
-          <Button label={isEdit ? t('form.saveEdit') : t('form.save')} onPress={save} loading={busy} style={{ marginTop: 22 }} />
+          <Button label={isEdit ? t('form.saveEdit') : t('form.save')} onPress={save} loading={busy} style={styles.submit} />
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
@@ -223,33 +217,49 @@ export default function FeedbackFormScreen() {
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <LoopText variant="eyebrow" color="ink4" style={{ marginTop: 22, marginBottom: 9 }}>
+    <LoopText variant="eyebrow" color="ink4" style={styles.fieldLabel}>
       {children}
     </LoopText>
   );
 }
 
-const input = {
-  backgroundColor: LoopColors.surface,
-  borderWidth: 1,
-  borderColor: LoopColors.line,
-  borderRadius: LoopRadius.xl,
-  paddingHorizontal: 16,
-  paddingVertical: 13,
-  fontSize: 15,
-  color: LoopColors.ink,
-  marginBottom: 0,
-} as const;
-
-const multiline = { minHeight: 92, textAlignVertical: 'top' as const };
-
-const selChip = {
-  paddingHorizontal: 14,
-  height: 40,
-  borderRadius: LoopRadius.full,
-  borderWidth: 1,
-  borderColor: LoopColors.line,
-  backgroundColor: LoopColors.surface,
-  alignItems: 'center' as const,
-  justifyContent: 'center' as const,
-};
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 },
+  headerBack: { padding: 4 },
+  headerTitle: { marginLeft: 8 },
+  scroll: { padding: 22, paddingBottom: 40 },
+  fieldLabel: { marginTop: 22, marginBottom: 9 },
+  input: {
+    backgroundColor: LoopColors.surface,
+    borderWidth: 1,
+    borderColor: LoopColors.line,
+    borderRadius: LoopRadius.xl,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    fontSize: 15,
+    color: LoopColors.ink,
+  },
+  multiline: { minHeight: 92, textAlignVertical: 'top' },
+  chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  selChip: {
+    paddingHorizontal: 14,
+    height: 40,
+    borderRadius: LoopRadius.full,
+    borderWidth: 1,
+    borderColor: LoopColors.line,
+    backgroundColor: LoopColors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selChipOn: { backgroundColor: LoopColors.warm, borderColor: LoopColors.warm },
+  impRow: { flexDirection: 'row', gap: 8 },
+  impChip: { flexDirection: 'row', justifyContent: 'center', gap: 7 },
+  impChipOn: { backgroundColor: LoopColors.warmSoft, borderColor: LoopColors.warmLine },
+  takeawayRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginBottom: 8 },
+  takeawayInput: { flex: 1 },
+  takeawayRemove: { padding: 6 },
+  addRow: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 6 },
+  error: { marginTop: 6 },
+  submit: { marginTop: 22 },
+});

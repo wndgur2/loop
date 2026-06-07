@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Card, Icon, LoopText, Ring, Screen, TabHeader } from '@/components/ui';
 import { LoopColors } from '@/constants/loop-theme';
@@ -26,42 +26,42 @@ export default function InsightsScreen() {
   return (
     <Screen edges={['top']}>
       <TabHeader title={t('dash.title')} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 22, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         {stats.total === 0 && !isLoading ? (
-          <Card radius={22} style={{ padding: 24, alignItems: 'center' }}>
+          <Card radius={22} style={styles.emptyCard}>
             <Icon name="chart" size={28} color={LoopColors.warm} />
-            <LoopText variant="cardTitle" style={{ marginTop: 12, textAlign: 'center' }}>
+            <LoopText variant="cardTitle" style={styles.emptyTitle}>
               {t('dash.empty.title')}
             </LoopText>
-            <LoopText variant="bodyTight" color="ink3" style={{ marginTop: 6, textAlign: 'center' }}>
+            <LoopText variant="bodyTight" color="ink3" style={styles.emptyBody}>
               {t('dash.empty.body')}
             </LoopText>
           </Card>
         ) : (
           <>
             {/* 내재화율 hero */}
-            <Card radius={24} style={{ padding: 22, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Card radius={24} style={styles.hero}>
               <Ring value={stats.internalizationRate} size={120} stroke={11}>
-                <LoopText style={{ fontSize: 32, fontWeight: '700', letterSpacing: -0.8 }}>
+                <LoopText style={styles.heroPct}>
                   {pct}
-                  <LoopText style={{ fontSize: 16, color: LoopColors.ink4, fontWeight: '700' }}>%</LoopText>
+                  <LoopText style={styles.heroPctUnit}>%</LoopText>
                 </LoopText>
-                <LoopText variant="eyebrow" color="ink4" style={{ marginTop: 2 }}>
+                <LoopText variant="eyebrow" color="ink4" style={styles.heroEyebrow}>
                   {t('home.internalized')}
                 </LoopText>
               </Ring>
-              <View style={{ flex: 1 }}>
+              <View style={styles.flex}>
                 <LoopText variant="body" color="ink2">
                   {t('dash.hero.line', { total: stats.total, internalized: stats.internalized })}
                 </LoopText>
-                <LoopText variant="caption" color="ink4" style={{ marginTop: 8 }}>
+                <LoopText variant="caption" color="ink4" style={styles.heroSub}>
                   {t('dash.hero.sub', { done: stats.takeawayDone, total: stats.takeawayTotal })}
                 </LoopText>
               </View>
             </Card>
 
             {/* 두 지표 타일 */}
-            <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
+            <View style={styles.tiles}>
               <MetricTile
                 label={t('dash.metric.rate')}
                 value={`${pct}%`}
@@ -76,7 +76,7 @@ export default function InsightsScreen() {
 
             {/* 하위목표별 분포 */}
             <SectionTitle>{t('dash.section.subgoal')}</SectionTitle>
-            <Card radius={20} style={{ padding: 16, gap: 13 }}>
+            <Card radius={20} style={styles.distCard}>
               {Object.entries(stats.bySubGoal)
                 .sort((a, b) => b[1].count - a[1].count)
                 .map(([id, b]) => (
@@ -92,7 +92,7 @@ export default function InsightsScreen() {
 
             {/* 중요도 분포 */}
             <SectionTitle>{t('dash.section.importance')}</SectionTitle>
-            <Card radius={20} style={{ padding: 16, gap: 13 }}>
+            <Card radius={20} style={styles.distCard}>
               {(['high', 'mid', 'low'] as Importance[]).map((lv) => (
                 <DistRow
                   key={lv}
@@ -107,22 +107,9 @@ export default function InsightsScreen() {
             {stats.tagFrequency.length > 0 && (
               <>
                 <SectionTitle>{t('dash.section.tags')}</SectionTitle>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                <View style={styles.tagsWrap}>
                   {stats.tagFrequency.slice(0, 12).map(({ tag, count }) => (
-                    <View
-                      key={tag}
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 6,
-                        backgroundColor: LoopColors.surface,
-                        borderWidth: 1,
-                        borderColor: LoopColors.line,
-                        borderRadius: 9999,
-                        paddingHorizontal: 12,
-                        height: 32,
-                      }}
-                    >
+                    <View key={tag} style={styles.tag}>
                       <LoopText variant="label" color="ink2">
                         {tag}
                       </LoopText>
@@ -143,14 +130,12 @@ export default function InsightsScreen() {
 
 function MetricTile({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
-    <Card radius={20} style={{ flex: 1, padding: 16 }}>
+    <Card radius={20} style={styles.tile}>
       <LoopText variant="eyebrow" color="ink4">
         {label}
       </LoopText>
-      <LoopText style={{ fontSize: 28, fontWeight: '700', letterSpacing: -0.6, marginTop: 8, color: LoopColors.warmDeep }}>
-        {value}
-      </LoopText>
-      <LoopText variant="caption" color="ink4" style={{ marginTop: 4 }}>
+      <LoopText style={styles.tileValue}>{value}</LoopText>
+      <LoopText variant="caption" color="ink4" style={styles.tileSub}>
         {sub}
       </LoopText>
     </Card>
@@ -160,12 +145,12 @@ function MetricTile({ label, value, sub }: { label: string; value: string; sub: 
 function DistRow({ label, count, fraction, caption }: { label: string; count: number; fraction: number; caption?: string }) {
   return (
     <View>
-      <View style={{ flexDirection: 'row', alignItems: 'baseline', marginBottom: 6 }}>
-        <LoopText variant="label" color="ink2" numberOfLines={1} style={{ flex: 1 }}>
+      <View style={styles.distHead}>
+        <LoopText variant="label" color="ink2" numberOfLines={1} style={styles.flex}>
           {label}
         </LoopText>
         {caption && (
-          <LoopText variant="caption" color="ink4" style={{ marginRight: 8 }}>
+          <LoopText variant="caption" color="ink4" style={styles.distCaption}>
             {caption}
           </LoopText>
         )}
@@ -173,8 +158,8 @@ function DistRow({ label, count, fraction, caption }: { label: string; count: nu
           {count}
         </LoopText>
       </View>
-      <View style={{ height: 8, borderRadius: 9999, backgroundColor: LoopColors.ringTrack, overflow: 'hidden' }}>
-        <View style={{ width: `${Math.max(4, Math.round(fraction * 100))}%`, height: '100%', borderRadius: 9999, backgroundColor: LoopColors.warm }} />
+      <View style={styles.distTrack}>
+        <View style={[styles.distFill, { width: `${Math.max(4, Math.round(fraction * 100))}%` }]} />
       </View>
     </View>
   );
@@ -182,8 +167,43 @@ function DistRow({ label, count, fraction, caption }: { label: string; count: nu
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <LoopText variant="eyebrow" color="ink4" style={{ marginTop: 26, marginBottom: 11 }}>
+    <LoopText variant="eyebrow" color="ink4" style={styles.sectionTitle}>
       {children}
     </LoopText>
   );
 }
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  scroll: { paddingHorizontal: 22, paddingBottom: 24 },
+  emptyCard: { padding: 24, alignItems: 'center' },
+  emptyTitle: { marginTop: 12, textAlign: 'center' },
+  emptyBody: { marginTop: 6, textAlign: 'center' },
+  hero: { padding: 22, flexDirection: 'row', alignItems: 'center', gap: 20 },
+  heroPct: { fontSize: 32, fontWeight: '700', letterSpacing: -0.8 },
+  heroPctUnit: { fontSize: 16, color: LoopColors.ink4, fontWeight: '700' },
+  heroEyebrow: { marginTop: 2 },
+  heroSub: { marginTop: 8 },
+  tiles: { flexDirection: 'row', gap: 12, marginTop: 12 },
+  tile: { flex: 1, padding: 16 },
+  tileValue: { fontSize: 28, fontWeight: '700', letterSpacing: -0.6, marginTop: 8, color: LoopColors.warmDeep },
+  tileSub: { marginTop: 4 },
+  distCard: { padding: 16, gap: 13 },
+  distHead: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 6 },
+  distCaption: { marginRight: 8 },
+  distTrack: { height: 8, borderRadius: 9999, backgroundColor: LoopColors.ringTrack, overflow: 'hidden' },
+  distFill: { height: '100%', borderRadius: 9999, backgroundColor: LoopColors.warm },
+  tagsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  tag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: LoopColors.surface,
+    borderWidth: 1,
+    borderColor: LoopColors.line,
+    borderRadius: 9999,
+    paddingHorizontal: 12,
+    height: 32,
+  },
+  sectionTitle: { marginTop: 26, marginBottom: 11 },
+});

@@ -1,4 +1,5 @@
-import { ActivityIndicator, Pressable, View, type ViewStyle } from 'react-native';
+import { memo } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 
@@ -17,7 +18,7 @@ type ButtonProps = {
 };
 
 /** 기본 액션 버튼 — primary=warm 채움, secondary=surface+border. */
-export function Button({
+export const Button = memo(function Button({
   label,
   onPress,
   variant = 'primary',
@@ -35,19 +36,10 @@ export function Button({
       onPress={onPress}
       disabled={disabled || loading}
       style={({ pressed }) => [
-        {
-          height,
-          borderRadius: LoopRadius.xl,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8,
-          paddingHorizontal: 18,
-          backgroundColor: isPrimary ? LoopColors.warm : LoopColors.surface,
-          borderWidth: isPrimary ? 0 : 1,
-          borderColor: LoopColors.line,
-          opacity: disabled ? 0.5 : pressed ? 0.9 : 1,
-        },
+        styles.base,
+        { height },
+        isPrimary ? styles.primary : styles.secondary,
+        { opacity: disabled ? 0.5 : pressed ? 0.9 : 1 },
         style,
       ]}
     >
@@ -56,17 +48,17 @@ export function Button({
       ) : (
         <>
           {icon && <Icon name={icon} size={19} color={fg} />}
-          <LoopText variant="label" color={fg} style={{ fontWeight: '700', fontSize: 15 }}>
+          <LoopText variant="label" color={fg} style={styles.label}>
             {label}
           </LoopText>
         </>
       )}
     </Pressable>
   );
-}
+});
 
 /** 아이콘만 있는 정사각 버튼 (상세 화면 액션 등). */
-export function IconButton({
+export const IconButton = memo(function IconButton({
   icon,
   onPress,
   color = LoopColors.ink3,
@@ -80,21 +72,33 @@ export function IconButton({
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => ({
-        width: size,
-        height: size,
-        borderRadius: LoopRadius.xl,
-        borderWidth: 1,
-        borderColor: LoopColors.line,
-        backgroundColor: LoopColors.surface,
-        alignItems: 'center',
-        justifyContent: 'center',
-        opacity: pressed ? 0.85 : 1,
-      })}
+      style={({ pressed }) => [styles.iconBtn, { width: size, height: size, opacity: pressed ? 0.85 : 1 }]}
     >
       <View>
         <Icon name={icon} size={22} color={color} />
       </View>
     </Pressable>
   );
-}
+});
+
+const styles = StyleSheet.create({
+  base: {
+    borderRadius: LoopRadius.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: 18,
+  },
+  primary: { backgroundColor: LoopColors.warm, borderWidth: 0 },
+  secondary: { backgroundColor: LoopColors.surface, borderWidth: 1, borderColor: LoopColors.line },
+  label: { fontWeight: '700', fontSize: 15 },
+  iconBtn: {
+    borderRadius: LoopRadius.xl,
+    borderWidth: 1,
+    borderColor: LoopColors.line,
+    backgroundColor: LoopColors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

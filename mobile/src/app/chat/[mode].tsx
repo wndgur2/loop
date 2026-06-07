@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
+import { memo, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { Chip, ComposerInput, Icon, ImportanceDots, LoopText, Screen } from '@/components/ui';
@@ -143,31 +143,31 @@ export default function LoopiChatScreen() {
   return (
     <Screen edges={['top', 'bottom']}>
       {/* 헤더 — airy(quiet journal) */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 18, paddingBottom: 14 }}>
-        <Pressable onPress={() => router.back()} hitSlop={8} style={{ padding: 2 }}>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.back}>
           <Icon name="chevron-left" size={24} color={LoopColors.ink2} />
         </Pressable>
         <CoachAvatar />
-        <View style={{ flex: 1 }}>
-          <LoopText variant="heading2" style={{ fontSize: 15 }}>
+        <View style={styles.flex}>
+          <LoopText variant="heading2" style={styles.title}>
             {uiMode === 'reflect' ? t('chat.title.reflect') : t('chat.title.write')}
           </LoopText>
-          <LoopText variant="small" color="warmDeep" style={{ marginTop: 2 }}>
+          <LoopText variant="small" color="warmDeep" style={styles.sub}>
             {t('chat.sub')}
           </LoopText>
         </View>
       </View>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           ref={scrollRef}
-          contentContainerStyle={{ paddingHorizontal: 26, paddingTop: 6, paddingBottom: 12, gap: 22 }}
+          contentContainerStyle={styles.scroll}
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
           keyboardShouldPersistTaps="handled"
         >
           <CoachLine text={intro} />
           {messages.map((m, i) => (m.role === 'user' ? <UserLine key={i} text={m.content} /> : <CoachLine key={i} text={m.content} />))}
-          {sending && <ActivityIndicator color={LoopColors.warm} size="small" style={{ alignSelf: 'flex-start' }} />}
+          {sending && <ActivityIndicator color={LoopColors.warm} size="small" style={styles.typing} />}
 
           {proposal?.kind === 'create_feedback' && (
             <CreateProposalCard
@@ -194,49 +194,40 @@ export default function LoopiChatScreen() {
           disabled={sending}
           placeholder={uiMode === 'reflect' ? t('chat.ph.reflect') : t('chat.ph.write')}
         />
-        <View style={{ height: 6 }} />
+        <View style={styles.bottomSpacer} />
       </KeyboardAvoidingView>
     </Screen>
   );
 }
 
 /** Loopi 작은 링 아바타. */
-function CoachAvatar() {
+const CoachAvatar = memo(function CoachAvatar() {
   return (
-    <View
-      style={{
-        width: 28,
-        height: 28,
-        borderRadius: 9999,
-        backgroundColor: LoopColors.warmSoft,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
+    <View style={styles.avatar}>
       <Icon name="loop" size={16} color={LoopColors.warm} />
     </View>
   );
-}
+});
 
 /** Loopi 프롬프트 — 버블 없이 따뜻한 톤의 문장. */
-function CoachLine({ text }: { text: string }) {
+const CoachLine = memo(function CoachLine({ text }: { text: string }) {
   return (
-    <LoopText color="warmDeep" style={{ fontSize: 16, fontWeight: '600', lineHeight: 25 }}>
+    <LoopText color="warmDeep" style={styles.coachLine}>
       {text}
     </LoopText>
   );
-}
+});
 
 /** 사용자 발화 — 좌측 보더로 들여쓴 저널 인용. */
-function UserLine({ text }: { text: string }) {
+const UserLine = memo(function UserLine({ text }: { text: string }) {
   return (
-    <View style={{ paddingLeft: 14, borderLeftWidth: 2, borderLeftColor: LoopColors.warmLine }}>
-      <LoopText color="ink" style={{ fontSize: 15, fontWeight: '500', lineHeight: 24 }}>
+    <View style={styles.userLine}>
+      <LoopText color="ink" style={styles.userText}>
         {text}
       </LoopText>
     </View>
   );
-}
+});
 
 function CreateProposalCard({
   proposal,
@@ -251,21 +242,12 @@ function CreateProposalCard({
 }) {
   const t = useT();
   return (
-    <View
-      style={{
-        backgroundColor: LoopColors.warmSoft,
-        borderWidth: 1,
-        borderColor: LoopColors.warmLine,
-        borderRadius: 18,
-        padding: 16,
-        gap: 10,
-      }}
-    >
+    <View style={styles.createCard}>
       <LoopText variant="eyebrow" color="warmDeep">
         {t('chat.proposal.createTitle')}
       </LoopText>
       <LoopText variant="cardTitle">{proposal.title}</LoopText>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+      <View style={styles.metaRow}>
         <Chip label={proposal.category} tone="warm" />
         <ImportanceDots level={proposal.importance} />
         <LoopText variant="caption" color="ink3">
@@ -273,13 +255,13 @@ function CreateProposalCard({
         </LoopText>
       </View>
       {proposal.takeaways.length > 0 && (
-        <View style={{ gap: 4 }}>
+        <View style={styles.takeaways}>
           {proposal.takeaways.map((tk, i) => (
-            <View key={i} style={{ flexDirection: 'row', gap: 7 }}>
+            <View key={i} style={styles.takeawayItem}>
               <LoopText variant="bodyTight" color="warmDeep">
                 ·
               </LoopText>
-              <LoopText variant="bodyTight" color="ink2" style={{ flex: 1 }}>
+              <LoopText variant="bodyTight" color="ink2" style={styles.flex}>
                 {tk.text}
               </LoopText>
             </View>
@@ -305,23 +287,14 @@ function RetroProposalCard({
   const { t } = useI18n();
   const lines = describeRetrospective(proposal, t);
   return (
-    <View
-      style={{
-        backgroundColor: LoopColors.surface,
-        borderWidth: 1,
-        borderColor: LoopColors.line,
-        borderRadius: 18,
-        padding: 16,
-        gap: 8,
-      }}
-    >
+    <View style={styles.retroCard}>
       <LoopText variant="eyebrow" color="ink4">
         {t('chat.proposal.retroTitle')}
       </LoopText>
       {lines.map((l, i) => (
-        <View key={i} style={{ flexDirection: 'row', gap: 7 }}>
+        <View key={i} style={styles.takeawayItem}>
           <Icon name="check-sm" size={15} color={LoopColors.good} />
-          <LoopText variant="bodyTight" color="ink2" style={{ flex: 1 }}>
+          <LoopText variant="bodyTight" color="ink2" style={styles.flex}>
             {l}
           </LoopText>
         </View>
@@ -346,20 +319,8 @@ function ConfirmChips({
 }) {
   const t = useT();
   return (
-    <View style={{ flexDirection: 'row', gap: 9, justifyContent: 'flex-end', marginTop: 4 }}>
-      <Pressable
-        onPress={onDismiss}
-        disabled={busy}
-        style={{
-          borderWidth: 1.4,
-          borderColor: LoopColors.line,
-          backgroundColor: LoopColors.surface,
-          borderRadius: LoopRadius.full,
-          paddingHorizontal: 16,
-          height: 38,
-          justifyContent: 'center',
-        }}
-      >
+    <View style={styles.chips}>
+      <Pressable onPress={onDismiss} disabled={busy} style={styles.dismiss}>
         <LoopText variant="label" color="ink2">
           {t('chat.proposal.dismiss')}
         </LoopText>
@@ -367,16 +328,7 @@ function ConfirmChips({
       <Pressable
         onPress={onAccept}
         disabled={busy}
-        style={{
-          backgroundColor: good ? LoopColors.good : LoopColors.warm,
-          borderRadius: LoopRadius.full,
-          paddingHorizontal: 16,
-          height: 38,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 6,
-          opacity: busy ? 0.7 : 1,
-        }}
+        style={[styles.accept, { backgroundColor: good ? LoopColors.good : LoopColors.warm, opacity: busy ? 0.7 : 1 }]}
       >
         {busy ? (
           <ActivityIndicator color={LoopColors.white} size="small" />
@@ -390,3 +342,62 @@ function ConfirmChips({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 18, paddingBottom: 14 },
+  back: { padding: 2 },
+  title: { fontSize: 15 },
+  sub: { marginTop: 2 },
+  scroll: { paddingHorizontal: 26, paddingTop: 6, paddingBottom: 12, gap: 22 },
+  typing: { alignSelf: 'flex-start' },
+  bottomSpacer: { height: 6 },
+  avatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 9999,
+    backgroundColor: LoopColors.warmSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  coachLine: { fontSize: 16, fontWeight: '600', lineHeight: 25 },
+  userLine: { paddingLeft: 14, borderLeftWidth: 2, borderLeftColor: LoopColors.warmLine },
+  userText: { fontSize: 15, fontWeight: '500', lineHeight: 24 },
+  createCard: {
+    backgroundColor: LoopColors.warmSoft,
+    borderWidth: 1,
+    borderColor: LoopColors.warmLine,
+    borderRadius: 18,
+    padding: 16,
+    gap: 10,
+  },
+  retroCard: {
+    backgroundColor: LoopColors.surface,
+    borderWidth: 1,
+    borderColor: LoopColors.line,
+    borderRadius: 18,
+    padding: 16,
+    gap: 8,
+  },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  takeaways: { gap: 4 },
+  takeawayItem: { flexDirection: 'row', gap: 7 },
+  chips: { flexDirection: 'row', gap: 9, justifyContent: 'flex-end', marginTop: 4 },
+  dismiss: {
+    borderWidth: 1.4,
+    borderColor: LoopColors.line,
+    backgroundColor: LoopColors.surface,
+    borderRadius: LoopRadius.full,
+    paddingHorizontal: 16,
+    height: 38,
+    justifyContent: 'center',
+  },
+  accept: {
+    borderRadius: LoopRadius.full,
+    paddingHorizontal: 16,
+    height: 38,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+});

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { ColorValue } from 'react-native';
 import { Circle, Path, Svg } from 'react-native-svg';
 
@@ -39,7 +40,7 @@ type IconProps = {
   color?: ColorValue;
 };
 
-export function Icon({ name, size = 24, color = LoopColors.ink }: IconProps) {
+export const Icon = memo(function Icon({ name, size = 24, color = LoopColors.ink }: IconProps) {
   const s = { stroke: color, strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' };
   const filled = { fill: color, stroke: 'none' as const };
 
@@ -48,7 +49,7 @@ export function Icon({ name, size = 24, color = LoopColors.ink }: IconProps) {
       {renderIcon(name, s, filled, color)}
     </Svg>
   );
-}
+});
 
 function renderIcon(
   name: IconName,

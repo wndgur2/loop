@@ -20,12 +20,6 @@ export type SubGoalSource = Database['public']['Enums']['sub_goal_source'];
 
 export const IMPORTANCE_VALUES: Importance[] = ['high', 'mid', 'low'];
 
-export const IMPORTANCE_LABEL: Record<Importance, string> = {
-  high: '높음',
-  mid: '보통',
-  low: '낮음',
-};
-
 export interface Goal {
   id: string;
   title: string;

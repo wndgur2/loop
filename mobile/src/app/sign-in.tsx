@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { LoopMark } from '@/components/loop-mark';
 import { Button, LoopText, Screen } from '@/components/ui';
@@ -42,19 +42,19 @@ export default function SignInScreen() {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 28 }} keyboardShouldPersistTaps="handled">
-          <View style={{ marginBottom: 28 }}>
+      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <View style={styles.intro}>
             <LoopMark height={30} />
-            <LoopText variant="title" style={{ marginTop: 22 }}>
+            <LoopText variant="title" style={styles.title}>
               {isSignUp ? t('signin.title.signup') : t('signin.title.signin')}
             </LoopText>
-            <LoopText variant="body" color="ink3" style={{ marginTop: 8 }}>
+            <LoopText variant="body" color="ink3" style={styles.subtitle}>
               {t('signin.subtitle')}
             </LoopText>
           </View>
 
-          <View style={{ gap: 12 }}>
+          <View style={styles.fields}>
             {isSignUp && (
               <Field placeholder={t('field.name')} value={displayName} onChangeText={setDisplayName} autoCapitalize="words" />
             )}
@@ -76,7 +76,7 @@ export default function SignInScreen() {
           </View>
 
           {error && (
-            <LoopText variant="caption" color="warmDeep" style={{ marginTop: 14 }}>
+            <LoopText variant="caption" color="warmDeep" style={styles.error}>
               {t(error)}
             </LoopText>
           )}
@@ -85,10 +85,10 @@ export default function SignInScreen() {
             label={isSignUp ? t('signin.cta.signup') : t('signin.cta.signin')}
             onPress={submit}
             loading={busy}
-            style={{ marginTop: 22 }}
+            style={styles.submit}
           />
 
-          <Pressable onPress={() => setMode(isSignUp ? 'sign-in' : 'sign-up')} style={{ marginTop: 18, alignItems: 'center' }}>
+          <Pressable onPress={() => setMode(isSignUp ? 'sign-in' : 'sign-up')} style={styles.toggle}>
             <LoopText variant="label" color="ink3">
               {isSignUp ? t('signin.toggle.toSignin') : t('signin.toggle.toSignup')}
             </LoopText>
@@ -100,23 +100,30 @@ export default function SignInScreen() {
 }
 
 function Field(props: React.ComponentProps<typeof TextInput>) {
-  return (
-    <TextInput
-      {...props}
-      placeholderTextColor={LoopColors.ink4}
-      style={{
-        backgroundColor: LoopColors.surface,
-        borderWidth: 1,
-        borderColor: LoopColors.line,
-        borderRadius: LoopRadius.xl,
-        paddingHorizontal: 16,
-        paddingVertical: 15,
-        fontSize: 15,
-        color: LoopColors.ink,
-      }}
-    />
-  );
+  return <TextInput {...props} placeholderTextColor={LoopColors.ink4} style={styles.field} />;
 }
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  scroll: { flexGrow: 1, justifyContent: 'center', padding: 28 },
+  intro: { marginBottom: 28 },
+  title: { marginTop: 22 },
+  subtitle: { marginTop: 8 },
+  fields: { gap: 12 },
+  error: { marginTop: 14 },
+  submit: { marginTop: 22 },
+  toggle: { marginTop: 18, alignItems: 'center' },
+  field: {
+    backgroundColor: LoopColors.surface,
+    borderWidth: 1,
+    borderColor: LoopColors.line,
+    borderRadius: LoopRadius.xl,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+    fontSize: 15,
+    color: LoopColors.ink,
+  },
+});
 
 function authMessageKey(e: unknown): TKey {
   const msg = e instanceof Error ? e.message : String(e);

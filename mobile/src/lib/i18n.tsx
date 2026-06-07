@@ -25,10 +25,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>('ko');
 
   useEffect(() => {
-    // 비동기 로드 → 저장된 언어 복원(렌더 차단하지 않음).
+    // 비동기 로드 → 저장된 언어 복원(렌더 차단하지 않음). 언마운트 후 setState 방지.
+    let mounted = true;
     AsyncStorage.getItem(STORAGE_KEY).then((v) => {
-      if (v === 'ko' || v === 'en') setLangState(v);
+      if (mounted && (v === 'ko' || v === 'en')) setLangState(v);
     });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const value = useMemo<I18nState>(

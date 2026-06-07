@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { View } from 'react-native';
+import { memo, type ReactNode } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Circle, Svg } from 'react-native-svg';
 
 import { LoopColors } from '@/constants/loop-theme';
@@ -15,7 +15,7 @@ type RingProps = {
 };
 
 /** 진척 링 — 내재화율의 시각 모티프(닫히는 고리). demo home Ring 이식. */
-export function Ring({
+export const Ring = memo(function Ring({
   value,
   size = 92,
   stroke = 9,
@@ -29,8 +29,8 @@ export function Ring({
   const center = size / 2;
 
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      <Svg width={size} height={size} style={{ position: 'absolute', transform: [{ rotate: '-90deg' }] }}>
+    <View style={[styles.wrap, { width: size, height: size }]}>
+      <Svg width={size} height={size} style={styles.svg}>
         <Circle cx={center} cy={center} r={r} fill="none" stroke={track} strokeWidth={stroke} />
         <Circle
           cx={center}
@@ -44,7 +44,13 @@ export function Ring({
           strokeDashoffset={c * (1 - clamped)}
         />
       </Svg>
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>{children}</View>
+      <View style={styles.center}>{children}</View>
     </View>
   );
-}
+});
+
+const styles = StyleSheet.create({
+  wrap: { alignItems: 'center', justifyContent: 'center' },
+  svg: { position: 'absolute', transform: [{ rotate: '-90deg' }] },
+  center: { alignItems: 'center', justifyContent: 'center' },
+});

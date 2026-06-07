@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { View } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 
@@ -6,7 +7,7 @@ import { LoopColors } from '@/constants/loop-theme';
 import { LoopText } from './ui/text';
 
 /** Loop 로고 — 닫히는 고리 마크 + 워드마크. demo LoopMark 이식. */
-export function LoopMark({ height = 22, color = LoopColors.ink }: { height?: number; color?: string }) {
+export const LoopMark = memo(function LoopMark({ height = 22, color = LoopColors.ink }: { height?: number; color?: string }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: height * 0.42 }}>
       <Svg width={height * 1.04} height={height} viewBox="0 0 26 25" fill="none">
@@ -22,4 +23,4 @@ export function LoopMark({ height = 22, color = LoopColors.ink }: { height?: num
       </LoopText>
     </View>
   );
-}
+});

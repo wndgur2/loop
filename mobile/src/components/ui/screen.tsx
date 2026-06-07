@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { View, type ViewStyle } from 'react-native';
+import { StyleSheet, View, type ViewStyle } from 'react-native';
 import { type Edge, SafeAreaView } from 'react-native-safe-area-context';
 
 import { LoopColors } from '@/constants/loop-theme';
@@ -17,10 +17,15 @@ export function Screen({
   background?: string;
 }) {
   return (
-    <View style={{ flex: 1, backgroundColor: background }}>
-      <SafeAreaView style={[{ flex: 1 }, style]} edges={edges}>
+    <View style={[styles.root, { backgroundColor: background }]}>
+      <SafeAreaView style={[styles.safe, style]} edges={edges}>
         {children}
       </SafeAreaView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  safe: { flex: 1 },
+});

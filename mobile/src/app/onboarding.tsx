@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { Button, Icon, LoopText, Screen } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
@@ -60,15 +60,15 @@ export default function OnboardingScreen() {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <LoopText variant="eyebrow" color="ink4">
             {t('ob.step1')}
           </LoopText>
-          <LoopText variant="title" style={{ marginTop: 8 }}>
+          <LoopText variant="title" style={styles.gap8}>
             {t('ob.goalTitle')}
           </LoopText>
-          <LoopText variant="body" color="ink3" style={{ marginTop: 8, marginBottom: 18 }}>
+          <LoopText variant="body" color="ink3" style={styles.lead}>
             {t('ob.goalDesc')}
           </LoopText>
 
@@ -77,7 +77,7 @@ export default function OnboardingScreen() {
             onChangeText={setTitle}
             placeholder={t('ob.goalPlaceholder')}
             placeholderTextColor={LoopColors.ink4}
-            style={inputStyle}
+            style={styles.input}
           />
           <TextInput
             value={description}
@@ -85,24 +85,24 @@ export default function OnboardingScreen() {
             placeholder={t('ob.goalDescPlaceholder')}
             placeholderTextColor={LoopColors.ink4}
             multiline
-            style={[inputStyle, { marginTop: 12, minHeight: 64, textAlignVertical: 'top' }]}
+            style={[styles.input, styles.descInput]}
           />
 
-          <LoopText variant="eyebrow" color="ink4" style={{ marginTop: 32 }}>
+          <LoopText variant="eyebrow" color="ink4" style={styles.step2}>
             {t('ob.step2')}
           </LoopText>
-          <LoopText variant="title" style={{ marginTop: 8 }}>
+          <LoopText variant="title" style={styles.gap8}>
             {t('ob.subTitle')}
           </LoopText>
-          <LoopText variant="body" color="ink3" style={{ marginTop: 8, marginBottom: 16 }}>
+          <LoopText variant="body" color="ink3" style={styles.subLead}>
             {t('ob.subDesc')}
           </LoopText>
 
           {selected.length > 0 && (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+            <View style={styles.selectedWrap}>
               {selected.map((name) => (
                 <Pressable key={name} onPress={() => toggle(name)}>
-                  <View style={[chip, { backgroundColor: LoopColors.warm, borderColor: LoopColors.warm }]}>
+                  <View style={[styles.chip, styles.chipOn]}>
                     <LoopText variant="label" color="white">
                       {name}
                     </LoopText>
@@ -113,10 +113,10 @@ export default function OnboardingScreen() {
             </View>
           )}
 
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          <View style={styles.chipsWrap}>
             {suggestions.map((name) => (
               <Pressable key={name} onPress={() => toggle(name)}>
-                <View style={chip}>
+                <View style={styles.chip}>
                   <Icon name="plus" size={14} color={LoopColors.ink3} />
                   <LoopText variant="label" color="ink2">
                     {name}
@@ -126,63 +126,77 @@ export default function OnboardingScreen() {
             ))}
           </View>
 
-          <View style={{ flexDirection: 'row', gap: 8, marginTop: 14, alignItems: 'center' }}>
+          <View style={styles.customRow}>
             <TextInput
               value={custom}
               onChangeText={setCustom}
               placeholder={t('ob.addPlaceholder')}
               placeholderTextColor={LoopColors.ink4}
               onSubmitEditing={addCustom}
-              style={[inputStyle, { flex: 1, paddingVertical: 11 }]}
+              style={[styles.input, styles.customInput]}
             />
-            <Pressable onPress={addCustom} style={addBtn}>
+            <Pressable onPress={addCustom} style={styles.addBtn}>
               <Icon name="plus" size={20} color={LoopColors.warmDeep} />
             </Pressable>
           </View>
 
           {error && (
-            <LoopText variant="caption" color="warmDeep" style={{ marginTop: 16 }}>
+            <LoopText variant="caption" color="warmDeep" style={styles.error}>
               {t(error)}
             </LoopText>
           )}
 
-          <Button label={t('ob.cta')} onPress={submit} disabled={!canSubmit} loading={create.isPending} style={{ marginTop: 28 }} />
+          <Button label={t('ob.cta')} onPress={submit} disabled={!canSubmit} loading={create.isPending} style={styles.submit} />
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
   );
 }
 
-const inputStyle = {
-  backgroundColor: LoopColors.surface,
-  borderWidth: 1,
-  borderColor: LoopColors.line,
-  borderRadius: LoopRadius.xl,
-  paddingHorizontal: 16,
-  paddingVertical: 15,
-  fontSize: 15,
-  color: LoopColors.ink,
-} as const;
-
-const chip = {
-  flexDirection: 'row' as const,
-  alignItems: 'center' as const,
-  gap: 5,
-  paddingHorizontal: 13,
-  height: 38,
-  borderRadius: LoopRadius.full,
-  borderWidth: 1,
-  borderColor: LoopColors.line,
-  backgroundColor: LoopColors.surface,
-};
-
-const addBtn = {
-  width: 46,
-  height: 46,
-  borderRadius: LoopRadius.xl,
-  borderWidth: 1,
-  borderColor: LoopColors.warmLine,
-  backgroundColor: LoopColors.warmSoft,
-  alignItems: 'center' as const,
-  justifyContent: 'center' as const,
-};
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  scroll: { padding: 24, paddingBottom: 40 },
+  gap8: { marginTop: 8 },
+  lead: { marginTop: 8, marginBottom: 18 },
+  step2: { marginTop: 32 },
+  subLead: { marginTop: 8, marginBottom: 16 },
+  input: {
+    backgroundColor: LoopColors.surface,
+    borderWidth: 1,
+    borderColor: LoopColors.line,
+    borderRadius: LoopRadius.xl,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+    fontSize: 15,
+    color: LoopColors.ink,
+  },
+  descInput: { marginTop: 12, minHeight: 64, textAlignVertical: 'top' },
+  selectedWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 },
+  chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 13,
+    height: 38,
+    borderRadius: LoopRadius.full,
+    borderWidth: 1,
+    borderColor: LoopColors.line,
+    backgroundColor: LoopColors.surface,
+  },
+  chipOn: { backgroundColor: LoopColors.warm, borderColor: LoopColors.warm },
+  customRow: { flexDirection: 'row', gap: 8, marginTop: 14, alignItems: 'center' },
+  customInput: { flex: 1, paddingVertical: 11 },
+  addBtn: {
+    width: 46,
+    height: 46,
+    borderRadius: LoopRadius.xl,
+    borderWidth: 1,
+    borderColor: LoopColors.warmLine,
+    backgroundColor: LoopColors.warmSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  error: { marginTop: 16 },
+  submit: { marginTop: 28 },
+});
