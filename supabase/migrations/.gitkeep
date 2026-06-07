@@ -1,0 +1,2 @@
+-- Supabase 마이그레이션 (SQL). 모든 사용자 데이터 테이블은 RLS 필수.
+-- 작성은 supabase-migration 스킬 사용 (RLS 정책을 같은 마이그레이션에 강제).
