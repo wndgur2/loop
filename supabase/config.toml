@@ -27,9 +27,20 @@ port = 54324
 
 [auth]
 enabled = true
-# 모바일 딥링크(scheme=loop). 매직링크/소셜 리다이렉트가 앱으로 돌아오게 한다.
-site_url = "loop://"
-additional_redirect_urls = ["loop://", "exp://"]
+# 모바일 딥링크(scheme=loop). 매직링크/소셜·이메일확인 리다이렉트가 앱으로 돌아오게 한다.
+# site_url 은 emailRedirectTo 가 허용목록에 없을 때의 폴백이다 → localhost 가 되면
+# 확인 메일 링크가 깨지므로 앱 딥링크로 둔다.
+site_url = "loop://auth-callback"
+# emailRedirectTo(클라이언트의 EXPO_PUBLIC_AUTH_REDIRECT_URL)는 여기 등록된 값과
+# 일치해야 GoTrue 가 그대로 사용한다. 로컬 웹 프리뷰(:8081)도 허용해 둔다.
+# 운영 프로젝트는 이 파일이 아니라 대시보드(Authentication > URL Configuration)에서 같은 값을 등록한다.
+additional_redirect_urls = [
+  "loop://auth-callback",
+  "loop://",
+  "exp://",
+  "http://localhost:8081/auth-callback",
+  "http://localhost:8081",
+]
 jwt_expiry = 3600
 enable_signup = true
 
