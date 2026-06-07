@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
@@ -14,7 +15,8 @@ import {
 import { useI18n } from '@/lib/i18n';
 
 export default function SettingsScreen() {
-  const { session, signOut } = useAuth();
+  const { session } = useAuth();
+  const router = useRouter();
   const { t, lang, setLang } = useI18n();
   const { data: goal } = useActiveGoal();
   const { data: subGoals = [] } = useSubGoals();
@@ -65,24 +67,22 @@ export default function SettingsScreen() {
     ]);
   }
 
-  function confirmSignOut() {
-    Alert.alert(t('settings.signout.title'), t('settings.signout.msg'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      { text: t('settings.signout'), style: 'destructive', onPress: () => signOut() },
-    ]);
-  }
-
   return (
     <Screen edges={['top']}>
       <TabHeader title={t('settings.title')} />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <SectionTitle first>{t('settings.section.account')}</SectionTitle>
-        <Card radius={20} style={styles.accountCard}>
-          {!!displayName && <LoopText variant="cardTitle">{displayName}</LoopText>}
-          <LoopText variant="bodyTight" color="ink3">
-            {email}
-          </LoopText>
-        </Card>
+        <Pressable onPress={() => router.push('/account')} style={({ pressed }) => pressed && styles.pressed}>
+          <Card radius={20} style={styles.accountCard}>
+            <View style={styles.accountInfo}>
+              {!!displayName && <LoopText variant="cardTitle">{displayName}</LoopText>}
+              <LoopText variant="bodyTight" color="ink3">
+                {email}
+              </LoopText>
+            </View>
+            <Icon name="chevron-right" size={20} color={LoopColors.ink4} />
+          </Card>
+        </Pressable>
 
         <SectionTitle>{t('settings.section.language')}</SectionTitle>
         <View style={styles.langRow}>
@@ -133,8 +133,6 @@ export default function SettingsScreen() {
           </View>
         </Card>
 
-        <Button label={t('settings.signout')} variant="secondary" onPress={confirmSignOut} style={styles.signout} />
-
         <LoopText variant="caption" color="ink4" style={styles.tagline}>
           {t('settings.tagline')}
         </LoopText>
@@ -166,7 +164,9 @@ function SectionTitle({ children, first }: { children: React.ReactNode; first?: 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   scroll: { paddingHorizontal: 22, paddingBottom: 24 },
-  accountCard: { padding: 16, gap: 4 },
+  accountCard: { padding: 16, flexDirection: 'row', alignItems: 'center' },
+  accountInfo: { flex: 1, gap: 4 },
+  pressed: { opacity: 0.85 },
   langRow: { flexDirection: 'row', gap: 8 },
   langPill: { height: 46, borderRadius: LoopRadius.xl, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   langPillOn: { borderColor: LoopColors.warm, backgroundColor: LoopColors.warmSoft },
@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  signout: { marginTop: 28 },
   tagline: { textAlign: 'center', marginTop: 20 },
   sectionTitle: { marginTop: 24, marginBottom: 11 },
   sectionTitleFirst: { marginTop: 4 },

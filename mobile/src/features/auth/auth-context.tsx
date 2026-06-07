@@ -16,6 +16,10 @@ type AuthState = {
   /** 이메일 확인이 켜져 있으면 세션 없이 needsConfirmation=true 를 돌려준다. */
   signUp: (email: string, password: string, displayName?: string) => Promise<{ needsConfirmation: boolean }>;
   resendConfirmation: (email: string) => Promise<void>;
+  /** 표시 이름 변경. user_metadata(표시 기준)와 profiles(정본 저장소)를 함께 갱신. */
+  updateDisplayName: (name: string) => Promise<void>;
+  /** 본인 계정·모든 데이터 영구 삭제(Edge Function 경유) 후 로그아웃. */
+  deleteAccount: () => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -77,6 +81,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           options: { emailRedirectTo: authRedirectUrl() },
         });
         if (error) throw error;
+      },
+      async updateDisplayName(name) {
+        const supabase = getSupabase();
+        const trimmed = name.trim();
+        // user_metadata 갱신 → onAuthStateChange(USER_UPDATED)로 세션 반영(화면이 읽는 값).
+        const { error } = await supabase.auth.updateUser({ data: { display_name: trimmed } });
+        if (error) throw error;
+        // 정본 저장소(profiles)도 동기화. RLS가 본인 행으로 스코프.
+        if (session) {
+          await supabase.from('profiles').update({ display_name: trimmed }).eq('id', session.user.id);
+        }
+      },
+      async deleteAccount() {
+        const supabase = getSupabase();
+        // 권한 작업 → Edge Function(service_role)이 본인 계정과 연쇄 데이터를 삭제(CLAUDE.md §6).
+        const { error } = await supabase.functions.invoke('delete-account', { method: 'POST' });
+        if (error) throw error;
+        await supabase.auth.signOut();
       },
       async signOut() {
         await getSupabase().auth.signOut();

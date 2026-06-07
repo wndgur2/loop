@@ -73,6 +73,7 @@ function RootNavigator() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="sign-in" />
       <Stack.Screen name="onboarding" />
+      <Stack.Screen name="account" options={{ presentation: 'card' }} />
       <Stack.Screen name="feedback/[id]" options={{ presentation: 'card' }} />
       <Stack.Screen name="feedback/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="chat/[mode]" options={{ presentation: 'card' }} />
