@@ -41,7 +41,7 @@ export default function InsightsScreen() {
           <>
             {/* 내재화율 hero */}
             <Card radius={24} style={styles.hero}>
-              <Ring value={stats.internalizationRate} size={120} stroke={11}>
+              <Ring value={stats.internalizationRate} size={132} stroke={10}>
                 <LoopText style={styles.heroPct}>
                   {pct}
                   <LoopText style={styles.heroPctUnit}>%</LoopText>
@@ -159,7 +159,7 @@ function DistRow({ label, count, fraction, caption }: { label: string; count: nu
         </LoopText>
       </View>
       <View style={styles.distTrack}>
-        <View style={[styles.distFill, { width: `${Math.max(4, Math.round(fraction * 100))}%` }]} />
+        {fraction > 0 && <View style={[styles.distFill, { width: `${Math.max(4, Math.round(fraction * 100))}%` }]} />}
       </View>
     </View>
   );
@@ -180,13 +180,13 @@ const styles = StyleSheet.create({
   emptyTitle: { marginTop: 12, textAlign: 'center' },
   emptyBody: { marginTop: 6, textAlign: 'center' },
   hero: { padding: 22, flexDirection: 'row', alignItems: 'center', gap: 20 },
-  heroPct: { fontSize: 32, fontWeight: '700', letterSpacing: -0.8 },
+  heroPct: { fontSize: 32, lineHeight: 38, fontWeight: '700', letterSpacing: -0.8 },
   heroPctUnit: { fontSize: 16, color: LoopColors.ink4, fontWeight: '700' },
   heroEyebrow: { marginTop: 2 },
   heroSub: { marginTop: 8 },
   tiles: { flexDirection: 'row', gap: 12, marginTop: 12 },
   tile: { flex: 1, padding: 16 },
-  tileValue: { fontSize: 28, fontWeight: '700', letterSpacing: -0.6, marginTop: 8, color: LoopColors.warmDeep },
+  tileValue: { fontSize: 28, lineHeight: 34, fontWeight: '700', letterSpacing: -0.6, marginTop: 8, color: LoopColors.warmDeep },
   tileSub: { marginTop: 4 },
   distCard: { padding: 16, gap: 13 },
   distHead: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 6 },

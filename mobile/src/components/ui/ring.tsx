@@ -32,17 +32,19 @@ export const Ring = memo(function Ring({
     <View style={[styles.wrap, { width: size, height: size }]}>
       <Svg width={size} height={size} style={styles.svg}>
         <Circle cx={center} cy={center} r={r} fill="none" stroke={track} strokeWidth={stroke} />
-        <Circle
-          cx={center}
-          cy={center}
-          r={r}
-          fill="none"
-          stroke={color}
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={c}
-          strokeDashoffset={c * (1 - clamped)}
-        />
+        {clamped > 0 && (
+          <Circle
+            cx={center}
+            cy={center}
+            r={r}
+            fill="none"
+            stroke={color}
+            strokeWidth={stroke}
+            strokeLinecap="round"
+            strokeDasharray={c}
+            strokeDashoffset={c * (1 - clamped)}
+          />
+        )}
       </Svg>
       <View style={styles.center}>{children}</View>
     </View>
