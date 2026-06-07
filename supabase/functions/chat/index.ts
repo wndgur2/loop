@@ -1,21 +1,21 @@
-// 코칭 Edge Function — 작성(write)·회고(retrospective) 공통 엔진, 모드당 툴 1개.
-// 정본: documents/ai-coaching-spec.md · 계약: ../_shared/types.ts
+// Loopi Edge Function — 작성(write)·회고(retrospective) 공통 엔진, 모드당 툴 1개.
+// 정본: documents/loopi-spec.md · 계약: ../_shared/types.ts
 // 모든 AI 호출은 이 함수를 경유한다(CLAUDE.md §6). 변경(생성/수정)은 여기서 커밋하지 않고
 // 제안(proposal)만 돌려준다 — 클라이언트가 확인 칩으로 사용자 동의를 받아 반영한다.
 
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts';
 import { createUserClient } from '../_shared/client.ts';
 import type {
-  CoachingProposal,
-  CoachingRequest,
-  CoachingResponse,
+  ChatProposal,
+  ChatRequest,
+  ChatResponse,
   Importance,
   SessionMode,
 } from '../_shared/types.ts';
 import { buildContext } from './context.ts';
 import { toolForMode } from './tools.ts';
 import { callClaude, type SystemBlock } from './claude.ts';
-// 프롬프트는 import되는 모듈로 버전 관리(ai-coaching-spec §5).
+// 프롬프트는 import되는 모듈로 버전 관리(loopi-spec §5).
 // edge-runtime은 비-import 정적 파일을 번들하지 않으므로 readTextFile(.md)은 쓰지 않는다.
 import { SYSTEM } from './prompts/system.ts';
 import { EXTRACT } from './prompts/extract.ts';
@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
     } = await supabase.auth.getUser(token);
     if (!user) return jsonResponse({ error: 'unauthorized' }, 401);
 
-    const body = (await req.json().catch(() => null)) as CoachingRequest | null;
+    const body = (await req.json().catch(() => null)) as ChatRequest | null;
     if (!body || (body.mode !== 'write' && body.mode !== 'retrospective')) {
       return jsonResponse({ error: 'invalid_mode' }, 400);
     }
@@ -59,14 +59,14 @@ Deno.serve(async (req) => {
       tool: toolForMode(body.mode),
     });
 
-    const response: CoachingResponse = {
+    const response: ChatResponse = {
       reply: text,
       proposal: toolUse ? toProposal(body.mode, toolUse.name, toolUse.input) : null,
     };
     return jsonResponse(response);
   } catch (err) {
     // 본문/개인정보는 남기지 않는다(CLAUDE.md §6).
-    console.error('coaching error:', err instanceof Error ? err.message : 'unknown');
+    console.error('chat error:', err instanceof Error ? err.message : 'unknown');
     return jsonResponse({ error: 'internal_error' }, 500);
   }
 });
@@ -76,7 +76,7 @@ function toProposal(
   mode: SessionMode,
   name: string,
   input: Record<string, unknown>,
-): CoachingProposal | null {
+): ChatProposal | null {
   if (mode === 'write' && name === 'create_feedback') {
     return {
       kind: 'create_feedback',

@@ -39,8 +39,8 @@ export async function callClaude(args: {
 }): Promise<ClaudeResult> {
   const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY 미설정');
-  // 기본 모델은 claude-opus-4-8. 비용/지연 튜닝은 secret(COACHING_MODEL)으로 오버라이드.
-  const model = Deno.env.get('COACHING_MODEL') ?? 'claude-opus-4-8';
+  // 기본 모델은 claude-opus-4-8. 비용/지연 튜닝은 secret(CHAT_MODEL)으로 오버라이드.
+  const model = Deno.env.get('CHAT_MODEL') ?? 'claude-opus-4-8';
 
   const res = await fetch(ANTHROPIC_URL, {
     method: 'POST',

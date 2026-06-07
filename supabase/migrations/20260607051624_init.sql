@@ -84,9 +84,9 @@ create policy "sub_goals_delete_own" on sub_goals
     exists (select 1 from goals g where g.id = sub_goals.goal_id and g.user_id = auth.uid())
   );
 
--- ────────────────────────── coaching_sessions — AI 대화 세션 ──────────────────────────
+-- ────────────────────────── chat_sessions — AI 대화 세션 ──────────────────────────
 -- feedbacks.session_id 가 참조하므로 feedbacks 보다 먼저 만든다.
-create table coaching_sessions (
+create table chat_sessions (
   id           uuid primary key default gen_random_uuid(),
   user_id      uuid           not null references profiles (id) on delete cascade,
   mode         session_mode   not null,
@@ -96,24 +96,24 @@ create table coaching_sessions (
   created_at   timestamptz    not null default now(),
   completed_at timestamptz
 );
-create index coaching_sessions_user_id_idx on coaching_sessions (user_id);
+create index chat_sessions_user_id_idx on chat_sessions (user_id);
 
-alter table coaching_sessions enable row level security;
+alter table chat_sessions enable row level security;
 
-create policy "coaching_sessions_select_own" on coaching_sessions
+create policy "chat_sessions_select_own" on chat_sessions
   for select using (user_id = auth.uid());
-create policy "coaching_sessions_insert_own" on coaching_sessions
+create policy "chat_sessions_insert_own" on chat_sessions
   for insert with check (user_id = auth.uid());
-create policy "coaching_sessions_update_own" on coaching_sessions
+create policy "chat_sessions_update_own" on chat_sessions
   for update using (user_id = auth.uid()) with check (user_id = auth.uid());
-create policy "coaching_sessions_delete_own" on coaching_sessions
+create policy "chat_sessions_delete_own" on chat_sessions
   for delete using (user_id = auth.uid());
 
 -- ────────────────────────── feedbacks — 회고 1건 (Canonical Template) ──────────────────────────
 create table feedbacks (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid        not null references profiles (id) on delete cascade,
-  session_id      uuid        references coaching_sessions (id) on delete set null,
+  session_id      uuid        references chat_sessions (id) on delete set null,
   title           text        not null,
   situation       text        not null,  -- 템플릿 ## Feedback
   root_cause      text        not null,  -- 템플릿 ## Root cause
@@ -174,36 +174,36 @@ create policy "takeaways_delete_own" on takeaways
     exists (select 1 from feedbacks f where f.id = takeaways.feedback_id and f.user_id = auth.uid())
   );
 
--- ────────────────────────── coaching_messages — 세션 내 메시지 ──────────────────────────
-create table coaching_messages (
+-- ────────────────────────── chat_messages — 세션 내 메시지 ──────────────────────────
+create table chat_messages (
   id         uuid primary key default gen_random_uuid(),
-  session_id uuid         not null references coaching_sessions (id) on delete cascade,
+  session_id uuid         not null references chat_sessions (id) on delete cascade,
   role       message_role not null,
   content    text         not null,
   created_at timestamptz  not null default now()
 );
-create index coaching_messages_session_id_idx on coaching_messages (session_id);
+create index chat_messages_session_id_idx on chat_messages (session_id);
 
-alter table coaching_messages enable row level security;
+alter table chat_messages enable row level security;
 
--- 소유권: 부모 coaching_sessions 를 통해 검증
-create policy "coaching_messages_select_own" on coaching_messages
+-- 소유권: 부모 chat_sessions 를 통해 검증
+create policy "chat_messages_select_own" on chat_messages
   for select using (
-    exists (select 1 from coaching_sessions s where s.id = coaching_messages.session_id and s.user_id = auth.uid())
+    exists (select 1 from chat_sessions s where s.id = chat_messages.session_id and s.user_id = auth.uid())
   );
-create policy "coaching_messages_insert_own" on coaching_messages
+create policy "chat_messages_insert_own" on chat_messages
   for insert with check (
-    exists (select 1 from coaching_sessions s where s.id = coaching_messages.session_id and s.user_id = auth.uid())
+    exists (select 1 from chat_sessions s where s.id = chat_messages.session_id and s.user_id = auth.uid())
   );
-create policy "coaching_messages_update_own" on coaching_messages
+create policy "chat_messages_update_own" on chat_messages
   for update using (
-    exists (select 1 from coaching_sessions s where s.id = coaching_messages.session_id and s.user_id = auth.uid())
+    exists (select 1 from chat_sessions s where s.id = chat_messages.session_id and s.user_id = auth.uid())
   ) with check (
-    exists (select 1 from coaching_sessions s where s.id = coaching_messages.session_id and s.user_id = auth.uid())
+    exists (select 1 from chat_sessions s where s.id = chat_messages.session_id and s.user_id = auth.uid())
   );
-create policy "coaching_messages_delete_own" on coaching_messages
+create policy "chat_messages_delete_own" on chat_messages
   for delete using (
-    exists (select 1 from coaching_sessions s where s.id = coaching_messages.session_id and s.user_id = auth.uid())
+    exists (select 1 from chat_sessions s where s.id = chat_messages.session_id and s.user_id = auth.uid())
   );
 
 -- ────────────────────────── 가입 시 profiles 자동 생성 트리거 ──────────────────────────

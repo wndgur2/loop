@@ -38,7 +38,7 @@ enable_signup = true
 # 로컬 개발 편의: 이메일 확인 비활성(운영에선 true 권장)
 enable_confirmations = false
 
-# Edge Functions — 코칭(작성/회고). 플랫폼이 JWT를 먼저 검증.
-[functions.coaching]
+# Edge Functions — Loopi(작성/회고). 플랫폼이 JWT를 먼저 검증.
+[functions.chat]
 enabled = true
 verify_jwt = true

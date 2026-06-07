@@ -1,6 +1,6 @@
-// v0 · 회고(retrospective) 모드. 정본: ai-coaching-spec §9.
+// v0 · 회고(retrospective) 모드. 정본: loopi-spec §9.
 
-export const RETROSPECTIVE = `# 회고(retrospective) 모드 — 대화 흐름 (ai-coaching-spec §9)
+export const RETROSPECTIVE = `# 회고(retrospective) 모드 — 대화 흐름 (loopi-spec §9)
 
 목적: 기존 피드백을 되짚어 내재화를 촉진한다. 새 피드백은 만들지 않는다(새 상황은 작성 모드에서).
 

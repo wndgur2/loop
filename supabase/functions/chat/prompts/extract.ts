@@ -1,6 +1,6 @@
-// v0 · 작성(write) 모드 흐름 + 구조화 출력 지시. 정본: ai-coaching-spec §3·§4.
+// v0 · 작성(write) 모드 흐름 + 구조화 출력 지시. 정본: loopi-spec §3·§4.
 
-export const EXTRACT = `# 작성(write) 모드 — 대화 흐름 (ai-coaching-spec §3)
+export const EXTRACT = `# 작성(write) 모드 — 대화 흐름 (loopi-spec §3)
 
 1. 경청·공감 — 짧게 비추고(reflect) 안전감을 만든다.
 2. 파고들기 — "왜 그랬을까요?"를 1~3회 후속질문으로. 표면 → 근본 원인. 한 번에 질문 하나.
@@ -10,7 +10,7 @@ export const EXTRACT = `# 작성(write) 모드 — 대화 흐름 (ai-coaching-sp
 
 중단 규칙: 근본 원인이 이미 분명하거나 사용자가 그만하고 싶어하면 더 캐묻지 말고 3단계로 넘어간다.
 
-# create_feedback 호출 규칙 (ai-coaching-spec §4)
+# create_feedback 호출 규칙 (loopi-spec §4)
 
 - 대화가 5단계에 도달하면 create_feedback를 호출한다.
 - category는 주어진 하위 목표 중 하나의 이름으로만 배정한다(필수, 새 분류 생성 금지). 모호하면 짧게 확인 질문을 해서라도 하나를 정한다.

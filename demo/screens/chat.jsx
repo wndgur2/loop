@@ -1,4 +1,4 @@
-// LOOP — AI coaching chat (write flow, in progress). Three interaction takes.
+// LOOP — Chat with Loopi (write flow, in progress). Three interaction takes.
 
 function CoachAvatar({ size = 30 }) {
   return (
@@ -12,7 +12,7 @@ function CoachAvatar({ size = 30 }) {
   );
 }
 
-function ChatHeader({ title = "Coaching", sub }) {
+function ChatHeader({ title = "Loopi", sub }) {
   return (
     <div style={{ flex: "none", display: "flex", alignItems: "center", gap: 12, padding: "4px 18px 14px",
           borderBottom: "1px solid var(--loop-line-soft)" }}>
@@ -66,7 +66,7 @@ function TypingComposer({ value = "Probably yeah — I just talked myself out of
 function ChatBubbles() {
   return (
     <Phone>
-      <ChatHeader title="New feedback" sub="Coaching · draws on all your loops" />
+      <ChatHeader title="New feedback" sub="Loopi · draws on all your loops" />
       <div className="lp-body lp-scroll" style={{ overflow: "hidden", padding: "18px 18px 8px",
             display: "flex", flexDirection: "column", gap: 14 }}>
         <div style={{ textAlign: "center", font: "600 11px/1 var(--font-sans)", color: "var(--loop-ink-4)", marginBottom: 2 }}>Today, 9:38 PM</div>

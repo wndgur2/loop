@@ -1,8 +1,8 @@
 import type { SessionMode } from '../_shared/types.ts';
 
 /**
- * 모드당 툴 1개 (ai-coaching-spec.md §4 작성 · §9 회고).
- * input_schema는 ai-coaching-spec의 구조화 출력 계약과 1:1.
+ * 모드당 툴 1개 (loopi-spec.md §4 작성 · §9 회고).
+ * input_schema는 loopi-spec의 구조화 출력 계약과 1:1.
  */
 
 const createFeedbackTool = {

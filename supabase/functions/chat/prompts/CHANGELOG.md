@@ -1,7 +1,7 @@
-# 코칭 프롬프트 변경 이력
+# Loopi 프롬프트 변경 이력
 
-프롬프트는 코드처럼 버전 관리한다. 변경 시 `evals`로 회귀 검증하고(`eval-coaching` 스킬), 점수 변화를 여기 남긴다.
-정본 의도: [ai-coaching-spec.md](../../../../documents/ai-coaching-spec.md) · 채점: [eval-rubric.md](../../../../documents/eval-rubric.md)
+프롬프트는 코드처럼 버전 관리한다. 변경 시 `evals`로 회귀 검증하고(`eval-loopi` 스킬), 점수 변화를 여기 남긴다.
+정본 의도: [loopi-spec.md](../../../../documents/loopi-spec.md) · 채점: [eval-rubric.md](../../../../documents/eval-rubric.md)
 
 ## v0 (2026-06-07) — 초안
 

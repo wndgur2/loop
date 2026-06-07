@@ -1,20 +1,20 @@
-# Loop — AI 코칭 스펙
+# Loop — Loopi 스펙
 
 작성일: 2026-05-31 · 최종 수정: 2026-06-07 · 상태: Draft v0.3
 관련: [PRD.md](PRD.md) · [feature-spec.md](feature-spec.md) · [data-model.md](data-model.md) · [eval-rubric.md](eval-rubric.md) · [branding.md](branding.md)
 
-> Loop의 핵심 차별점인 "대화형 코칭"의 명세. 프롬프트·대화 흐름·구조화 출력의 단일 진실원(source of truth).
-> 프롬프트 실파일은 `supabase/functions/coaching/prompts/`에 버전 관리하고, 이 문서는 그 **의도와 계약**을 정의합니다.
-> 코칭에는 두 모드가 있다: **작성(write)** = 새 피드백 도출 · **회고(retrospective)** = 기존 피드백 되새김(§9).
-> 두 모드는 **같은 채팅 엔진**이고, 차이는 *시스템 프롬프트 + 에이전트가 쥐는 툴(모드당 1개)*뿐이다. **컨텍스트는 둘 다 사용자의 전체 피드백.** (구조: [feature-spec.md](feature-spec.md) "코칭 채팅 구조")
+> Loop의 핵심 차별점인 "Loopi"의 명세. 프롬프트·대화 흐름·구조화 출력의 단일 진실원(source of truth).
+> 프롬프트 실파일은 `supabase/functions/chat/prompts/`에 버전 관리하고, 이 문서는 그 **의도와 계약**을 정의합니다.
+> Loopi에는 두 모드가 있다: **작성(write)** = 새 피드백 도출 · **회고(retrospective)** = 기존 피드백 되새김(§9).
+> 두 모드는 **같은 채팅 엔진**이고, 차이는 *시스템 프롬프트 + 에이전트가 쥐는 툴(모드당 1개)*뿐이다. **컨텍스트는 둘 다 사용자의 전체 피드백.** (구조: [feature-spec.md](feature-spec.md) "Loopi 채팅 구조")
 
 ---
 
-## 1. 코칭이 달성해야 하는 것
+## 1. Loopi가 달성해야 하는 것
 
 PRD 핵심: AI가 대화로 **(1) 근본 원인**과 **(2) 구체적 Takeaways 2~3개**를 끌어내고, **(3) category(=하위 목표)·중요도·태그를 자동 분류**한다.
 
-코칭이 성공했다 = 사용자가 *스스로* 근본 원인을 말로 꺼냈고, 다음에 시도할 구체적 행동(Takeaway)이 손에 잡힌다.
+Loopi가 성공했다 = 사용자가 *스스로* 근본 원인을 말로 꺼냈고, 다음에 시도할 구체적 행동(Takeaway)이 손에 잡힌다.
 
 ---
 
@@ -80,7 +80,7 @@ PRD 핵심: AI가 대화로 **(1) 근본 원인**과 **(2) 구체적 Takeaways 2
 ## 5. 프롬프트 파일 구성 (예정)
 
 ```
-supabase/functions/coaching/
+supabase/functions/chat/
 ├── index.ts                 # Edge Function 진입점 (Claude 호출, 스트리밍, mode 분기)
 └── prompts/
     ├── system.md            # 페르소나 + 작성 대화 흐름 규칙 (2·3절)
@@ -98,17 +98,17 @@ supabase/functions/coaching/
 
 ## 6. 비용·티어 (PRD §6 연동)
 
-- **무료**: 제한된 코칭 대화(예: 세션당 후속질문 수 / 월 세션 수 제한).
-- **프리미엄(v1.1)**: 무제한 코칭, 주간/월간 리포트.
+- **무료**: 제한된 Loopi 대화(예: 세션당 후속질문 수 / 월 세션 수 제한).
+- **프리미엄(v1.1)**: 무제한 Loopi 대화, 주간/월간 리포트.
 - 제한 로직은 Edge Function에서 강제(클라이언트 신뢰 금지). 구체 수치는 미결 → 설정값으로 분리.
 
 ---
 
 ## 7. 품질 보증
 
-코칭 품질이 차별점이므로 프롬프트 변경은 반드시 평가를 거친다.
+Loopi 품질이 차별점이므로 프롬프트 변경은 반드시 평가를 거친다.
 - 채점 기준: [eval-rubric.md](eval-rubric.md)
-- 실행: `evals/` 골격 + `eval-coaching` 스킬
+- 실행: `evals/` 골격 + `eval-loopi` 스킬
 - 회귀가 확인되면 머지하지 않는다.
 
 ---
@@ -117,7 +117,7 @@ supabase/functions/coaching/
 
 - 사용자를 **평가·진단·단정하지 않는다**(브랜드 안티패턴).
 - 민감 데이터는 로그에 남기지 않는다([../CLAUDE.md](../CLAUDE.md) §6).
-- **위기/정신건강 상담은 MVP 비범위**(2026-05-31 확정). 코칭은 진단·치료·위기개입을 시도하지 않는다. 관련 정책은 추후 별도 검토([feature-spec.md] 비범위).
+- **위기/정신건강 상담은 MVP 비범위**(2026-05-31 확정). Loopi는 진단·치료·위기개입을 시도하지 않는다. 관련 정책은 추후 별도 검토([feature-spec.md] 비범위).
 
 ---
 

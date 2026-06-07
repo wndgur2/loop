@@ -1,7 +1,7 @@
 import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 
 /**
- * 코칭 컨텍스트 = 사용자의 **전체 피드백 + 하위 목표**(ai-coaching-spec §5).
+ * Loopi 컨텍스트 = 사용자의 **전체 피드백 + 하위 목표**(loopi-spec §5).
  * RLS 클라이언트로 조회하므로 자기 데이터만 나온다.
  * 반환 문자열은 시스템 프롬프트에 캐시되는 블록으로 주입한다(프롬프트 캐싱).
  */
