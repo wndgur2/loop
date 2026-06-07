@@ -11,7 +11,7 @@
 
 ## 문서
 
-- [documents/PRD-draft.md](documents/PRD-draft.md) — 제품 요구사항
+- [documents/PRD.md](documents/PRD.md) — 제품 요구사항
 - [documents/feature-spec.md](documents/feature-spec.md) — 기능 명세 (MVP 범위 · 시나리오 · 피드백 템플릿)
 - [documents/data-model.md](documents/data-model.md) — 데이터 모델 (엔티티 · RLS)
 - [documents/loopi-spec.md](documents/loopi-spec.md) — Loopi 스펙 (대화 흐름 · 출력 계약 · 회고)
