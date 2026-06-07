@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { LoopMark } from '@/components/loop-mark';
 import { Button, LoopText, Screen } from '@/components/ui';
@@ -11,7 +12,7 @@ import type { TKey } from '@/lib/translations';
 type Mode = 'sign-in' | 'sign-up';
 
 export default function SignInScreen() {
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resendConfirmation } = useAuth();
   const t = useT();
   const [mode, setMode] = useState<Mode>('sign-in');
   const [email, setEmail] = useState('');
@@ -19,20 +20,28 @@ export default function SignInScreen() {
   const [displayName, setDisplayName] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<TKey | null>(null);
+  // 이메일 확인 대기 화면: 확인 메일을 보낸 주소(없으면 일반 폼).
+  const [sentTo, setSentTo] = useState<string | null>(null);
+  const [resent, setResent] = useState(false);
 
   const isSignUp = mode === 'sign-up';
 
   async function submit() {
     setError(null);
-    if (!email.trim() || password.length < 6) {
+    const mail = email.trim();
+    if (!mail || password.length < 6) {
       setError('signin.err.fields');
       return;
     }
     setBusy(true);
     try {
-      if (isSignUp) await signUp(email.trim(), password, displayName.trim() || undefined);
-      else await signIn(email.trim(), password);
-      // 성공 시 onAuthStateChange → 루트 컨트롤러가 라우팅한다.
+      if (isSignUp) {
+        const { needsConfirmation } = await signUp(mail, password, displayName.trim() || undefined);
+        // 확인이 필요하면 대기 화면으로, 아니면 onAuthStateChange → 루트 컨트롤러가 라우팅.
+        if (needsConfirmation) setSentTo(mail);
+      } else {
+        await signIn(mail, password);
+      }
     } catch (e) {
       setError(authMessageKey(e));
     } finally {
@@ -40,59 +49,121 @@ export default function SignInScreen() {
     }
   }
 
+  async function resend() {
+    if (!sentTo) return;
+    setError(null);
+    setResent(false);
+    setBusy(true);
+    try {
+      await resendConfirmation(sentTo);
+      setResent(true);
+    } catch (e) {
+      setError(authMessageKey(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function backToSignIn() {
+    setSentTo(null);
+    setResent(false);
+    setError(null);
+    setMode('sign-in');
+  }
+
+  const title = sentTo
+    ? t('signin.confirm.title')
+    : isSignUp
+      ? t('signin.title.signup')
+      : t('signin.title.signin');
+
   return (
     <Screen edges={['top', 'bottom']}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.intro}>
             <LoopMark height={30} />
             <LoopText variant="title" style={styles.title}>
-              {isSignUp ? t('signin.title.signup') : t('signin.title.signin')}
+              {title}
             </LoopText>
             <LoopText variant="body" color="ink3" style={styles.subtitle}>
-              {t('signin.subtitle')}
+              {sentTo ? t('signin.confirm.body', { email: sentTo }) : t('signin.subtitle')}
             </LoopText>
           </View>
 
-          <View style={styles.fields}>
-            {isSignUp && (
-              <Field placeholder={t('field.name')} value={displayName} onChangeText={setDisplayName} autoCapitalize="words" />
-            )}
-            <Field
-              placeholder={t('field.email')}
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-            />
-            <Field
-              placeholder={t('field.password')}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              autoCapitalize="none"
-            />
-          </View>
+          {sentTo ? (
+            <>
+              {resent && (
+                <LoopText variant="caption" color="ink3" style={styles.error}>
+                  {t('signin.confirm.resent')}
+                </LoopText>
+              )}
+              {error && (
+                <LoopText variant="caption" color="warmDeep" style={styles.error}>
+                  {t(error)}
+                </LoopText>
+              )}
+              <Button
+                label={t('signin.confirm.resend')}
+                variant="secondary"
+                onPress={resend}
+                loading={busy}
+                style={styles.submit}
+              />
+              <Pressable onPress={backToSignIn} style={styles.toggle}>
+                <LoopText variant="label" color="ink3">
+                  {t('signin.confirm.back')}
+                </LoopText>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <View style={styles.fields}>
+                {isSignUp && (
+                  <Field
+                    placeholder={t('field.name')}
+                    value={displayName}
+                    onChangeText={setDisplayName}
+                    autoCapitalize="words"
+                  />
+                )}
+                <Field
+                  placeholder={t('field.email')}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                />
+                <Field
+                  placeholder={t('field.password')}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  autoCapitalize="none"
+                />
+              </View>
 
-          {error && (
-            <LoopText variant="caption" color="warmDeep" style={styles.error}>
-              {t(error)}
-            </LoopText>
+              {error && (
+                <LoopText variant="caption" color="warmDeep" style={styles.error}>
+                  {t(error)}
+                </LoopText>
+              )}
+
+              <Button
+                label={isSignUp ? t('signin.cta.signup') : t('signin.cta.signin')}
+                onPress={submit}
+                loading={busy}
+                style={styles.submit}
+              />
+
+              <Pressable onPress={() => setMode(isSignUp ? 'sign-in' : 'sign-up')} style={styles.toggle}>
+                <LoopText variant="label" color="ink3">
+                  {isSignUp ? t('signin.toggle.toSignin') : t('signin.toggle.toSignup')}
+                </LoopText>
+              </Pressable>
+            </>
           )}
-
-          <Button
-            label={isSignUp ? t('signin.cta.signup') : t('signin.cta.signin')}
-            onPress={submit}
-            loading={busy}
-            style={styles.submit}
-          />
-
-          <Pressable onPress={() => setMode(isSignUp ? 'sign-in' : 'sign-up')} style={styles.toggle}>
-            <LoopText variant="label" color="ink3">
-              {isSignUp ? t('signin.toggle.toSignin') : t('signin.toggle.toSignup')}
-            </LoopText>
-          </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>

@@ -34,6 +34,11 @@ const ko = {
   'signin.err.invalid': '이메일 또는 비밀번호가 올바르지 않아요.',
   'signin.err.password': '비밀번호는 6자 이상이어야 해요.',
   'signin.err.generic': '문제가 생겼어요. 잠시 후 다시 시도해 주세요.',
+  'signin.confirm.title': '이메일을 확인해 주세요',
+  'signin.confirm.body': '{email}로 확인 링크를 보냈어요. 메일의 링크를 누르면 자동으로 로그인돼요.',
+  'signin.confirm.resend': '확인 메일 다시 보내기',
+  'signin.confirm.resent': '확인 메일을 다시 보냈어요.',
+  'signin.confirm.back': '로그인으로 돌아가기',
 
   // 온보딩
   'ob.step1': '1. 최종 목표',
@@ -211,6 +216,11 @@ const en: Record<TKey, string> = {
   'signin.err.invalid': 'Email or password is incorrect.',
   'signin.err.password': 'Password must be at least 6 characters.',
   'signin.err.generic': 'Something went wrong. Please try again.',
+  'signin.confirm.title': 'Check your email',
+  'signin.confirm.body': 'We sent a confirmation link to {email}. Tap the link and you’ll be signed in automatically.',
+  'signin.confirm.resend': 'Resend confirmation email',
+  'signin.confirm.resent': 'Confirmation email resent.',
+  'signin.confirm.back': 'Back to log in',
 
   'ob.step1': '1. Final goal',
   'ob.goalTitle': 'Where are you headed?',

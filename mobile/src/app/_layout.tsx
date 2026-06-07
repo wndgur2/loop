@@ -4,10 +4,12 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { LoopColors } from '@/constants/loop-theme';
 import { AuthProvider, useAuth } from '@/features/auth/auth-context';
+import { useAuthDeepLink } from '@/features/auth/use-auth-deep-link';
 import { useActiveGoal } from '@/features/goals/queries';
 import { LanguageProvider } from '@/lib/i18n';
 import { queryClient } from '@/lib/query-client';
@@ -15,16 +17,18 @@ import { queryClient } from '@/lib/query-client';
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <LanguageProvider>
-          <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-              <RootNavigator />
-              <StatusBar style="dark" />
-            </AuthProvider>
-          </QueryClientProvider>
-        </LanguageProvider>
-      </SafeAreaProvider>
+      <KeyboardProvider>
+        <SafeAreaProvider>
+          <LanguageProvider>
+            <QueryClientProvider client={queryClient}>
+              <AuthProvider>
+                <RootNavigator />
+                <StatusBar style="dark" />
+              </AuthProvider>
+            </QueryClientProvider>
+          </LanguageProvider>
+        </SafeAreaProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }
@@ -34,6 +38,9 @@ function RootNavigator() {
   const { data: goal, isLoading: goalLoading } = useActiveGoal(!!session);
   const segments = useSegments();
   const router = useRouter();
+
+  // 이메일 확인 링크(딥링크) → 세션 교환. 세션이 서면 아래 라우팅 effect 가 이어받는다.
+  useAuthDeepLink();
 
   useEffect(() => {
     if (loading) return;

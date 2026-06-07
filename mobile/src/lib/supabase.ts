@@ -34,7 +34,10 @@ export function getSupabase(): SupabaseClient<Database> {
       storage: AsyncStorage,
       autoRefreshToken: true,
       persistSession: true,
+      // 모바일은 URL에서 세션을 자동 감지하지 않는다. 이메일 확인 딥링크는
+      // use-auth-deep-link 가 직접 코드→세션 교환으로 처리한다(PKCE).
       detectSessionInUrl: false,
+      flowType: 'pkce',
     },
   });
 

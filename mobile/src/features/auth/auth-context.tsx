@@ -1,13 +1,21 @@
 import type { Session } from '@supabase/supabase-js';
+import * as Linking from 'expo-linking';
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 import { getSupabase } from '@/lib/supabase';
+
+/** 이메일 확인 링크가 앱으로 돌아올 딥링크 (standalone: loop://auth-callback, dev: exp://…/--/auth-callback). */
+export function authRedirectUrl(): string {
+  return Linking.createURL('auth-callback');
+}
 
 type AuthState = {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, displayName?: string) => Promise<void>;
+  /** 이메일 확인이 켜져 있으면 세션 없이 needsConfirmation=true 를 돌려준다. */
+  signUp: (email: string, password: string, displayName?: string) => Promise<{ needsConfirmation: boolean }>;
+  resendConfirmation: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -50,10 +58,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (error) throw error;
       },
       async signUp(email, password, displayName) {
-        const { error } = await getSupabase().auth.signUp({
+        const { data, error } = await getSupabase().auth.signUp({
           email,
           password,
-          options: { data: displayName ? { display_name: displayName } : undefined },
+          options: {
+            emailRedirectTo: authRedirectUrl(),
+            data: displayName ? { display_name: displayName } : undefined,
+          },
+        });
+        if (error) throw error;
+        // 이메일 확인이 켜져 있으면 session 이 없다 → 확인 대기 상태.
+        return { needsConfirmation: !data.session };
+      },
+      async resendConfirmation(email) {
+        const { error } = await getSupabase().auth.resend({
+          type: 'signup',
+          email,
+          options: { emailRedirectTo: authRedirectUrl() },
         });
         if (error) throw error;
       },
