@@ -4,8 +4,23 @@ import { createContext, type ReactNode, useContext, useEffect, useMemo, useState
 
 import { getSupabase } from '@/lib/supabase';
 
-/** 이메일 확인 링크가 앱으로 돌아올 딥링크 (standalone: loop://auth-callback, dev: exp://…/--/auth-callback). */
+/**
+ * 이메일 확인 링크가 돌아올 리다이렉트 URL.
+ *
+ * 기본값(`Linking.createURL`)은 실행 환경에 따라 달라진다:
+ *   - standalone 빌드 → loop://auth-callback  (정상)
+ *   - Expo Go(dev)    → exp://<LAN-IP>/--/auth-callback
+ *   - 웹(dev/preview)  → http://localhost:8081/auth-callback  ← localhost!
+ * 이메일은 보통 다른 기기에서 열리므로 localhost/LAN 주소로 가면 확인 링크가 깨진다.
+ *
+ * 그래서 운영·프리뷰에서는 `EXPO_PUBLIC_AUTH_REDIRECT_URL`(예: loop://auth-callback)로
+ * 고정한다. 이 값은 Supabase 대시보드의 Redirect URLs 허용목록(로컬은 config.toml의
+ * additional_redirect_urls)에 반드시 등록되어 있어야 GoTrue 가 그대로 사용한다. 없으면
+ * GoTrue 는 프로젝트 Site URL(기본 localhost)로 폴백한다.
+ */
 export function authRedirectUrl(): string {
+  const configured = process.env.EXPO_PUBLIC_AUTH_REDIRECT_URL?.trim();
+  if (configured) return configured;
   return Linking.createURL('auth-callback');
 }
 
