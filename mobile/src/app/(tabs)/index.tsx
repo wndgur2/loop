@@ -107,7 +107,7 @@ function EmptyState() {
   const t = useT();
   return (
     <View style={styles.empty}>
-      <Icon name="sparkle" size={28} color={LoopColors.warm} />
+      <Icon name="loop" size={28} color={LoopColors.warm} />
       <LoopText variant="cardTitle" style={styles.emptyTitle}>
         {t('home.empty.title')}
       </LoopText>

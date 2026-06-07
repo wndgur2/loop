@@ -60,7 +60,7 @@ const ko = {
   'home.feedbackCount': '내 피드백',
   'home.directWrite': '직접 작성',
   'home.composer': '오늘 마음에 남은 순간이 있나요?',
-  'home.empty.title': '첫 되돌아보기를 시작해 보세요',
+  'home.empty.title': '첫 피드백을 시작해 보세요',
   'home.empty.body': '아래에 오늘 있었던 일을 적으면 Loopi가 근본 원인과 실천항목을 함께 정리해 드려요.',
   'home.takeawayDone': '{done}/{total} 실행',
   'badge.internalized': '내재화됨',
