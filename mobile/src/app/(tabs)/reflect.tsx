@@ -1,13 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import {
   Button,
@@ -50,11 +44,7 @@ export default function ReflectScreen() {
     <Screen edges={['top']}>
       <TabHeader title={t('reflect.title')} />
 
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={8}
-      >
+      <KeyboardAvoidingView style={styles.flex} behavior="padding" keyboardVerticalOffset={8}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           <LoopText variant="bodyTight" color="ink3" style={styles.subtitle}>
             {t('reflect.subtitle')}

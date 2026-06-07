@@ -1,14 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
-import {
-  FlatList,
-  KeyboardAvoidingView,
-  type ListRenderItem,
-  Platform,
-  Pressable,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { FlatList, type ListRenderItem, Pressable, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { Icon, LoopText, Screen, TabHeader } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
@@ -77,11 +70,7 @@ export default function FeedbackHomeScreen() {
         }
       />
 
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={8}
-      >
+      <KeyboardAvoidingView style={styles.flex} behavior="padding" keyboardVerticalOffset={8}>
         <FlatList
           data={feedbacks}
           keyExtractor={keyExtractor}

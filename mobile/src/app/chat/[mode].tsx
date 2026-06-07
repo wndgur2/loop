@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { memo, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { Chip, ComposerInput, Icon, ImportanceDots, LoopText, Screen } from '@/components/ui';
@@ -158,7 +159,7 @@ export default function LoopiChatScreen() {
         </View>
       </View>
 
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <ScrollView
           ref={scrollRef}
           contentContainerStyle={styles.scroll}

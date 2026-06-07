@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { Button, Icon, ImportanceDots, LoopText, Screen } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
@@ -104,7 +105,7 @@ export default function FeedbackFormScreen() {
         </LoopText>
       </View>
 
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <FieldLabel>{t('form.label.title')}</FieldLabel>
           <TextInput value={title} onChangeText={setTitle} placeholder={t('form.ph.title')} placeholderTextColor={LoopColors.ink4} style={styles.input} />
