@@ -6,25 +6,31 @@ import {
   flattenSystem,
   MAX_TOKENS,
   resolveModel,
+  safeJson,
+  sseData,
   type LLMCallArgs,
   type LLMProvider,
   type LLMResult,
+  type LLMStreamEvent,
 } from './types.ts';
 
 const OPENAI_URL = 'https://api.openai.com/v1/chat/completions';
 const DEFAULT_MODEL = 'gpt-5.4';
 
-interface OpenAIToolCall {
-  function?: { name?: string; arguments?: string };
-}
-interface OpenAIChoice {
-  message?: { content?: string | null; tool_calls?: OpenAIToolCall[] };
+/** Chat Completions streaming 청크(필요한 필드만). */
+interface OpenAIChunk {
+  choices?: {
+    delta?: {
+      content?: string | null;
+      tool_calls?: { function?: { name?: string; arguments?: string } }[];
+    };
+  }[];
 }
 
 export function createOpenAIProvider(): LLMProvider {
   return {
     name: 'openai',
-    async complete({ system, messages, tool }: LLMCallArgs): Promise<LLMResult> {
+    async *stream({ system, messages, tool }: LLMCallArgs): AsyncGenerator<LLMStreamEvent> {
       const apiKey = Deno.env.get('OPENAI_API_KEY');
       if (!apiKey) throw new Error('OPENAI_API_KEY 미설정');
       const model = resolveModel('OPENAI_MODEL', DEFAULT_MODEL);
@@ -54,25 +60,29 @@ export function createOpenAIProvider(): LLMProvider {
             },
           ],
           tool_choice: 'auto',
+          stream: true,
         }),
       });
       ensureOk(res, 'OpenAI');
 
-      const data = (await res.json()) as { choices?: OpenAIChoice[] };
-      const message = data.choices?.[0]?.message;
-      const text = (message?.content ?? '').trim();
-      let toolUse: LLMResult['toolUse'] = null;
-      const call = message?.tool_calls?.[0]?.function;
-      if (call?.name) {
-        let input: Record<string, unknown> = {};
-        try {
-          input = call.arguments ? JSON.parse(call.arguments) : {};
-        } catch {
-          input = {};
+      let text = '';
+      let toolName: string | null = null;
+      let toolArgs = ''; // function.arguments는 청크로 쪼개져 와 끝에서 합쳐 파싱한다.
+      for await (const payload of sseData(res)) {
+        if (payload === '[DONE]') break;
+        const chunk = JSON.parse(payload) as OpenAIChunk;
+        const delta = chunk.choices?.[0]?.delta;
+        if (delta?.content) {
+          text += delta.content;
+          yield { type: 'text', text: delta.content };
         }
-        toolUse = { name: call.name, input };
+        const call = delta?.tool_calls?.[0]?.function;
+        if (call?.name) toolName = call.name;
+        if (call?.arguments) toolArgs += call.arguments;
       }
-      return { text, toolUse };
+
+      const toolUse: LLMResult['toolUse'] = toolName ? { name: toolName, input: safeJson(toolArgs) } : null;
+      yield { type: 'final', result: { text: text.trim(), toolUse } };
     },
   };
 }

@@ -11,7 +11,7 @@ import { completeSession, createChatSession, saveMessage } from '@/features/chat
 import { useCreateFeedback } from '@/features/feedback/queries';
 import { useSubGoals } from '@/features/goals/queries';
 import { useI18n, useT } from '@/lib/i18n';
-import { type ChatProposal, type FeedbackProposal, invokeLoopi, type LoopiMessage } from '@/lib/loopi';
+import { type ChatProposal, type FeedbackProposal, type LoopiMessage, streamLoopi } from '@/lib/loopi';
 import { qk } from '@/lib/query-keys';
 import type { TKey } from '@/lib/translations';
 import { type Importance, type SessionMode } from '@/types/models';
@@ -42,9 +42,25 @@ export default function LoopiChatScreen() {
   const scrollRef = useRef<ScrollView>(null);
 
   const intro = uiMode === 'reflect' ? t('chat.intro.reflect') : t('chat.intro.write');
+  const lastMessage = messages[messages.length - 1];
+  const lastAssistantHasText = lastMessage?.role === 'assistant' && lastMessage.content.length > 0;
 
   function appendAssistant(content: string) {
     setMessages((cur) => [...cur, { role: 'assistant', content }]);
+  }
+
+  /** 마지막 assistant 말풍선의 content를 갱신 (스트리밍 델타 누적·최종 확정). */
+  function updateLastAssistant(fn: (prev: string) => string) {
+    setMessages((cur) => {
+      const copy = cur.slice();
+      for (let i = copy.length - 1; i >= 0; i--) {
+        if (copy[i].role === 'assistant') {
+          copy[i] = { ...copy[i], content: fn(copy[i].content) };
+          break;
+        }
+      }
+      return copy;
+    });
   }
 
   async function sendText(content: string) {
@@ -65,13 +81,21 @@ export default function LoopiChatScreen() {
     }
     if (sessionIdRef.current) void saveMessage(sessionIdRef.current, 'user', trimmed);
 
+    // 스트리밍 답변을 채워 넣을 빈 말풍선을 먼저 띄운다.
+    appendAssistant('');
     try {
-      const res = await invokeLoopi({ mode: serverMode, messages: next });
-      appendAssistant(res.reply);
+      const res = await streamLoopi({
+        mode: serverMode,
+        messages: next,
+        onDelta: (delta) => updateLastAssistant((prev) => prev + delta),
+      });
+      // 최종 reply(트림본)로 확정 — 델타 누적과 미세한 공백 차이를 맞춘다.
+      updateLastAssistant(() => res.reply);
       if (sessionIdRef.current) void saveMessage(sessionIdRef.current, 'assistant', res.reply);
       if (res.proposal) setProposal(res.proposal);
     } catch {
-      appendAssistant(t('chat.err.connect'));
+      // 빈 말풍선이면 에러 문구로 대체, 이미 일부 받았으면 뒤에 덧붙인다.
+      updateLastAssistant((prev) => (prev ? prev : t('chat.err.connect')));
     } finally {
       setSending(false);
     }
@@ -167,8 +191,17 @@ export default function LoopiChatScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <CoachLine text={intro} />
-          {messages.map((m, i) => (m.role === 'user' ? <UserLine key={i} text={m.content} /> : <CoachLine key={i} text={m.content} />))}
-          {sending && <ActivityIndicator color={LoopColors.warm} size="small" style={styles.typing} />}
+          {messages.map((m, i) =>
+            m.role === 'user' ? (
+              <UserLine key={i} text={m.content} />
+            ) : m.content ? (
+              <CoachLine key={i} text={m.content} />
+            ) : null,
+          )}
+          {/* 첫 토큰 전까지만 타이핑 표시 (스트리밍이 시작되면 텍스트가 대신 보인다). */}
+          {sending && !lastAssistantHasText && (
+            <ActivityIndicator color={LoopColors.warm} size="small" style={styles.typing} />
+          )}
 
           {proposal?.kind === 'create_feedback' && (
             <CreateProposalCard

@@ -6,9 +6,11 @@ import {
   flattenSystem,
   MAX_TOKENS,
   resolveModel,
+  sseData,
   type LLMCallArgs,
   type LLMProvider,
   type LLMResult,
+  type LLMStreamEvent,
 } from './types.ts';
 
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
@@ -18,19 +20,21 @@ interface GeminiPart {
   text?: string;
   functionCall?: { name?: string; args?: Record<string, unknown> };
 }
-interface GeminiCandidate {
-  content?: { parts?: GeminiPart[] };
+/** streamGenerateContent의 각 SSE 청크(부분 응답). */
+interface GeminiChunk {
+  candidates?: { content?: { parts?: GeminiPart[] } }[];
 }
 
 export function createGeminiProvider(): LLMProvider {
   return {
     name: 'gemini',
-    async complete({ system, messages, tool }: LLMCallArgs): Promise<LLMResult> {
+    async *stream({ system, messages, tool }: LLMCallArgs): AsyncGenerator<LLMStreamEvent> {
       const apiKey = Deno.env.get('GEMINI_API_KEY');
       if (!apiKey) throw new Error('GEMINI_API_KEY 미설정');
       const model = resolveModel('GEMINI_MODEL', DEFAULT_MODEL);
 
-      const res = await fetch(`${GEMINI_BASE}/${model}:generateContent`, {
+      // alt=sse 로 받아야 청크가 text/event-stream으로 온다(기본은 JSON 배열).
+      const res = await fetch(`${GEMINI_BASE}/${model}:streamGenerateContent?alt=sse`, {
         method: 'POST',
         headers: {
           'x-goog-api-key': apiKey,
@@ -58,17 +62,21 @@ export function createGeminiProvider(): LLMProvider {
       });
       ensureOk(res, 'Gemini');
 
-      const data = (await res.json()) as { candidates?: GeminiCandidate[] };
-      const parts = data.candidates?.[0]?.content?.parts ?? [];
       let text = '';
       let toolUse: LLMResult['toolUse'] = null;
-      for (const part of parts) {
-        if (part.text) text += part.text;
-        else if (part.functionCall?.name) {
-          toolUse = { name: part.functionCall.name, input: part.functionCall.args ?? {} };
+      for await (const payload of sseData(res)) {
+        const chunk = JSON.parse(payload) as GeminiChunk;
+        for (const part of chunk.candidates?.[0]?.content?.parts ?? []) {
+          if (part.text) {
+            text += part.text;
+            yield { type: 'text', text: part.text };
+          } else if (part.functionCall?.name) {
+            toolUse = { name: part.functionCall.name, input: part.functionCall.args ?? {} };
+          }
         }
       }
-      return { text: text.trim(), toolUse };
+
+      yield { type: 'final', result: { text: text.trim(), toolUse } };
     },
   };
 }

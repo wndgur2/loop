@@ -5,25 +5,28 @@ import {
   ensureOk,
   MAX_TOKENS,
   resolveModel,
+  safeJson,
+  sseData,
   type LLMCallArgs,
   type LLMProvider,
   type LLMResult,
+  type LLMStreamEvent,
 } from './types.ts';
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const DEFAULT_MODEL = 'claude-opus-4-8';
 
-interface AnthropicBlock {
+/** Messages streaming 이벤트(필요한 필드만). 정본: Claude API SSE 스펙. */
+interface AnthropicEvent {
   type: string;
-  text?: string;
-  name?: string;
-  input?: Record<string, unknown>;
+  content_block?: { type?: string; name?: string };
+  delta?: { type?: string; text?: string; partial_json?: string };
 }
 
 export function createAnthropicProvider(): LLMProvider {
   return {
     name: 'anthropic',
-    async complete({ system, messages, tool }: LLMCallArgs): Promise<LLMResult> {
+    async *stream({ system, messages, tool }: LLMCallArgs): AsyncGenerator<LLMStreamEvent> {
       const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
       if (!apiKey) throw new Error('ANTHROPIC_API_KEY 미설정');
       // 비용/지연 튜닝은 secret(ANTHROPIC_MODEL 또는 공통 CHAT_MODEL)으로 오버라이드.
@@ -44,20 +47,33 @@ export function createAnthropicProvider(): LLMProvider {
           messages,
           tools: [{ name: tool.name, description: tool.description, input_schema: tool.input_schema }],
           tool_choice: { type: 'auto' },
+          stream: true,
         }),
       });
       ensureOk(res, 'Anthropic');
 
-      const data = (await res.json()) as { content?: AnthropicBlock[] };
       let text = '';
-      let toolUse: LLMResult['toolUse'] = null;
-      for (const block of data.content ?? []) {
-        if (block.type === 'text' && block.text) text += block.text;
-        else if (block.type === 'tool_use' && block.name) {
-          toolUse = { name: block.name, input: block.input ?? {} };
+      let toolName: string | null = null;
+      let toolJson = ''; // tool_use input은 input_json_delta로 쪼개져 와 끝에서 합쳐 파싱한다.
+      for await (const payload of sseData(res)) {
+        const ev = JSON.parse(payload) as AnthropicEvent;
+        if (ev.type === 'content_block_start' && ev.content_block?.type === 'tool_use') {
+          toolName = ev.content_block.name ?? null;
+          toolJson = '';
+        } else if (ev.type === 'content_block_delta') {
+          const d = ev.delta;
+          if (d?.type === 'text_delta' && d.text) {
+            text += d.text;
+            yield { type: 'text', text: d.text };
+          } else if (d?.type === 'input_json_delta' && d.partial_json) {
+            toolJson += d.partial_json;
+          }
+          // thinking_delta는 사용자 답변이 아니므로 흘리지 않는다.
         }
       }
-      return { text: text.trim(), toolUse };
+
+      const toolUse: LLMResult['toolUse'] = toolName ? { name: toolName, input: safeJson(toolJson) } : null;
+      yield { type: 'final', result: { text: text.trim(), toolUse } };
     },
   };
 }
