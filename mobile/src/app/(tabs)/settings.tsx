@@ -11,9 +11,11 @@ import {
   useSubGoals,
   useUpdateGoal,
 } from '@/features/goals/queries';
+import { useI18n } from '@/lib/i18n';
 
 export default function SettingsScreen() {
   const { session, signOut } = useAuth();
+  const { t, lang, setLang } = useI18n();
   const { data: goal } = useActiveGoal();
   const { data: subGoals = [] } = useSubGoals();
   const updateGoal = useUpdateGoal();
@@ -47,16 +49,16 @@ export default function SettingsScreen() {
   }
 
   function removeSub(id: string, name: string) {
-    Alert.alert('하위 목표 삭제', `"${name}"을(를) 삭제할까요?`, [
-      { text: '취소', style: 'cancel' },
+    Alert.alert(t('settings.subgoal.delete.title'), t('settings.subgoal.delete.msg', { name }), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: '삭제',
+        text: t('common.delete'),
         style: 'destructive',
         onPress: async () => {
           try {
             await deleteSubGoal.mutateAsync(id);
           } catch {
-            Alert.alert('삭제할 수 없어요', '이 하위 목표에 연결된 피드백이 있어요. 먼저 피드백의 하위 목표를 옮겨 주세요.');
+            Alert.alert(t('settings.subgoal.delete.failTitle'), t('settings.subgoal.delete.failMsg'));
           }
         },
       },
@@ -64,9 +66,9 @@ export default function SettingsScreen() {
   }
 
   function confirmSignOut() {
-    Alert.alert('로그아웃', '로그아웃할까요?', [
-      { text: '취소', style: 'cancel' },
-      { text: '로그아웃', style: 'destructive', onPress: () => signOut() },
+    Alert.alert(t('settings.signout.title'), t('settings.signout.msg'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('settings.signout'), style: 'destructive', onPress: () => signOut() },
     ]);
   }
 
@@ -74,25 +76,29 @@ export default function SettingsScreen() {
     <Screen edges={['top']}>
       <ScrollView contentContainerStyle={{ padding: 22, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
         <LoopText variant="title" style={{ marginBottom: 18 }}>
-          설정
+          {t('settings.title')}
         </LoopText>
 
-        <SectionTitle>계정</SectionTitle>
+        <SectionTitle>{t('settings.section.account')}</SectionTitle>
         <Card radius={20} style={{ padding: 16, gap: 4 }}>
-          {!!displayName && (
-            <LoopText variant="cardTitle">{displayName}</LoopText>
-          )}
+          {!!displayName && <LoopText variant="cardTitle">{displayName}</LoopText>}
           <LoopText variant="bodyTight" color="ink3">
             {email}
           </LoopText>
         </Card>
 
-        <SectionTitle>최종 목표</SectionTitle>
+        <SectionTitle>{t('settings.section.language')}</SectionTitle>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <LangPill label="한국어" active={lang === 'ko'} onPress={() => setLang('ko')} />
+          <LangPill label="English" active={lang === 'en'} onPress={() => setLang('en')} />
+        </View>
+
+        <SectionTitle>{t('settings.section.goal')}</SectionTitle>
         <Card radius={20} style={{ padding: 16 }}>
           <TextInput
             value={goalTitle}
             onChangeText={setGoalTitle}
-            placeholder="최종 목표"
+            placeholder={t('settings.goalPlaceholder')}
             placeholderTextColor={LoopColors.ink4}
             style={{
               fontSize: 16,
@@ -104,11 +110,11 @@ export default function SettingsScreen() {
             }}
           />
           {goalChanged && (
-            <Button label="목표 저장" height={42} loading={updateGoal.isPending} onPress={saveGoal} style={{ marginTop: 14 }} />
+            <Button label={t('settings.goalSave')} height={42} loading={updateGoal.isPending} onPress={saveGoal} style={{ marginTop: 14 }} />
           )}
         </Card>
 
-        <SectionTitle>하위 목표</SectionTitle>
+        <SectionTitle>{t('settings.section.subgoals')}</SectionTitle>
         <Card radius={20} style={{ padding: 8 }}>
           {subGoals.map((s, i) => (
             <View
@@ -136,7 +142,7 @@ export default function SettingsScreen() {
             <TextInput
               value={newSub}
               onChangeText={setNewSub}
-              placeholder="하위 목표 추가"
+              placeholder={t('settings.addSubgoal')}
               placeholderTextColor={LoopColors.ink4}
               onSubmitEditing={addSub}
               style={{
@@ -165,13 +171,35 @@ export default function SettingsScreen() {
           </View>
         </Card>
 
-        <Button label="로그아웃" variant="secondary" onPress={confirmSignOut} style={{ marginTop: 28 }} />
+        <Button label={t('settings.signout')} variant="secondary" onPress={confirmSignOut} style={{ marginTop: 28 }} />
 
         <LoopText variant="caption" color="ink4" style={{ textAlign: 'center', marginTop: 20 }}>
-          Loop · 피드백을 목표 달성으로, with Loopi
+          {t('settings.tagline')}
         </LoopText>
       </ScrollView>
     </Screen>
+  );
+}
+
+function LangPill({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={{ flex: 1 }}>
+      <View
+        style={{
+          height: 46,
+          borderRadius: LoopRadius.xl,
+          borderWidth: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderColor: active ? LoopColors.warm : LoopColors.line,
+          backgroundColor: active ? LoopColors.warmSoft : LoopColors.surface,
+        }}
+      >
+        <LoopText variant="label" color={active ? 'warmDeep' : 'ink3'}>
+          {label}
+        </LoopText>
+      </View>
+    </Pressable>
   );
 }
 

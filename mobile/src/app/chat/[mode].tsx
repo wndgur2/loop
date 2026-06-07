@@ -1,13 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  View,
-} from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { Chip, ComposerInput, Icon, ImportanceDots, LoopText, Screen } from '@/components/ui';
@@ -16,17 +9,17 @@ import { applyRetrospective, describeRetrospective } from '@/features/chat/apply
 import { completeSession, createChatSession, saveMessage } from '@/features/chat/session';
 import { useCreateFeedback } from '@/features/feedback/queries';
 import { useSubGoals } from '@/features/goals/queries';
+import { useI18n, useT } from '@/lib/i18n';
 import { type ChatProposal, type FeedbackProposal, invokeLoopi, type LoopiMessage } from '@/lib/loopi';
 import { qk } from '@/lib/query-keys';
-import { IMPORTANCE_LABEL, type SessionMode } from '@/types/models';
+import type { TKey } from '@/lib/translations';
+import { type Importance, type SessionMode } from '@/types/models';
 
 type UiMode = 'write' | 'reflect';
 
-const INTRO: Record<UiMode, string> = {
-  write: '오늘 마음에 남은 순간을 들려주세요. 무슨 일이 있었는지부터 편하게 적어 주시면, 근본 원인과 다음 다짐까지 함께 정리해 볼게요.',
-  reflect:
-    '지난 피드백을 함께 되새겨 봐요. 요즘 어떤 영역이 떠오르나요? 떠오르는 상황을 적어 주시면 비슷한 옛 다짐을 같이 짚어 볼게요.',
-};
+function impLabelKey(imp: Importance): TKey {
+  return imp === 'high' ? 'imp.high' : imp === 'low' ? 'imp.low' : 'imp.mid';
+}
 
 export default function LoopiChatScreen() {
   const { mode } = useLocalSearchParams<{ mode: UiMode }>();
@@ -34,6 +27,7 @@ export default function LoopiChatScreen() {
   const serverMode: SessionMode = uiMode === 'reflect' ? 'retrospective' : 'write';
 
   const router = useRouter();
+  const t = useT();
   const qc = useQueryClient();
   const { data: subGoals = [] } = useSubGoals();
   const create = useCreateFeedback();
@@ -45,6 +39,8 @@ export default function LoopiChatScreen() {
   const [applying, setApplying] = useState(false);
   const sessionIdRef = useRef<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
+
+  const intro = uiMode === 'reflect' ? t('chat.intro.reflect') : t('chat.intro.write');
 
   function appendAssistant(content: string) {
     setMessages((cur) => [...cur, { role: 'assistant', content }]);
@@ -60,12 +56,11 @@ export default function LoopiChatScreen() {
     setMessages(next);
     setSending(true);
 
-    // 세션 영속은 best-effort — 실패해도 대화는 진행한다.
     if (!sessionIdRef.current) {
       try {
         sessionIdRef.current = await createChatSession(serverMode);
       } catch {
-        /* skip persistence */
+        /* 영속 실패해도 대화는 진행 */
       }
     }
     if (sessionIdRef.current) void saveMessage(sessionIdRef.current, 'user', content);
@@ -75,8 +70,8 @@ export default function LoopiChatScreen() {
       appendAssistant(res.reply);
       if (sessionIdRef.current) void saveMessage(sessionIdRef.current, 'assistant', res.reply);
       if (res.proposal) setProposal(res.proposal);
-    } catch (e) {
-      appendAssistant(e instanceof Error ? e.message : 'Loopi와 연결하지 못했어요. 잠시 후 다시 시도해 주세요.');
+    } catch {
+      appendAssistant(t('chat.err.connect'));
     } finally {
       setSending(false);
     }
@@ -86,7 +81,7 @@ export default function LoopiChatScreen() {
     const match =
       subGoals.find((s) => s.name.trim().toLowerCase() === p.category.trim().toLowerCase()) ?? subGoals[0];
     if (!match) {
-      appendAssistant('저장할 하위 목표가 없어요. 설정에서 먼저 하위 목표를 추가해 주세요.');
+      appendAssistant(t('chat.err.noSubgoal'));
       setProposal(null);
       return;
     }
@@ -99,14 +94,14 @@ export default function LoopiChatScreen() {
         subGoalId: match.id,
         importance: p.importance,
         tags: p.tags,
-        takeaways: p.takeaways.map((t) => t.text),
+        takeaways: p.takeaways.map((x) => x.text),
         sessionId: sessionIdRef.current,
       });
       if (sessionIdRef.current) void completeSession(sessionIdRef.current);
       setProposal(null);
       router.replace(`/feedback/${fb.id}`);
     } catch {
-      appendAssistant('저장에 실패했어요. 잠시 후 다시 시도해 주세요.');
+      appendAssistant(t('chat.err.saveFail'));
     } finally {
       setApplying(false);
     }
@@ -120,9 +115,9 @@ export default function LoopiChatScreen() {
       qc.invalidateQueries({ queryKey: qk.feedback(p.feedback_id) });
       if (sessionIdRef.current) void completeSession(sessionIdRef.current);
       setProposal(null);
-      appendAssistant('반영했어요. 차근차근 잘 하고 있어요.');
+      appendAssistant(t('chat.applied'));
     } catch {
-      appendAssistant('반영에 실패했어요. 잠시 후 다시 시도해 주세요.');
+      appendAssistant(t('chat.err.applyFail'));
     } finally {
       setApplying(false);
     }
@@ -130,44 +125,32 @@ export default function LoopiChatScreen() {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      {/* header */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 11,
-          paddingHorizontal: 16,
-          paddingBottom: 12,
-          borderBottomWidth: 1,
-          borderBottomColor: LoopColors.lineSoft,
-        }}
-      >
-        <Pressable onPress={() => router.back()} hitSlop={8} style={{ padding: 4 }}>
+      {/* 헤더 — airy(quiet journal) */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 18, paddingBottom: 14 }}>
+        <Pressable onPress={() => router.back()} hitSlop={8} style={{ padding: 2 }}>
           <Icon name="chevron-left" size={24} color={LoopColors.ink2} />
         </Pressable>
+        <CoachAvatar />
         <View style={{ flex: 1 }}>
           <LoopText variant="heading2" style={{ fontSize: 15 }}>
-            {uiMode === 'reflect' ? '되새김' : '작성'}
+            {uiMode === 'reflect' ? t('chat.title.reflect') : t('chat.title.write')}
           </LoopText>
           <LoopText variant="small" color="warmDeep" style={{ marginTop: 2 }}>
-            Loopi와 대화 중
+            {t('chat.sub')}
           </LoopText>
         </View>
-        <Icon name="loop" size={20} color={LoopColors.warm} />
       </View>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           ref={scrollRef}
-          contentContainerStyle={{ padding: 16, gap: 12 }}
+          contentContainerStyle={{ paddingHorizontal: 26, paddingTop: 6, paddingBottom: 12, gap: 22 }}
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
           keyboardShouldPersistTaps="handled"
         >
-          <Bubble role="assistant" text={INTRO[uiMode]} />
-          {messages.map((m, i) => (
-            <Bubble key={i} role={m.role} text={m.content} />
-          ))}
-          {sending && <TypingBubble />}
+          <CoachLine text={intro} />
+          {messages.map((m, i) => (m.role === 'user' ? <UserLine key={i} text={m.content} /> : <CoachLine key={i} text={m.content} />))}
+          {sending && <ActivityIndicator color={LoopColors.warm} size="small" style={{ alignSelf: 'flex-start' }} />}
 
           {proposal?.kind === 'create_feedback' && (
             <CreateProposalCard
@@ -179,7 +162,7 @@ export default function LoopiChatScreen() {
           )}
           {proposal?.kind === 'update_feedback' && (
             <RetroProposalCard
-              lines={describeRetrospective(proposal)}
+              proposal={proposal}
               busy={applying}
               onAccept={() => acceptRetro(proposal)}
               onDismiss={() => setProposal(null)}
@@ -192,7 +175,7 @@ export default function LoopiChatScreen() {
           onChangeText={setInput}
           onSend={send}
           disabled={sending}
-          placeholder={uiMode === 'reflect' ? '되새기고 싶은 것을 적어 주세요' : '무슨 일이 있었나요?'}
+          placeholder={uiMode === 'reflect' ? t('chat.ph.reflect') : t('chat.ph.write')}
         />
         <View style={{ height: 6 }} />
       </KeyboardAvoidingView>
@@ -200,42 +183,40 @@ export default function LoopiChatScreen() {
   );
 }
 
-function Bubble({ role, text }: { role: 'user' | 'assistant'; text: string }) {
-  const isUser = role === 'user';
+/** Loopi 작은 링 아바타. */
+function CoachAvatar() {
   return (
     <View
       style={{
-        alignSelf: isUser ? 'flex-end' : 'flex-start',
-        maxWidth: '84%',
-        backgroundColor: isUser ? LoopColors.warm : LoopColors.surface,
-        borderWidth: isUser ? 0 : 1,
-        borderColor: LoopColors.lineSoft,
-        borderRadius: 16,
-        paddingHorizontal: 14,
-        paddingVertical: 11,
+        width: 28,
+        height: 28,
+        borderRadius: 9999,
+        backgroundColor: LoopColors.warmSoft,
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
-      <LoopText variant="bodyTight" color={isUser ? 'white' : 'ink2'}>
-        {text}
-      </LoopText>
+      <Icon name="loop" size={16} color={LoopColors.warm} />
     </View>
   );
 }
 
-function TypingBubble() {
+/** Loopi 프롬프트 — 버블 없이 따뜻한 톤의 문장. */
+function CoachLine({ text }: { text: string }) {
   return (
-    <View
-      style={{
-        alignSelf: 'flex-start',
-        backgroundColor: LoopColors.surface,
-        borderWidth: 1,
-        borderColor: LoopColors.lineSoft,
-        borderRadius: 16,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-      }}
-    >
-      <ActivityIndicator color={LoopColors.warm} size="small" />
+    <LoopText color="warmDeep" style={{ fontSize: 16, fontWeight: '600', lineHeight: 25 }}>
+      {text}
+    </LoopText>
+  );
+}
+
+/** 사용자 발화 — 좌측 보더로 들여쓴 저널 인용. */
+function UserLine({ text }: { text: string }) {
+  return (
+    <View style={{ paddingLeft: 14, borderLeftWidth: 2, borderLeftColor: LoopColors.warmLine }}>
+      <LoopText color="ink" style={{ fontSize: 15, fontWeight: '500', lineHeight: 24 }}>
+        {text}
+      </LoopText>
     </View>
   );
 }
@@ -251,6 +232,7 @@ function CreateProposalCard({
   onAccept: () => void;
   onDismiss: () => void;
 }) {
+  const t = useT();
   return (
     <View
       style={{
@@ -263,46 +245,48 @@ function CreateProposalCard({
       }}
     >
       <LoopText variant="eyebrow" color="warmDeep">
-        이렇게 저장할까요?
+        {t('chat.proposal.createTitle')}
       </LoopText>
       <LoopText variant="cardTitle">{proposal.title}</LoopText>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <Chip label={proposal.category} tone="warm" />
         <ImportanceDots level={proposal.importance} />
         <LoopText variant="caption" color="ink3">
-          {IMPORTANCE_LABEL[proposal.importance]}
+          {t(impLabelKey(proposal.importance))}
         </LoopText>
       </View>
       {proposal.takeaways.length > 0 && (
         <View style={{ gap: 4 }}>
-          {proposal.takeaways.map((t, i) => (
+          {proposal.takeaways.map((tk, i) => (
             <View key={i} style={{ flexDirection: 'row', gap: 7 }}>
               <LoopText variant="bodyTight" color="warmDeep">
                 ·
               </LoopText>
               <LoopText variant="bodyTight" color="ink2" style={{ flex: 1 }}>
-                {t.text}
+                {tk.text}
               </LoopText>
             </View>
           ))}
         </View>
       )}
-      <ConfirmChips acceptLabel="이대로 저장" busy={busy} onAccept={onAccept} onDismiss={onDismiss} />
+      <ConfirmChips acceptLabel={t('chat.proposal.save')} busy={busy} onAccept={onAccept} onDismiss={onDismiss} />
     </View>
   );
 }
 
 function RetroProposalCard({
-  lines,
+  proposal,
   busy,
   onAccept,
   onDismiss,
 }: {
-  lines: string[];
+  proposal: Extract<ChatProposal, { kind: 'update_feedback' }>;
   busy: boolean;
   onAccept: () => void;
   onDismiss: () => void;
 }) {
+  const { t } = useI18n();
+  const lines = describeRetrospective(proposal, t);
   return (
     <View
       style={{
@@ -315,7 +299,7 @@ function RetroProposalCard({
       }}
     >
       <LoopText variant="eyebrow" color="ink4">
-        이렇게 반영할까요?
+        {t('chat.proposal.retroTitle')}
       </LoopText>
       {lines.map((l, i) => (
         <View key={i} style={{ flexDirection: 'row', gap: 7 }}>
@@ -325,7 +309,7 @@ function RetroProposalCard({
           </LoopText>
         </View>
       ))}
-      <ConfirmChips acceptLabel="반영하기" busy={busy} onAccept={onAccept} onDismiss={onDismiss} good />
+      <ConfirmChips acceptLabel={t('chat.proposal.apply')} busy={busy} onAccept={onAccept} onDismiss={onDismiss} good />
     </View>
   );
 }
@@ -343,6 +327,7 @@ function ConfirmChips({
   onDismiss: () => void;
   good?: boolean;
 }) {
+  const t = useT();
   return (
     <View style={{ flexDirection: 'row', gap: 9, justifyContent: 'flex-end', marginTop: 4 }}>
       <Pressable
@@ -359,7 +344,7 @@ function ConfirmChips({
         }}
       >
         <LoopText variant="label" color="ink2">
-          아직요
+          {t('chat.proposal.dismiss')}
         </LoopText>
       </Pressable>
       <Pressable

@@ -2,38 +2,40 @@ import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { FlatList, Pressable, View } from 'react-native';
 
-import { LoopMark } from '@/components/loop-mark';
-import { ComposerEntry, Icon, LoopText, Ring, Screen } from '@/components/ui';
+import { ComposerEntry, Icon, LoopText, Screen } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { computeStats } from '@/features/dashboard/stats';
-import { FeedbackCard } from '@/features/feedback/components';
+import { FeedbackRow } from '@/features/feedback/components';
 import { useFeedbacks } from '@/features/feedback/queries';
-import { useActiveGoal, useSubGoals } from '@/features/goals/queries';
+import { useSubGoals } from '@/features/goals/queries';
+import { useT } from '@/lib/i18n';
 
+/** 피드백 홈 — demo home B(Quiet list): 큰 타이틀 + 슬림 내재화 바 + dense 행 목록. */
 export default function FeedbackHomeScreen() {
   const router = useRouter();
+  const t = useT();
   const { data: feedbacks = [], isLoading } = useFeedbacks();
   const { data: subGoals = [] } = useSubGoals();
-  const { data: goal } = useActiveGoal();
 
   const subGoalName = useMemo(() => {
     const map = new Map(subGoals.map((s) => [s.id, s.name]));
-    return (id: string) => map.get(id) ?? '하위 목표';
+    return (id: string) => map.get(id) ?? '—';
   }, [subGoals]);
 
   const stats = useMemo(() => computeStats(feedbacks), [feedbacks]);
+  const pct = Math.round(stats.internalizationRate * 100);
 
   return (
     <Screen edges={['top']}>
       <FlatList
         data={feedbacks}
         keyExtractor={(f) => f.id}
-        contentContainerStyle={{ paddingHorizontal: 22, paddingTop: 6, paddingBottom: 16 }}
+        contentContainerStyle={{ paddingHorizontal: 22, paddingTop: 8, paddingBottom: 16 }}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-              <LoopMark height={21} />
+          <View style={{ paddingBottom: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
+              <LoopText variant="title">{t('tab.feedback')}</LoopText>
               <Pressable
                 onPress={() => router.push('/feedback/new')}
                 style={{
@@ -51,104 +53,54 @@ export default function FeedbackHomeScreen() {
               >
                 <Icon name="plus" size={16} color={LoopColors.warmDeep} />
                 <LoopText variant="label" color="warmDeep">
-                  직접 작성
+                  {t('home.directWrite')}
                 </LoopText>
               </Pressable>
             </View>
 
-            <Hero
-              rate={stats.internalizationRate}
-              internalized={stats.internalized}
-              total={stats.total}
-              goalTitle={goal?.title ?? null}
-            />
-
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 26, marginBottom: 14 }}>
-              <LoopText variant="heading2">내 피드백</LoopText>
-              <LoopText variant="label" color="ink4" style={{ marginLeft: 8 }}>
-                {stats.total}
-              </LoopText>
+            {/* 슬림 내재화 바 */}
+            <View>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 7 }}>
+                <LoopText variant="eyebrow" color="ink4">
+                  {t('home.internalizedOf', { done: stats.internalized, total: stats.total })}
+                </LoopText>
+                <LoopText variant="label" color="warmDeep" style={{ fontSize: 12 }}>
+                  {pct}%
+                </LoopText>
+              </View>
+              <View style={{ height: 7, borderRadius: 9999, backgroundColor: LoopColors.ringTrack, overflow: 'hidden' }}>
+                <View style={{ width: `${pct}%`, height: '100%', borderRadius: 9999, backgroundColor: LoopColors.warm }} />
+              </View>
             </View>
           </View>
         }
-        renderItem={({ item }) => (
-          <View style={{ marginBottom: 12 }}>
-            <FeedbackCard
-              feedback={item}
-              subGoalName={subGoalName(item.subGoalId)}
-              onPress={() => router.push(`/feedback/${item.id}`)}
-            />
-          </View>
+        renderItem={({ item, index }) => (
+          <FeedbackRow
+            feedback={item}
+            subGoalName={subGoalName(item.subGoalId)}
+            first={index === 0}
+            onPress={() => router.push(`/feedback/${item.id}`)}
+          />
         )}
         ListEmptyComponent={!isLoading ? <EmptyState /> : null}
       />
 
-      <ComposerEntry placeholder="오늘 마음에 남은 순간이 있나요?" onPress={() => router.push('/chat/write')} />
+      <ComposerEntry placeholder={t('home.composer')} onPress={() => router.push('/chat/write')} />
       <View style={{ height: 6 }} />
     </Screen>
   );
 }
 
-function Hero({
-  rate,
-  internalized,
-  total,
-  goalTitle,
-}: {
-  rate: number;
-  internalized: number;
-  total: number;
-  goalTitle: string | null;
-}) {
-  const pct = Math.round(rate * 100);
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        gap: 18,
-        alignItems: 'center',
-        backgroundColor: LoopColors.surface,
-        borderRadius: 24,
-        borderWidth: 1,
-        borderColor: LoopColors.lineSoft,
-        padding: 20,
-      }}
-    >
-      <Ring value={rate} size={96} stroke={9}>
-        <LoopText style={{ fontSize: 25, fontWeight: '700', letterSpacing: -0.5 }}>
-          {pct}
-          <LoopText style={{ fontSize: 14, fontWeight: '700', color: LoopColors.ink4 }}>%</LoopText>
-        </LoopText>
-      </Ring>
-      <View style={{ flex: 1 }}>
-        <LoopText variant="eyebrow" color="ink4" style={{ marginBottom: 7 }}>
-          내재화
-        </LoopText>
-        <LoopText variant="body" color="ink2" style={{ marginBottom: 10 }}>
-          {total === 0 ? '아직 닫은 고리가 없어요.\n첫 피드백을 남겨보세요.' : `${total}개 중 ${internalized}개의 고리를 닫았어요.`}
-        </LoopText>
-        {goalTitle && (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Icon name="target" size={15} color={LoopColors.warmDeep} />
-            <LoopText variant="caption" color="warmDeep" style={{ fontWeight: '600' }} numberOfLines={1}>
-              목표: {goalTitle}
-            </LoopText>
-          </View>
-        )}
-      </View>
-    </View>
-  );
-}
-
 function EmptyState() {
+  const t = useT();
   return (
-    <View style={{ alignItems: 'center', paddingVertical: 36, paddingHorizontal: 20 }}>
+    <View style={{ alignItems: 'center', paddingVertical: 40, paddingHorizontal: 14 }}>
       <Icon name="sparkle" size={28} color={LoopColors.warm} />
       <LoopText variant="cardTitle" style={{ marginTop: 12, textAlign: 'center' }}>
-        첫 되돌아보기를 시작해 보세요
+        {t('home.empty.title')}
       </LoopText>
       <LoopText variant="bodyTight" color="ink3" style={{ marginTop: 6, textAlign: 'center' }}>
-        아래에 오늘 있었던 일을 적으면 Loopi가 근본 원인과 실천항목을 함께 정리해 드려요.
+        {t('home.empty.body')}
       </LoopText>
     </View>
   );

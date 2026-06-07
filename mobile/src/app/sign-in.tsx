@@ -5,24 +5,27 @@ import { LoopMark } from '@/components/loop-mark';
 import { Button, LoopText, Screen } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
+import { useT } from '@/lib/i18n';
+import type { TKey } from '@/lib/translations';
 
 type Mode = 'sign-in' | 'sign-up';
 
 export default function SignInScreen() {
   const { signIn, signUp } = useAuth();
+  const t = useT();
   const [mode, setMode] = useState<Mode>('sign-in');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<TKey | null>(null);
 
   const isSignUp = mode === 'sign-up';
 
   async function submit() {
     setError(null);
     if (!email.trim() || password.length < 6) {
-      setError('이메일과 6자 이상 비밀번호를 입력해 주세요.');
+      setError('signin.err.fields');
       return;
     }
     setBusy(true);
@@ -31,7 +34,7 @@ export default function SignInScreen() {
       else await signIn(email.trim(), password);
       // 성공 시 onAuthStateChange → 루트 컨트롤러가 라우팅한다.
     } catch (e) {
-      setError(authMessage(e));
+      setError(authMessageKey(e));
     } finally {
       setBusy(false);
     }
@@ -44,19 +47,19 @@ export default function SignInScreen() {
           <View style={{ marginBottom: 28 }}>
             <LoopMark height={30} />
             <LoopText variant="title" style={{ marginTop: 22 }}>
-              {isSignUp ? '되돌아보기를 시작해요' : '다시 오셨네요'}
+              {isSignUp ? t('signin.title.signup') : t('signin.title.signin')}
             </LoopText>
             <LoopText variant="body" color="ink3" style={{ marginTop: 8 }}>
-              스스로 남긴 피드백을 Loopi가 목표로 이어드려요.
+              {t('signin.subtitle')}
             </LoopText>
           </View>
 
           <View style={{ gap: 12 }}>
             {isSignUp && (
-              <Field placeholder="이름 (선택)" value={displayName} onChangeText={setDisplayName} autoCapitalize="words" />
+              <Field placeholder={t('field.name')} value={displayName} onChangeText={setDisplayName} autoCapitalize="words" />
             )}
             <Field
-              placeholder="이메일"
+              placeholder={t('field.email')}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -64,7 +67,7 @@ export default function SignInScreen() {
               autoComplete="email"
             />
             <Field
-              placeholder="비밀번호 (6자 이상)"
+              placeholder={t('field.password')}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -74,12 +77,12 @@ export default function SignInScreen() {
 
           {error && (
             <LoopText variant="caption" color="warmDeep" style={{ marginTop: 14 }}>
-              {error}
+              {t(error)}
             </LoopText>
           )}
 
           <Button
-            label={isSignUp ? '가입하고 시작하기' : '로그인'}
+            label={isSignUp ? t('signin.cta.signup') : t('signin.cta.signin')}
             onPress={submit}
             loading={busy}
             style={{ marginTop: 22 }}
@@ -87,7 +90,7 @@ export default function SignInScreen() {
 
           <Pressable onPress={() => setMode(isSignUp ? 'sign-in' : 'sign-up')} style={{ marginTop: 18, alignItems: 'center' }}>
             <LoopText variant="label" color="ink3">
-              {isSignUp ? '이미 계정이 있어요 · 로그인' : '처음이세요? · 가입하기'}
+              {isSignUp ? t('signin.toggle.toSignin') : t('signin.toggle.toSignup')}
             </LoopText>
           </Pressable>
         </ScrollView>
@@ -115,10 +118,10 @@ function Field(props: React.ComponentProps<typeof TextInput>) {
   );
 }
 
-function authMessage(e: unknown): string {
+function authMessageKey(e: unknown): TKey {
   const msg = e instanceof Error ? e.message : String(e);
-  if (/already registered|already exists/i.test(msg)) return '이미 가입된 이메일이에요. 로그인해 주세요.';
-  if (/invalid login|invalid credentials/i.test(msg)) return '이메일 또는 비밀번호가 올바르지 않아요.';
-  if (/password/i.test(msg)) return '비밀번호는 6자 이상이어야 해요.';
-  return '문제가 생겼어요. 잠시 후 다시 시도해 주세요.';
+  if (/already registered|already exists/i.test(msg)) return 'signin.err.exists';
+  if (/invalid login|invalid credentials/i.test(msg)) return 'signin.err.invalid';
+  if (/password/i.test(msg)) return 'signin.err.password';
+  return 'signin.err.generic';
 }

@@ -1,12 +1,14 @@
 import { Pressable, View } from 'react-native';
 
-import { Card, Chip, Icon, ImportanceDots, LoopText } from '@/components/ui';
+import { Icon, LoopText } from '@/components/ui';
 import { LoopColors } from '@/constants/loop-theme';
-import { relativeKo } from '@/lib/date';
-import type { FeedbackWithTakeaways } from '@/types/models';
+import { relativeTime } from '@/lib/date';
+import { useI18n, useT } from '@/lib/i18n';
+import type { FeedbackWithTakeaways, Importance } from '@/types/models';
 
 /** 내재화 배지 — 닫힌 고리. */
 export function InternalizedBadge() {
+  const t = useT();
   return (
     <View
       style={{
@@ -22,7 +24,7 @@ export function InternalizedBadge() {
     >
       <Icon name="check-sm" size={13} color={LoopColors.good} />
       <LoopText variant="small" color="good">
-        내재화됨
+        {t('badge.internalized')}
       </LoopText>
     </View>
   );
@@ -30,6 +32,7 @@ export function InternalizedBadge() {
 
 /** Takeaway 실행 진척 — 막대 + n/m. */
 export function TakeawayProgress({ done, total }: { done: number; total: number }) {
+  const t = useT();
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
       <View style={{ flexDirection: 'row', gap: 3 }}>
@@ -46,58 +49,76 @@ export function TakeawayProgress({ done, total }: { done: number; total: number 
         ))}
       </View>
       <LoopText variant="small" color="ink3" style={{ fontWeight: '600' }}>
-        {done}/{total} 실행
+        {t('home.takeawayDone', { done, total })}
       </LoopText>
     </View>
   );
 }
 
-/** 피드백 카드 — demo home A(Calm cards) 이식. */
-export function FeedbackCard({
+const IMP_BAR: Record<Importance, string> = {
+  high: LoopColors.warm,
+  mid: LoopColors.ink4,
+  low: LoopColors.line,
+};
+
+/**
+ * 피드백 행 — demo home B(Quiet list) 이식.
+ * 좌측 importance 색막대 + 카테고리·날짜 + 제목 + (열린 고리면) 실천 진척. hairline 구분.
+ */
+export function FeedbackRow({
   feedback,
   subGoalName,
+  first,
   onPress,
 }: {
   feedback: FeedbackWithTakeaways;
   subGoalName: string;
+  first?: boolean;
   onPress: () => void;
 }) {
+  const { lang } = useI18n();
   const total = feedback.takeaways.length;
-  const done = feedback.takeaways.filter((t) => t.done).length;
+  const done = feedback.takeaways.filter((tk) => tk.done).length;
 
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.95 : 1 })}>
-      <Card radius={18} style={{ padding: 16 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 9 }}>
-          <Chip label={subGoalName} tone="warm" />
-          <ImportanceDots level={feedback.importance} />
-          <LoopText variant="caption" color="ink4" style={{ marginLeft: 'auto' }}>
-            {relativeKo(feedback.createdAt)}
-          </LoopText>
-        </View>
-
-        <LoopText variant="cardTitle" numberOfLines={2} style={{ marginBottom: 5 }}>
-          {feedback.title}
-        </LoopText>
-        <LoopText variant="bodyTight" color="ink3" numberOfLines={1} style={{ marginBottom: 12 }}>
-          {feedback.situation}
-        </LoopText>
-
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            borderTopWidth: 1,
-            borderTopColor: LoopColors.lineSoft,
-            paddingTop: 11,
-          }}
-        >
-          {feedback.internalized ? <InternalizedBadge /> : <TakeawayProgress done={done} total={total} />}
-          <View style={{ marginLeft: 'auto' }}>
-            <Icon name="chevron-right" size={17} color={LoopColors.ink4} />
+    <Pressable onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}>
+      <View
+        style={{
+          flexDirection: 'row',
+          gap: 13,
+          paddingVertical: 15,
+          borderTopWidth: first ? 1 : 0,
+          borderTopColor: LoopColors.lineSoft,
+          borderBottomWidth: 1,
+          borderBottomColor: LoopColors.lineSoft,
+        }}
+      >
+        <View style={{ width: 3, borderRadius: 9999, backgroundColor: IMP_BAR[feedback.importance], alignSelf: 'stretch' }} />
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 5 }}>
+            <LoopText variant="small" color="warmDeep" style={{ fontSize: 11, letterSpacing: 0.1 }} numberOfLines={1}>
+              {subGoalName}
+            </LoopText>
+            <View style={{ width: 3, height: 3, borderRadius: 9999, backgroundColor: LoopColors.ink4 }} />
+            <LoopText variant="caption" color="ink4" style={{ fontSize: 11 }}>
+              {relativeTime(feedback.createdAt, lang)}
+            </LoopText>
+            {feedback.internalized && (
+              <View style={{ marginLeft: 'auto' }}>
+                <Icon name="check-sm" size={14} color={LoopColors.good} />
+              </View>
+            )}
           </View>
+          <LoopText variant="cardTitle" style={{ fontSize: 14.5 }} numberOfLines={2}>
+            {feedback.title}
+          </LoopText>
+          {!feedback.internalized && total > 0 && (
+            <View style={{ marginTop: 8 }}>
+              <TakeawayProgress done={done} total={total} />
+            </View>
+          )}
         </View>
-      </Card>
+      </View>
     </Pressable>
   );
 }

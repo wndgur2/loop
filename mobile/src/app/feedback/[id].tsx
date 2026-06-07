@@ -4,7 +4,7 @@ import { Alert, Pressable, ScrollView, View } from 'react-native';
 
 import { Button, Checkbox, Chip, Icon, IconButton, ImportanceDots, LoopText, Screen } from '@/components/ui';
 import { LoopColors } from '@/constants/loop-theme';
-import { fullDateKo, relativeKo } from '@/lib/date';
+import { fullDate, relativeTime } from '@/lib/date';
 import {
   useDeleteFeedback,
   useFeedback,
@@ -12,11 +12,18 @@ import {
   useToggleTakeaway,
 } from '@/features/feedback/queries';
 import { useSubGoals } from '@/features/goals/queries';
-import { IMPORTANCE_LABEL } from '@/types/models';
+import { useI18n } from '@/lib/i18n';
+import type { TKey } from '@/lib/translations';
+import type { Importance } from '@/types/models';
+
+function impLabelKey(imp: Importance): TKey {
+  return imp === 'high' ? 'imp.high' : imp === 'low' ? 'imp.low' : 'imp.mid';
+}
 
 export default function FeedbackDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { t, lang } = useI18n();
   const { data: feedback, isLoading } = useFeedback(id);
   const { data: subGoals = [] } = useSubGoals();
   const toggleTakeaway = useToggleTakeaway();
@@ -32,7 +39,7 @@ export default function FeedbackDetailScreen() {
     return (
       <Screen edges={['top', 'bottom']}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <LoopText color="ink3">{isLoading ? '불러오는 중…' : '피드백을 찾을 수 없어요.'}</LoopText>
+          <LoopText color="ink3">{isLoading ? t('detail.loading') : t('detail.notfound')}</LoopText>
         </View>
       </Screen>
     );
@@ -43,10 +50,10 @@ export default function FeedbackDetailScreen() {
   const internalized = feedback.internalized;
 
   function confirmDelete() {
-    Alert.alert('피드백 삭제', '이 피드백과 실천항목을 삭제할까요? 되돌릴 수 없어요.', [
-      { text: '취소', style: 'cancel' },
+    Alert.alert(t('detail.delete.title'), t('detail.delete.msg'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: '삭제',
+        text: t('common.delete'),
         style: 'destructive',
         onPress: async () => {
           await deleteFeedback.mutateAsync(feedback!.id);
@@ -100,10 +107,10 @@ export default function FeedbackDetailScreen() {
             </View>
             <View>
               <LoopText variant="label" color="good">
-                고리를 닫았어요
+                {t('detail.closed.title')}
               </LoopText>
               <LoopText variant="caption" color="ink3" style={{ marginTop: 2 }}>
-                내재화 완료로 표시됨
+                {t('detail.closed.sub')}
               </LoopText>
             </View>
           </View>
@@ -115,38 +122,38 @@ export default function FeedbackDetailScreen() {
           {feedback.title}
         </LoopText>
 
-        <MetaRow label="하위 목표">
+        <MetaRow label={t('detail.meta.subgoal')}>
           <Chip label={subGoalName} tone="warm" icon={<Icon name="target" size={13} color={LoopColors.warmDeep} />} />
         </MetaRow>
-        <MetaRow label="중요도">
+        <MetaRow label={t('detail.meta.importance')}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
             <ImportanceDots level={feedback.importance} />
             <LoopText variant="label" color="ink2">
-              {IMPORTANCE_LABEL[feedback.importance]}
+              {t(impLabelKey(feedback.importance))}
             </LoopText>
           </View>
         </MetaRow>
-        <MetaRow label={internalized ? '내재화' : '작성'}>
+        <MetaRow label={internalized ? t('detail.meta.internalized') : t('detail.meta.created')}>
           <LoopText variant="label" color={internalized ? 'good' : 'ink2'}>
             {internalized && feedback.internalizedAt
-              ? `${fullDateKo(feedback.internalizedAt)}`
-              : `${fullDateKo(feedback.createdAt)} · ${relativeKo(feedback.createdAt)}`}
+              ? `${fullDate(feedback.internalizedAt, lang)}`
+              : `${fullDate(feedback.createdAt, lang)} · ${relativeTime(feedback.createdAt, lang)}`}
           </LoopText>
         </MetaRow>
 
-        <SectionLabel>상황 (FEEDBACK)</SectionLabel>
+        <SectionLabel>{t('detail.section.feedback')}</SectionLabel>
         <LoopText variant="body" color="ink2">
           {feedback.situation}
         </LoopText>
 
-        <SectionLabel>근본 원인 (ROOT CAUSE)</SectionLabel>
+        <SectionLabel>{t('detail.section.rootcause')}</SectionLabel>
         <LoopText variant="body" color="ink2">
           {feedback.rootCause}
         </LoopText>
 
         {total > 0 && (
           <>
-            <SectionLabel>{`실천항목 · ${done}/${total}`}</SectionLabel>
+            <SectionLabel>{t('detail.section.takeaways', { done, total })}</SectionLabel>
             <View style={{ borderTopWidth: 1, borderTopColor: LoopColors.lineSoft }}>
               {feedback.takeaways.map((t) => (
                 <View
@@ -181,7 +188,7 @@ export default function FeedbackDetailScreen() {
 
         {feedback.tags.length > 0 && (
           <>
-            <SectionLabel>태그</SectionLabel>
+            <SectionLabel>{t('detail.section.tags')}</SectionLabel>
             <View style={{ flexDirection: 'row', gap: 7, flexWrap: 'wrap' }}>
               {feedback.tags.map((tag) => (
                 <Chip key={tag} label={tag} icon={<Icon name="tag" size={12} color={LoopColors.ink3} />} />
@@ -195,7 +202,7 @@ export default function FeedbackDetailScreen() {
       <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 22, paddingTop: 10 }}>
         {internalized ? (
           <Button
-            label="다시 열기"
+            label={t('detail.action.reopen')}
             variant="secondary"
             icon="undo"
             style={{ flex: 1 }}
@@ -204,13 +211,14 @@ export default function FeedbackDetailScreen() {
         ) : (
           <IconButton icon="check" color={LoopColors.good} onPress={() => setInternalized.mutate({ feedbackId: feedback.id, internalized: true })} />
         )}
-        <Button label="회고하기" icon="loop" style={{ flex: 1 }} onPress={() => router.push('/chat/reflect')} />
+        <Button label={t('detail.action.reflect')} icon="loop" style={{ flex: 1 }} onPress={() => router.push('/chat/reflect')} />
       </View>
     </Screen>
   );
 }
 
 function StatusPill() {
+  const { t } = useI18n();
   return (
     <View
       style={{
@@ -228,7 +236,7 @@ function StatusPill() {
     >
       <View style={{ width: 6, height: 6, borderRadius: 9999, backgroundColor: LoopColors.warm }} />
       <LoopText variant="small" color="warmDeep" style={{ letterSpacing: 0.3 }}>
-        열린 고리
+        {t('detail.openLoop')}
       </LoopText>
     </View>
   );

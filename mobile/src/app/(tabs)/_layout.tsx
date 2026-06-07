@@ -3,9 +3,11 @@ import { Platform } from 'react-native';
 
 import { Icon } from '@/components/ui';
 import { LoopColors } from '@/constants/loop-theme';
+import { useT } from '@/lib/i18n';
 
 /** 하단 탭 4개 — 피드백(홈) · 회고 · 대시보드 · 설정. demo TabBar 톤 매칭. */
 export default function TabsLayout() {
+  const t = useT();
   return (
     <Tabs
       screenOptions={{
@@ -26,28 +28,28 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: '피드백',
+          title: t('tab.feedback'),
           tabBarIcon: ({ color, focused }) => <Icon name={focused ? 'home-fill' : 'home'} size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="reflect"
         options={{
-          title: '회고',
+          title: t('tab.reflect'),
           tabBarIcon: ({ color }) => <Icon name="loop" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="insights"
         options={{
-          title: '대시보드',
+          title: t('tab.insights'),
           tabBarIcon: ({ color }) => <Icon name="chart" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: '설정',
+          title: t('tab.settings'),
           tabBarIcon: ({ color }) => <Icon name="settings" size={24} color={color} />,
         }}
       />

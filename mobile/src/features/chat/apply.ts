@@ -4,6 +4,7 @@
  */
 import type { RetrospectiveProposal } from '@/lib/loopi';
 import { getSupabase } from '@/lib/supabase';
+import type { TKey } from '@/lib/translations';
 
 export async function applyRetrospective(proposal: RetrospectiveProposal): Promise<void> {
   const supabase = getSupabase();
@@ -41,16 +42,19 @@ export async function applyRetrospective(proposal: RetrospectiveProposal): Promi
   }
 }
 
-/** 회고 변경 내용을 사람이 읽을 한국어 요약으로 — 확인 칩 위에 보여준다. */
-export function describeRetrospective(p: RetrospectiveProposal): string[] {
+/** 회고 변경 내용을 사람이 읽을 요약으로 — 확인 칩 위에 보여준다(언어는 t로). */
+export function describeRetrospective(
+  p: RetrospectiveProposal,
+  t: (key: TKey, vars?: Record<string, string | number>) => string,
+): string[] {
   const lines: string[] = [];
-  if (p.internalized === true) lines.push('이 피드백을 내재화 완료로 표시');
-  if (p.internalized === false) lines.push('내재화 표시 해제');
+  if (p.internalized === true) lines.push(t('retro.internalize'));
+  if (p.internalized === false) lines.push(t('retro.deinternalize'));
   for (const u of p.takeaway_updates ?? []) {
-    if (u.takeaway_id && u.done === true) lines.push('실천항목 하나를 실행 완료로');
-    else if (u.takeaway_id && u.done === false) lines.push('실천항목 하나를 미실행으로');
-    else if (u.takeaway_id && u.text) lines.push(`다짐을 다듬기: "${u.text}"`);
-    else if (!u.takeaway_id && u.text) lines.push(`새 다짐 추가: "${u.text}"`);
+    if (u.takeaway_id && u.done === true) lines.push(t('retro.takeawayDone'));
+    else if (u.takeaway_id && u.done === false) lines.push(t('retro.takeawayUndone'));
+    else if (u.takeaway_id && u.text) lines.push(t('retro.takeawayEdit', { text: u.text }));
+    else if (!u.takeaway_id && u.text) lines.push(t('retro.takeawayAdd', { text: u.text }));
   }
-  return lines.length ? lines : ['변경할 내용이 없어요.'];
+  return lines.length ? lines : [t('retro.nochange')];
 }

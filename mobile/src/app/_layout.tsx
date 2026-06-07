@@ -9,18 +9,21 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LoopColors } from '@/constants/loop-theme';
 import { AuthProvider, useAuth } from '@/features/auth/auth-context';
 import { useActiveGoal } from '@/features/goals/queries';
+import { LanguageProvider } from '@/lib/i18n';
 import { queryClient } from '@/lib/query-client';
 
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <RootNavigator />
-            <StatusBar style="dark" />
-          </AuthProvider>
-        </QueryClientProvider>
+        <LanguageProvider>
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+              <RootNavigator />
+              <StatusBar style="dark" />
+            </AuthProvider>
+          </QueryClientProvider>
+        </LanguageProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
