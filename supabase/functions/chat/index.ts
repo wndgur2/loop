@@ -14,7 +14,7 @@ import type {
 } from '../_shared/types.ts';
 import { buildContext } from './context.ts';
 import { toolForMode } from './tools.ts';
-import { callClaude, type SystemBlock } from './claude.ts';
+import { callLLM, type SystemBlock } from './llm/index.ts';
 // 프롬프트는 import되는 모듈로 버전 관리(loopi-spec §5).
 // edge-runtime은 비-import 정적 파일을 번들하지 않으므로 readTextFile(.md)은 쓰지 않는다.
 import { SYSTEM } from './prompts/system.ts';
@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
     ];
     const messages = body.messages.map((m) => ({ role: m.role, content: m.content }));
 
-    const { text, toolUse } = await callClaude({
+    const { text, toolUse } = await callLLM({
       system,
       messages,
       tool: toolForMode(body.mode),
