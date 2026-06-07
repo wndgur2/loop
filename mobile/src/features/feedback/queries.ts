@@ -1,0 +1,179 @@
+/**
+ * 피드백(feedbacks) + 실천항목(takeaways) 데이터 훅.
+ * 작성(직접 폼·AI proposal 공통)·조회·내재화/실행 토글·수정·삭제.
+ */
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { qk } from '@/lib/query-keys';
+import { getSupabase } from '@/lib/supabase';
+import {
+  type Feedback,
+  type FeedbackWithTakeaways,
+  type Importance,
+  toFeedbackWithTakeaways,
+} from '@/types/models';
+
+const SELECT_WITH_TAKEAWAYS =
+  '*, takeaways(id, feedback_id, text, done, done_at, sort_order, created_at)';
+
+async function currentUserId(): Promise<string> {
+  const { data } = await getSupabase().auth.getSession();
+  const id = data.session?.user.id;
+  if (!id) throw new Error('로그인이 필요합니다.');
+  return id;
+}
+
+export interface FeedbackInput {
+  title: string;
+  situation: string;
+  rootCause: string;
+  subGoalId: string;
+  importance: Importance;
+  tags: string[];
+  takeaways: string[];
+  sessionId?: string | null;
+}
+
+export function useFeedbacks() {
+  return useQuery<FeedbackWithTakeaways[]>({
+    queryKey: qk.feedbacks,
+    queryFn: async () => {
+      const { data, error } = await getSupabase()
+        .from('feedbacks')
+        .select(SELECT_WITH_TAKEAWAYS)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data ?? []).map(toFeedbackWithTakeaways);
+    },
+  });
+}
+
+export function useFeedback(id: string | undefined) {
+  return useQuery<FeedbackWithTakeaways | null>({
+    queryKey: id ? qk.feedback(id) : ['feedback', 'none'],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data, error } = await getSupabase()
+        .from('feedbacks')
+        .select(SELECT_WITH_TAKEAWAYS)
+        .eq('id', id!)
+        .maybeSingle();
+      if (error) throw error;
+      return data ? toFeedbackWithTakeaways(data) : null;
+    },
+  });
+}
+
+export function useCreateFeedback() {
+  const qc = useQueryClient();
+  return useMutation<Feedback, Error, FeedbackInput>({
+    mutationFn: async (input) => {
+      const supabase = getSupabase();
+      const userId = await currentUserId();
+      const { data: fb, error } = await supabase
+        .from('feedbacks')
+        .insert({
+          user_id: userId,
+          session_id: input.sessionId ?? null,
+          title: input.title.trim(),
+          situation: input.situation.trim(),
+          root_cause: input.rootCause.trim(),
+          sub_goal_id: input.subGoalId,
+          importance: input.importance,
+          tags: input.tags,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+
+      const items = input.takeaways.map((t) => t.trim()).filter(Boolean);
+      if (items.length > 0) {
+        const rows = items.map((text, i) => ({ feedback_id: fb.id, text, sort_order: i }));
+        const { error: tErr } = await supabase.from('takeaways').insert(rows);
+        if (tErr) throw tErr;
+      }
+      return toFeedbackWithTakeaways(fb);
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.feedbacks }),
+  });
+}
+
+export function useUpdateFeedback() {
+  const qc = useQueryClient();
+  return useMutation<void, Error, { id: string } & FeedbackInput>({
+    mutationFn: async (input) => {
+      const supabase = getSupabase();
+      const { error } = await supabase
+        .from('feedbacks')
+        .update({
+          title: input.title.trim(),
+          situation: input.situation.trim(),
+          root_cause: input.rootCause.trim(),
+          sub_goal_id: input.subGoalId,
+          importance: input.importance,
+          tags: input.tags,
+        })
+        .eq('id', input.id);
+      if (error) throw error;
+
+      // takeaways는 단순 동기화: 기존 삭제 후 재삽입(MVP 규모에서 충분).
+      await supabase.from('takeaways').delete().eq('feedback_id', input.id);
+      const items = input.takeaways.map((t) => t.trim()).filter(Boolean);
+      if (items.length > 0) {
+        const rows = items.map((text, i) => ({ feedback_id: input.id, text, sort_order: i }));
+        const { error: tErr } = await supabase.from('takeaways').insert(rows);
+        if (tErr) throw tErr;
+      }
+    },
+    onSuccess: (_d, v) => {
+      qc.invalidateQueries({ queryKey: qk.feedbacks });
+      qc.invalidateQueries({ queryKey: qk.feedback(v.id) });
+    },
+  });
+}
+
+export function useToggleTakeaway() {
+  const qc = useQueryClient();
+  return useMutation<void, Error, { feedbackId: string; takeawayId: string; done: boolean }>({
+    mutationFn: async ({ takeawayId, done }) => {
+      const { error } = await getSupabase()
+        .from('takeaways')
+        .update({ done, done_at: done ? new Date().toISOString() : null })
+        .eq('id', takeawayId);
+      if (error) throw error;
+    },
+    onSuccess: (_d, v) => {
+      qc.invalidateQueries({ queryKey: qk.feedback(v.feedbackId) });
+      qc.invalidateQueries({ queryKey: qk.feedbacks });
+    },
+  });
+}
+
+export function useSetInternalized() {
+  const qc = useQueryClient();
+  return useMutation<void, Error, { feedbackId: string; internalized: boolean }>({
+    mutationFn: async ({ feedbackId, internalized }) => {
+      const { error } = await getSupabase()
+        .from('feedbacks')
+        .update({ internalized, internalized_at: internalized ? new Date().toISOString() : null })
+        .eq('id', feedbackId);
+      if (error) throw error;
+    },
+    onSuccess: (_d, v) => {
+      qc.invalidateQueries({ queryKey: qk.feedback(v.feedbackId) });
+      qc.invalidateQueries({ queryKey: qk.feedbacks });
+    },
+  });
+}
+
+export function useDeleteFeedback() {
+  const qc = useQueryClient();
+  return useMutation<void, Error, string>({
+    mutationFn: async (id) => {
+      // takeaways는 ON DELETE CASCADE로 함께 삭제된다(마이그레이션).
+      const { error } = await getSupabase().from('feedbacks').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.feedbacks }),
+  });
+}
