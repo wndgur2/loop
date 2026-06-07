@@ -220,7 +220,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingTop: 2, paddingBottom: 10 },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingTop: 12, paddingBottom: 10 },
   headerBtn: { padding: 4 },
   headerActions: { marginLeft: 'auto', flexDirection: 'row', gap: 4 },
   headerAction: { padding: 6 },

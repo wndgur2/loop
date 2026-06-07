@@ -28,9 +28,10 @@ export function ComposerInput({
           onChangeText={onChangeText}
           placeholder={placeholder}
           placeholderTextColor={LoopColors.ink4}
-          multiline
           editable={!disabled}
+          returnKeyType="send"
           onSubmitEditing={() => canSend && onSend()}
+          numberOfLines={1}
           style={styles.input}
         />
         <Pressable
@@ -51,15 +52,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+    minHeight: 52,
     backgroundColor: LoopColors.surface,
     borderWidth: 1,
     borderColor: LoopColors.line,
     borderRadius: LoopRadius.full,
-    paddingVertical: 7,
+    paddingVertical: 6,
     paddingLeft: 18,
-    paddingRight: 7,
+    paddingRight: 6,
     ...LoopShadow.strong,
   },
-  input: { flex: 1, fontSize: 14.5, fontWeight: '500', color: LoopColors.ink, maxHeight: 96, paddingTop: 0 },
+  // 단일 행 입력 — 아이콘·전송 버튼과 수직 중앙 정렬(멀티라인 top-align 문제 제거).
+  input: { flex: 1, fontSize: 14.5, fontWeight: '500', color: LoopColors.ink, padding: 0, margin: 0 },
   send: { width: 38, height: 38, borderRadius: LoopRadius.full, alignItems: 'center', justifyContent: 'center' },
 });

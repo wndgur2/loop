@@ -225,7 +225,7 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8 },
   headerBack: { padding: 4 },
   headerTitle: { marginLeft: 8 },
   scroll: { padding: 22, paddingBottom: 40 },

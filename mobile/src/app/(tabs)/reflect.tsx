@@ -1,8 +1,24 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 
-import { Button, Card, Icon, type IconName, LoopText, Ring, Screen, TabHeader } from '@/components/ui';
+import {
+  Button,
+  Card,
+  Icon,
+  type IconName,
+  LoopText,
+  Ring,
+  Screen,
+  TabHeader,
+} from '@/components/ui';
 import { LoopColors } from '@/constants/loop-theme';
 import { TabComposer } from '@/features/chat/tab-composer';
 import { useFeedbacks } from '@/features/feedback/queries';
@@ -32,9 +48,13 @@ export default function ReflectScreen() {
 
   return (
     <Screen edges={['top']}>
-      <TabHeader title={t('reflect.title')} action={<Icon name="loop" size={22} color={LoopColors.warm} />} />
+      <TabHeader title={t('reflect.title')} />
 
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={8}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={8}
+      >
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           <LoopText variant="bodyTight" color="ink3" style={styles.subtitle}>
             {t('reflect.subtitle')}
@@ -74,7 +94,11 @@ function RetroCardView({
           {card.title}
         </LoopText>
         <LoopText variant="caption" color="ink3" style={styles.todayMeta}>
-          {t('reflect.meta', { sub: subGoalName(card.subGoalId), imp: t(impLabelKey(card.importance)), days: card.days })}
+          {t('reflect.meta', {
+            sub: subGoalName(card.subGoalId),
+            imp: t(impLabelKey(card.importance)),
+            days: card.days,
+          })}
         </LoopText>
         <Button label={t('reflect.today.cta')} icon="arrow-right" height={44} onPress={onPress} />
       </View>
@@ -134,7 +158,15 @@ function RetroCardView({
   );
 }
 
-function Kind({ icon, label, tone = 'warm' }: { icon: IconName; label: string; tone?: 'warm' | 'neutral' }) {
+function Kind({
+  icon,
+  label,
+  tone = 'warm',
+}: {
+  icon: IconName;
+  label: string;
+  tone?: 'warm' | 'neutral';
+}) {
   const c = tone === 'warm' ? LoopColors.warmDeep : LoopColors.ink3;
   return (
     <View style={styles.kind}>
@@ -167,7 +199,13 @@ const styles = StyleSheet.create({
   subtitle: { marginBottom: 16 },
   cards: { gap: 14 },
   bottomSpacer: { height: 6 },
-  todayCard: { backgroundColor: LoopColors.warmSoft, borderWidth: 1, borderColor: LoopColors.warmLine, borderRadius: 22, padding: 18 },
+  todayCard: {
+    backgroundColor: LoopColors.warmSoft,
+    borderWidth: 1,
+    borderColor: LoopColors.warmLine,
+    borderRadius: 22,
+    padding: 18,
+  },
   todayTitle: { fontSize: 16, marginTop: 11, marginBottom: 7 },
   todayMeta: { marginBottom: 15 },
   repeatCard: { padding: 18 },

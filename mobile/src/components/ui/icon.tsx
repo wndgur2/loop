@@ -45,7 +45,7 @@ export const Icon = memo(function Icon({ name, size = 24, color = LoopColors.ink
   const filled = { fill: color, stroke: 'none' as const };
 
   return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Svg width={size} height={size} viewBox={name === 'loop' ? '0 0 26 25' : '0 0 24 24'} fill="none">
       {renderIcon(name, s, filled, color)}
     </Svg>
   );
@@ -74,12 +74,13 @@ function renderIcon(
       );
     case 'loop':
       return (
-        <>
-          <Path {...s} d="M19.5 11A7.5 7.5 0 0 0 6.4 6.3L4.5 8" />
-          <Path {...s} d="M4.5 13A7.5 7.5 0 0 0 17.6 17.7L19.5 16" />
-          <Path {...s} d="M4.5 4v4h4" />
-          <Path {...s} d="M19.5 20v-4h-4" />
-        </>
+        <Path
+          stroke={color}
+          strokeWidth={2.5}
+          strokeLinecap="round"
+          fill="none"
+          d="M13 3.2c5.1 0 9.3 3.9 9.3 8.8S18.1 20.8 13 20.8c-3.4 0-5.2-1.9-5.2-4.2s1.9-4.1 4.7-4.1c2.6 0 4.3 1.6 4.3 3.6"
+        />
       );
     case 'chart':
       return (

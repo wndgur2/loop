@@ -345,7 +345,7 @@ function ConfirmChips({
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 18, paddingBottom: 14 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 18, paddingTop: 12, paddingBottom: 14 },
   back: { padding: 2 },
   title: { fontSize: 15 },
   sub: { marginTop: 2 },

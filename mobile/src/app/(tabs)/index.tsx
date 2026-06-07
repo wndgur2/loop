@@ -1,6 +1,14 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
-import { FlatList, KeyboardAvoidingView, type ListRenderItem, Platform, Pressable, StyleSheet, View } from 'react-native';
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  type ListRenderItem,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 import { Icon, LoopText, Screen, TabHeader } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
@@ -31,7 +39,12 @@ export default function FeedbackHomeScreen() {
   const keyExtractor = useCallback((f: FeedbackWithTakeaways) => f.id, []);
   const renderItem = useCallback<ListRenderItem<FeedbackWithTakeaways>>(
     ({ item, index }) => (
-      <FeedbackRow feedback={item} subGoalName={subGoalName(item.subGoalId)} first={index === 0} onPress={handlePress} />
+      <FeedbackRow
+        feedback={item}
+        subGoalName={subGoalName(item.subGoalId)}
+        first={index === 0}
+        onPress={handlePress}
+      />
     ),
     [handlePress, subGoalName],
   );
@@ -57,9 +70,18 @@ export default function FeedbackHomeScreen() {
 
   return (
     <Screen edges={['top']}>
-      <TabHeader title={t('tab.feedback')} action={<WriteButton onPress={() => router.push('/feedback/new')} label={t('home.directWrite')} />} />
+      <TabHeader
+        title={t('tab.feedback')}
+        action={
+          <WriteButton onPress={() => router.push('/feedback/new')} label={t('home.directWrite')} />
+        }
+      />
 
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={8}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={8}
+      >
         <FlatList
           data={feedbacks}
           keyExtractor={keyExtractor}
@@ -113,7 +135,12 @@ const styles = StyleSheet.create({
   barWrap: { paddingBottom: 6 },
   barTop: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 7 },
   pct: { fontSize: 12 },
-  track: { height: 7, borderRadius: 9999, backgroundColor: LoopColors.ringTrack, overflow: 'hidden' },
+  track: {
+    height: 7,
+    borderRadius: 9999,
+    backgroundColor: LoopColors.ringTrack,
+    overflow: 'hidden',
+  },
   fill: { height: '100%', borderRadius: 9999, backgroundColor: LoopColors.warm },
   writeBtn: {
     flexDirection: 'row',
