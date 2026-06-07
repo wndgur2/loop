@@ -1,0 +1,5 @@
+{
+  "//": "Edge Functions(supabase/functions)만 Deno LSP로 인식 — 나머지(mobile RN/TS)는 기본 TS 서버 유지. Deno 전역(Deno.env 등) 'Cannot find name Deno' 해소.",
+  "deno.enablePaths": ["supabase/functions"],
+  "deno.lint": true
+}

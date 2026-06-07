@@ -1,0 +1,8 @@
+{
+  "//": "Deno 프로젝트 루트 마커 — VS Code Deno LSP가 이 폴더를 Deno로 인식하게 한다. 의존성은 각 파일의 jsr:/https: 스펙으로 직접 명시(import map 불필요).",
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  }
+}
