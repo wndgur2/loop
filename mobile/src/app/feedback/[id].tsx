@@ -26,7 +26,6 @@ import {
 } from '@/features/feedback/queries';
 import { useSubGoalName } from '@/features/goals/use-sub-goal-name';
 import { fullDate, relativeTime } from '@/lib/date';
-import { haptics } from '@/lib/haptics';
 import { useI18n } from '@/lib/i18n';
 import { impLabelKey } from '@/lib/importance';
 
@@ -65,7 +64,6 @@ export default function FeedbackDetailScreen() {
   const internalized = feedback.internalized;
 
   async function doDelete() {
-    haptics.warning();
     await deleteFeedback.mutateAsync(feedback!.id);
     setConfirmingDelete(false);
     router.back();
@@ -168,12 +166,7 @@ export default function FeedbackDetailScreen() {
           <IconButton
             icon="check"
             color={LoopColors.good}
-            onPress={() =>
-              setInternalized.mutate(
-                { feedbackId: feedback.id, internalized: true },
-                { onSuccess: () => haptics.success() },
-              )
-            }
+            onPress={() => setInternalized.mutate({ feedbackId: feedback.id, internalized: true })}
           />
         )}
         <Button

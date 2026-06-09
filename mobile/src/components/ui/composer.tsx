@@ -46,7 +46,6 @@ export function ComposerInput({
         <PressScale
           onPress={() => canSend && onSend()}
           disabled={!canSend}
-          haptic
           style={[
             styles.send,
             { backgroundColor: canSend ? LoopColors.warm : LoopColors.warmSoft2 },

@@ -73,6 +73,7 @@ export function useLoopiChat(mode: SessionMode, initial?: string) {
       });
       // Finalize with the final reply (trimmed) — reconciles minor whitespace differences from delta accumulation.
       patchLastAssistant(() => res.reply);
+      haptics.tap();
       if (sessionIdRef.current) void saveMessage(sessionIdRef.current, 'assistant', res.reply);
       if (res.proposal) setProposal(res.proposal);
     } catch {
@@ -116,7 +117,6 @@ export function useLoopiChat(mode: SessionMode, initial?: string) {
         sessionId: sessionIdRef.current,
       });
       if (sessionIdRef.current) void completeSession(sessionIdRef.current);
-      haptics.success();
       setProposal(null);
       router.replace(`/feedback/${fb.id}`);
     } catch {
@@ -133,7 +133,6 @@ export function useLoopiChat(mode: SessionMode, initial?: string) {
       qc.invalidateQueries({ queryKey: qk.feedbacks });
       qc.invalidateQueries({ queryKey: qk.feedback(p.feedback_id) });
       if (sessionIdRef.current) void completeSession(sessionIdRef.current);
-      haptics.success();
       setProposal(null);
       showAssistant(t('chat.applied'));
     } catch {

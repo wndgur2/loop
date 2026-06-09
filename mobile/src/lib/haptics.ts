@@ -2,8 +2,9 @@ import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
 
 /**
- * Haptic feedback helper — centralized so call sites stay terse and platform-safe.
- * No-op on web (expo-haptics is native-only); fire-and-forget so it never blocks UI.
+ * Haptic feedback helper — platform-safe and fire-and-forget so it never blocks UI.
+ * No-op on web (expo-haptics is native-only).
+ * The only haptic in the app: a short light tap when a Loopi chat response arrives.
  */
 const enabled = Platform.OS === 'ios' || Platform.OS === 'android';
 
@@ -13,14 +14,6 @@ function run(fn: () => Promise<unknown>) {
 }
 
 export const haptics = {
-  /** Light tap — tab / button press. */
+  /** Short light tap — chat response arrival. */
   tap: () => run(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)),
-  /** Selection tick — toggles, chips. */
-  select: () => run(() => Haptics.selectionAsync()),
-  /** Positive confirmation — proposal accept, internalize, takeaway done. */
-  success: () => run(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)),
-  /** Caution — destructive confirm, errors. */
-  warning: () => run(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)),
 };
-
-export type HapticKind = keyof typeof haptics;

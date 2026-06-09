@@ -179,7 +179,6 @@ export default function FeedbackFormScreen() {
                 <PressScale
                   onPress={() => setTakeaways((cur) => cur.filter((_, j) => j !== i))}
                   hitSlop={8}
-                  haptic
                   scaleTo={LoopMotion.scale.icon}
                   style={styles.takeawayRemove}
                 >
@@ -188,11 +187,7 @@ export default function FeedbackFormScreen() {
               )}
             </View>
           ))}
-          <PressScale
-            onPress={() => setTakeaways((cur) => [...cur, ''])}
-            haptic
-            style={styles.addRow}
-          >
+          <PressScale onPress={() => setTakeaways((cur) => [...cur, ''])} style={styles.addRow}>
             <Icon name="plus" size={18} color={LoopColors.warmDeep} />
             <LoopText variant="label" color="warmDeep">
               {t('form.addTakeaway')}

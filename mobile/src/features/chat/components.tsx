@@ -149,7 +149,6 @@ function ConfirmChips({
       <PressScale
         onPress={onAccept}
         disabled={busy}
-        haptic
         style={[
           styles.accept,
           { backgroundColor: good ? LoopColors.good : LoopColors.warm, opacity: busy ? 0.7 : 1 },

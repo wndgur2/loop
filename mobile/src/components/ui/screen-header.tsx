@@ -53,13 +53,7 @@ export function HeaderAction({
   color?: string;
 }) {
   return (
-    <PressScale
-      onPress={onPress}
-      hitSlop={8}
-      haptic
-      scaleTo={LoopMotion.scale.icon}
-      style={styles.action}
-    >
+    <PressScale onPress={onPress} hitSlop={8} scaleTo={LoopMotion.scale.icon} style={styles.action}>
       <Icon name={icon} size={21} color={color} />
     </PressScale>
   );

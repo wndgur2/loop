@@ -144,7 +144,6 @@ export default function SettingsScreen() {
               <PressScale
                 onPress={() => setPendingDelete({ id: s.id, name: s.name })}
                 hitSlop={8}
-                haptic
                 scaleTo={LoopMotion.scale.icon}
                 style={styles.subDelete}
               >
@@ -161,7 +160,7 @@ export default function SettingsScreen() {
               onSubmitEditing={addSub}
               style={styles.addInput}
             />
-            <PressScale onPress={addSub} haptic style={styles.addBtn}>
+            <PressScale onPress={addSub} style={styles.addBtn}>
               <Icon name="plus" size={20} color={LoopColors.warmDeep} />
             </PressScale>
           </View>

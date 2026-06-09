@@ -128,7 +128,7 @@ export default function OnboardingScreen() {
               onSubmitEditing={addCustom}
               style={styles.customInput}
             />
-            <PressScale onPress={addCustom} haptic style={styles.addBtn}>
+            <PressScale onPress={addCustom} style={styles.addBtn}>
               <Icon name="plus" size={20} color={LoopColors.warmDeep} />
             </PressScale>
           </View>

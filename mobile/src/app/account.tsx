@@ -118,7 +118,6 @@ export default function AccountScreen() {
           onPress={() => setDialog({ kind: 'delete' })}
           disabled={deleting}
           hitSlop={6}
-          haptic
           style={styles.deleteRow}
         >
           <Icon name="trash" size={18} color={LoopColors.danger} />

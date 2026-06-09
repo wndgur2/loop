@@ -38,7 +38,7 @@ export function SelectChip({
   const labelColor =
     tone === 'solid' ? (selected ? 'white' : 'ink2') : selected ? 'warmDeep' : 'ink3';
   return (
-    <PressScale onPress={onPress} haptic="select" style={style}>
+    <PressScale onPress={onPress} style={style}>
       <View
         style={[
           styles.chip,

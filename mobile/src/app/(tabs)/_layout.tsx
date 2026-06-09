@@ -6,7 +6,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon, usePressScale } from '@/components/ui';
 import { LoopColors, LoopMotion } from '@/constants/loop-theme';
-import { haptics } from '@/lib/haptics';
 import { useT } from '@/lib/i18n';
 
 /** Height of the tab bar content (icon + label) area. The bottom safe area is added separately via inset. */
@@ -14,7 +13,7 @@ const TAB_BAR_CONTENT_HEIGHT = 64;
 
 /**
  * Tab button with no platform press feedback (no Android ripple / iOS opacity dim).
- * Instead the content squishes (scales down) while pressed and springs back, plus a light haptic.
+ * Instead the content squishes (scales down) while pressed and springs back.
  */
 function SquishTabButton({
   children,
@@ -38,10 +37,7 @@ function SquishTabButton({
       {...rest}
       style={style}
       android_ripple={null}
-      onPress={(e) => {
-        haptics.tap();
-        onPress?.(e);
-      }}
+      onPress={onPress}
       onPressIn={(e) => {
         scaleIn();
         onPressIn?.(e);

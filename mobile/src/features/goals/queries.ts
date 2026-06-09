@@ -85,14 +85,12 @@ export function useAddSubGoal() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: { goalId: string; name: string; sortOrder: number }) => {
-      const { error } = await getSupabase()
-        .from('sub_goals')
-        .insert({
-          goal_id: input.goalId,
-          name: input.name.trim(),
-          source: 'user_added',
-          sort_order: input.sortOrder,
-        });
+      const { error } = await getSupabase().from('sub_goals').insert({
+        goal_id: input.goalId,
+        name: input.name.trim(),
+        source: 'user_added',
+        sort_order: input.sortOrder,
+      });
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: qk.subGoals }),

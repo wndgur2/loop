@@ -102,7 +102,7 @@ export default function FeedbackHomeScreen() {
 
 function WriteButton({ onPress, label }: { onPress: () => void; label: string }) {
   return (
-    <PressScale onPress={onPress} haptic style={styles.writeBtn}>
+    <PressScale onPress={onPress} style={styles.writeBtn}>
       <Icon name="plus" size={16} color={LoopColors.warmDeep} />
       <LoopText variant="label" color="warmDeep">
         {label}

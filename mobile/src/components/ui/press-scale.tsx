@@ -8,7 +8,6 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { LoopMotion } from '@/constants/loop-theme';
-import { haptics, type HapticKind } from '@/lib/haptics';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -36,8 +35,6 @@ type PressScaleProps = {
   onPress?: () => void;
   scaleTo?: number;
   spring?: WithSpringConfig;
-  /** Fire a haptic on press. `true` = light tap. */
-  haptic?: boolean | HapticKind;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   hitSlop?: PressableProps['hitSlop'];
@@ -52,19 +49,14 @@ export function PressScale({
   onPress,
   scaleTo,
   spring,
-  haptic,
   disabled,
   style,
   hitSlop,
 }: PressScaleProps) {
   const { animatedStyle, onPressIn, onPressOut } = usePressScale({ scaleTo, spring });
-  const fire = () => {
-    if (haptic) haptics[haptic === true ? 'tap' : haptic]();
-    onPress?.();
-  };
   return (
     <AnimatedPressable
-      onPress={fire}
+      onPress={onPress}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       disabled={disabled}

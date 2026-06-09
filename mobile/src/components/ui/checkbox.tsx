@@ -10,7 +10,6 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { LoopColors, LoopMotion } from '@/constants/loop-theme';
-import { haptics } from '@/lib/haptics';
 
 import { Icon } from './icon';
 
@@ -47,10 +46,7 @@ export const Checkbox = memo(function Checkbox({
 
   return (
     <Pressable
-      onPress={() => {
-        haptics[done ? 'select' : 'success']();
-        onPress?.();
-      }}
+      onPress={onPress}
       onPressIn={() => press.set(withTiming(0.9, { duration: LoopMotion.timing.fast }))}
       onPressOut={() => press.set(withSpring(1, LoopMotion.spring.pop))}
       hitSlop={8}

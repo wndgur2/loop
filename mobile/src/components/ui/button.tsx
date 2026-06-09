@@ -3,7 +3,6 @@ import { ActivityIndicator, Pressable, StyleSheet, type ViewStyle } from 'react-
 import Animated from 'react-native-reanimated';
 
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
-import { haptics } from '@/lib/haptics';
 
 import { Icon, type IconName } from './icon';
 import { usePressScale } from './press-scale';
@@ -37,10 +36,7 @@ export const Button = memo(function Button({
 
   return (
     <Pressable
-      onPress={() => {
-        haptics.tap();
-        onPress?.();
-      }}
+      onPress={onPress}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       disabled={disabled || loading}
@@ -86,10 +82,7 @@ export const IconButton = memo(function IconButton({
   const { animatedStyle, onPressIn, onPressOut } = usePressScale();
   return (
     <Pressable
-      onPress={() => {
-        haptics.tap();
-        onPress?.();
-      }}
+      onPress={onPress}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       android_ripple={null}
