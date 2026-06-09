@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
-import { Button, Card, Icon, LoopText, Screen, TabHeader } from '@/components/ui';
+import { Button, Card, ConfirmDialog, Icon, LoopText, Screen, TabHeader } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
 import {
@@ -26,6 +26,7 @@ export default function SettingsScreen() {
 
   const [goalTitle, setGoalTitle] = useState('');
   const [newSub, setNewSub] = useState('');
+  const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null);
 
   // When the server goal arrives/changes, initialize the edit field with that value (sync during render — no effect needed).
   const [syncedGoalId, setSyncedGoalId] = useState<string | undefined>(undefined);
@@ -50,21 +51,15 @@ export default function SettingsScreen() {
     setNewSub('');
   }
 
-  function removeSub(id: string, name: string) {
-    Alert.alert(t('settings.subgoal.delete.title'), t('settings.subgoal.delete.msg', { name }), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('common.delete'),
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await deleteSubGoal.mutateAsync(id);
-          } catch {
-            Alert.alert(t('settings.subgoal.delete.failTitle'), t('settings.subgoal.delete.failMsg'));
-          }
-        },
-      },
-    ]);
+  async function confirmDelete() {
+    if (!pendingDelete) return;
+    try {
+      await deleteSubGoal.mutateAsync(pendingDelete.id);
+      setPendingDelete(null);
+    } catch {
+      setPendingDelete(null);
+      Alert.alert(t('settings.subgoal.delete.failTitle'), t('settings.subgoal.delete.failMsg'));
+    }
   }
 
   return (
@@ -112,7 +107,11 @@ export default function SettingsScreen() {
               <LoopText variant="body" color="ink2" style={styles.subName}>
                 {s.name}
               </LoopText>
-              <Pressable onPress={() => removeSub(s.id, s.name)} hitSlop={8} style={styles.subDelete}>
+              <Pressable
+                onPress={() => setPendingDelete({ id: s.id, name: s.name })}
+                hitSlop={8}
+                style={styles.subDelete}
+              >
                 <Icon name="trash" size={18} color={LoopColors.ink4} />
               </Pressable>
             </View>
@@ -137,6 +136,18 @@ export default function SettingsScreen() {
           {t('settings.tagline')}
         </LoopText>
       </ScrollView>
+
+      <ConfirmDialog
+        visible={!!pendingDelete}
+        icon="trash"
+        title={t('settings.subgoal.delete.title')}
+        message={pendingDelete ? t('settings.subgoal.delete.msg', { name: pendingDelete.name }) : undefined}
+        confirmLabel={t('common.delete')}
+        cancelLabel={t('common.cancel')}
+        loading={deleteSubGoal.isPending}
+        onConfirm={confirmDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
     </Screen>
   );
 }

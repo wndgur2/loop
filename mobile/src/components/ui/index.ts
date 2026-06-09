@@ -2,6 +2,7 @@ export { Button, IconButton } from './button';
 export { Card } from './card';
 export { Checkbox } from './checkbox';
 export { Chip } from './chip';
+export { ConfirmDialog } from './confirm-dialog';
 export { ComposerInput } from './composer';
 export { Icon, type IconName } from './icon';
 export { ImportanceDots } from './importance-dots';

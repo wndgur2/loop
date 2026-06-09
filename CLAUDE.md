@@ -149,6 +149,8 @@ deno check supabase/functions/chat/index.ts        # Edge Function 타입 체크
 - 사용자 대면 텍스트는 1차 타깃이 국내라 한국어가 기본이지만, **하드코딩하지 말고 `lib/translations.ts`에 키를 추가**하고 `useT()`로 렌더하세요(한/영 토글 지원).
 - DB Row(snake)와 앱 모델(camel) 변환은 `types/models.ts` 매퍼를 통해서만. 화면에서 raw Row를 직접 다루지 마세요.
 - 커밋 메시지는 명확한 한 줄 요약 + 필요 시 본문. 의미 단위로 커밋.
+- commit & push directly on main.
+- use english for comments.
 
 ---
 
