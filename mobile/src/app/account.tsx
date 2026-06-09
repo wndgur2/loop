@@ -1,14 +1,11 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
-import { Button, Card, Icon, LoopText, Screen } from '@/components/ui';
-import { LoopColors, LoopRadius } from '@/constants/loop-theme';
+import { Button, Card, ConfirmDialog, Icon, LoopText, PressScale, Screen } from '@/components/ui';
+import { LoopColors, LoopMotion, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
 import { useI18n } from '@/lib/i18n';
-
-// Red reserved for destructive actions (the palette has only one saturated color, warm, so this is a one-off literal used only here).
-const DANGER = '#C0392B';
 
 export default function AccountScreen() {
   const router = useRouter();
@@ -28,6 +25,9 @@ export default function AccountScreen() {
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [dialog, setDialog] = useState<
+    { kind: 'signout' } | { kind: 'delete' } | { kind: 'info'; title: string; message?: string } | null
+  >(null);
 
   const nameChanged = name.trim().length > 0 && name.trim() !== currentName;
 
@@ -37,45 +37,34 @@ export default function AccountScreen() {
     try {
       await updateDisplayName(name);
     } catch {
-      Alert.alert(t('account.nameSaveFail'));
+      setDialog({ kind: 'info', title: t('account.nameSaveFail') });
     } finally {
       setSaving(false);
     }
   }
 
-  function confirmSignOut() {
-    Alert.alert(t('settings.signout.title'), t('settings.signout.msg'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      { text: t('account.signout'), style: 'destructive', onPress: () => signOut() },
-    ]);
+  function doSignOut() {
+    setDialog(null);
+    signOut();
   }
 
-  function confirmDelete() {
-    Alert.alert(t('account.delete.title'), t('account.delete.msg'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('account.delete.confirm'),
-        style: 'destructive',
-        onPress: async () => {
-          setDeleting(true);
-          try {
-            // On success, deleteAccount signs out → the root navigator sends the user to sign-in.
-            await deleteAccount();
-          } catch {
-            setDeleting(false);
-            Alert.alert(t('account.delete.fail'));
-          }
-        },
-      },
-    ]);
+  async function doDelete() {
+    setDeleting(true);
+    try {
+      // On success, deleteAccount signs out → the root navigator sends the user to sign-in.
+      await deleteAccount();
+    } catch {
+      setDeleting(false);
+      setDialog({ kind: 'info', title: t('account.delete.fail') });
+    }
   }
 
   return (
     <Screen edges={['top', 'bottom']}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.headerBtn}>
+        <PressScale onPress={() => router.back()} hitSlop={8} scaleTo={LoopMotion.scale.icon} style={styles.headerBtn}>
           <Icon name="chevron-left" size={24} color={LoopColors.ink2} />
-        </Pressable>
+        </PressScale>
         <LoopText variant="heading2">{t('account.title')}</LoopText>
       </View>
 
@@ -106,15 +95,46 @@ export default function AccountScreen() {
           )}
         </Card>
 
-        <Button label={t('account.signout')} variant="secondary" onPress={confirmSignOut} style={styles.signout} />
+        <Button label={t('account.signout')} variant="secondary" onPress={() => setDialog({ kind: 'signout' })} style={styles.signout} />
 
-        <Pressable onPress={confirmDelete} disabled={deleting} hitSlop={6} style={styles.deleteRow}>
-          <Icon name="trash" size={18} color={DANGER} />
+        <PressScale onPress={() => setDialog({ kind: 'delete' })} disabled={deleting} hitSlop={6} haptic style={styles.deleteRow}>
+          <Icon name="trash" size={18} color={LoopColors.danger} />
           <LoopText variant="label" style={[styles.deleteLabel, deleting && styles.deleteDisabled]}>
             {t('account.delete')}
           </LoopText>
-        </Pressable>
+        </PressScale>
       </ScrollView>
+
+      <ConfirmDialog
+        visible={dialog?.kind === 'signout'}
+        title={t('settings.signout.title')}
+        message={t('settings.signout.msg')}
+        confirmLabel={t('account.signout')}
+        cancelLabel={t('common.cancel')}
+        onConfirm={doSignOut}
+        onCancel={() => setDialog(null)}
+      />
+
+      <ConfirmDialog
+        visible={dialog?.kind === 'delete'}
+        icon="trash"
+        title={t('account.delete.title')}
+        message={t('account.delete.msg')}
+        confirmLabel={t('account.delete.confirm')}
+        cancelLabel={t('common.cancel')}
+        destructive
+        loading={deleting}
+        onConfirm={doDelete}
+        onCancel={() => setDialog(null)}
+      />
+
+      <ConfirmDialog
+        visible={dialog?.kind === 'info'}
+        title={dialog?.kind === 'info' ? dialog.title : ''}
+        message={dialog?.kind === 'info' ? dialog.message : undefined}
+        confirmLabel={t('common.ok')}
+        onConfirm={() => setDialog(null)}
+      />
     </Screen>
   );
 }
@@ -155,6 +175,6 @@ const styles = StyleSheet.create({
     marginTop: 14,
     borderRadius: LoopRadius.xl,
   },
-  deleteLabel: { color: DANGER },
+  deleteLabel: { color: LoopColors.danger },
   deleteDisabled: { opacity: 0.5 },
 });

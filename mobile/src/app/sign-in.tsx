@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { LoopMark } from '@/components/loop-mark';
-import { Button, LoopText, Screen } from '@/components/ui';
+import { Button, LoopText, PressScale, Screen } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
 import { useT } from '@/lib/i18n';
@@ -113,11 +113,11 @@ export default function SignInScreen() {
                 loading={busy}
                 style={styles.submit}
               />
-              <Pressable onPress={backToSignIn} style={styles.toggle}>
+              <PressScale onPress={backToSignIn} style={styles.toggle}>
                 <LoopText variant="label" color="ink3">
                   {t('signin.confirm.back')}
                 </LoopText>
-              </Pressable>
+              </PressScale>
             </>
           ) : (
             <>
@@ -170,11 +170,11 @@ export default function SignInScreen() {
                 style={styles.submit}
               />
 
-              <Pressable onPress={() => setMode(isSignUp ? 'sign-in' : 'sign-up')} style={styles.toggle}>
+              <PressScale onPress={() => setMode(isSignUp ? 'sign-in' : 'sign-up')} style={styles.toggle}>
                 <LoopText variant="label" color="ink3">
                   {isSignUp ? t('signin.toggle.toSignin') : t('signin.toggle.toSignup')}
                 </LoopText>
-              </Pressable>
+              </PressScale>
             </>
           )}
         </ScrollView>

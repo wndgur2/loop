@@ -1,11 +1,11 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { memo, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { Chip, ComposerInput, Icon, ImportanceDots, LoopText, Screen } from '@/components/ui';
-import { LoopColors, LoopRadius } from '@/constants/loop-theme';
+import { Chip, ComposerInput, Icon, ImportanceDots, LoopText, PressScale, Screen } from '@/components/ui';
+import { LoopColors, LoopMotion, LoopRadius } from '@/constants/loop-theme';
 import { applyRetrospective, describeRetrospective } from '@/features/chat/apply';
 import { completeSession, createChatSession, saveMessage } from '@/features/chat/session';
 import { useCreateFeedback } from '@/features/feedback/queries';
@@ -172,9 +172,9 @@ export default function LoopiChatScreen() {
     <Screen edges={['top', 'bottom']}>
       {/* Header — airy (quiet journal) */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.back}>
+        <PressScale onPress={() => router.back()} hitSlop={8} scaleTo={LoopMotion.scale.icon} style={styles.back}>
           <Icon name="chevron-left" size={24} color={LoopColors.ink2} />
-        </Pressable>
+        </PressScale>
         <CoachAvatar />
         <View style={styles.flex}>
           <LoopText variant="heading2" style={styles.title}>
@@ -357,14 +357,15 @@ function ConfirmChips({
   const t = useT();
   return (
     <View style={styles.chips}>
-      <Pressable onPress={onDismiss} disabled={busy} style={styles.dismiss}>
+      <PressScale onPress={onDismiss} disabled={busy} style={styles.dismiss}>
         <LoopText variant="label" color="ink2">
           {t('chat.proposal.dismiss')}
         </LoopText>
-      </Pressable>
-      <Pressable
+      </PressScale>
+      <PressScale
         onPress={onAccept}
         disabled={busy}
+        haptic
         style={[styles.accept, { backgroundColor: good ? LoopColors.good : LoopColors.warm, opacity: busy ? 0.7 : 1 }]}
       >
         {busy ? (
@@ -375,7 +376,7 @@ function ConfirmChips({
         <LoopText variant="label" color="white">
           {acceptLabel}
         </LoopText>
-      </Pressable>
+      </PressScale>
     </View>
   );
 }

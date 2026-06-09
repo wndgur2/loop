@@ -1,8 +1,8 @@
 import { memo } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { Icon, LoopText } from '@/components/ui';
-import { LoopColors } from '@/constants/loop-theme';
+import { Icon, LoopText, PressScale } from '@/components/ui';
+import { LoopColors, LoopMotion } from '@/constants/loop-theme';
 import { relativeTime } from '@/lib/date';
 import { useI18n, useT } from '@/lib/i18n';
 import type { FeedbackWithTakeaways, Importance } from '@/types/models';
@@ -61,7 +61,7 @@ export const FeedbackRow = memo(function FeedbackRow({ feedback, subGoalName, fi
   const done = feedback.takeaways.filter((tk) => tk.done).length;
 
   return (
-    <Pressable onPress={() => onPress(feedback.id)}>
+    <PressScale onPress={() => onPress(feedback.id)} scaleTo={LoopMotion.scale.card}>
       <View style={[styles.row, first && styles.rowFirst]}>
         <View style={[styles.impBar, { backgroundColor: IMP_BAR[feedback.importance] }]} />
         <View style={styles.content}>
@@ -89,7 +89,7 @@ export const FeedbackRow = memo(function FeedbackRow({ feedback, subGoalName, fi
           )}
         </View>
       </View>
-    </Pressable>
+    </PressScale>
   );
 });
 

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import {
@@ -9,11 +9,12 @@ import {
   Icon,
   type IconName,
   LoopText,
+  PressScale,
   Ring,
   Screen,
   TabHeader,
 } from '@/components/ui';
-import { LoopColors } from '@/constants/loop-theme';
+import { LoopColors, LoopMotion } from '@/constants/loop-theme';
 import { TabComposer } from '@/features/chat/tab-composer';
 import { useFeedbacks } from '@/features/feedback/queries';
 import { useSubGoals } from '@/features/goals/queries';
@@ -97,7 +98,7 @@ function RetroCardView({
 
   if (card.kind === 'repeat') {
     return (
-      <Pressable onPress={onPress}>
+      <PressScale onPress={onPress} scaleTo={LoopMotion.scale.card}>
         <Card radius={22} style={styles.repeatCard}>
           <Kind icon="undo" label={t('reflect.kind.repeat')} tone="neutral" />
           <LoopText variant="cardTitle" color="warmDeep" style={styles.repeatLine}>
@@ -120,13 +121,13 @@ function RetroCardView({
             <Icon name="chevron-right" size={16} color={LoopColors.warmDeep} />
           </View>
         </Card>
-      </Pressable>
+      </PressScale>
     );
   }
 
   // area
   return (
-    <Pressable onPress={onPress}>
+    <PressScale onPress={onPress} scaleTo={LoopMotion.scale.card}>
       <Card radius={22} style={styles.areaCard}>
         <Ring value={card.total ? card.internalized / card.total : 0} size={52} stroke={6}>
           <LoopText variant="small" color="ink2">
@@ -144,7 +145,7 @@ function RetroCardView({
         </View>
         <Icon name="chevron-right" size={20} color={LoopColors.ink4} />
       </Card>
-    </Pressable>
+    </PressScale>
   );
 }
 

@@ -1,9 +1,9 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { Button, Checkbox, Chip, Icon, IconButton, ImportanceDots, LoopText, Screen } from '@/components/ui';
-import { LoopColors } from '@/constants/loop-theme';
+import { Button, Checkbox, Chip, ConfirmDialog, Icon, IconButton, ImportanceDots, LoopText, PressScale, Screen, Skeleton } from '@/components/ui';
+import { LoopColors, LoopMotion } from '@/constants/loop-theme';
 import { fullDate, relativeTime } from '@/lib/date';
 import { haptics } from '@/lib/haptics';
 import {
@@ -30,6 +30,7 @@ export default function FeedbackDetailScreen() {
   const toggleTakeaway = useToggleTakeaway();
   const setInternalized = useSetInternalized();
   const deleteFeedback = useDeleteFeedback();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   const subGoalName = useMemo(
     () => subGoals.find((s) => s.id === feedback?.subGoalId)?.name ?? '—',
@@ -39,9 +40,18 @@ export default function FeedbackDetailScreen() {
   if (!feedback) {
     return (
       <Screen edges={['top', 'bottom']}>
-        <View style={styles.centerFill}>
-          <LoopText color="ink3">{isLoading ? t('detail.loading') : t('detail.notfound')}</LoopText>
-        </View>
+        {isLoading ? (
+          <View style={styles.detailSkeleton}>
+            <Skeleton width="70%" height={26} radius={9} />
+            <Skeleton width="45%" height={12} radius={6} />
+            <Skeleton width="100%" height={64} radius={12} />
+            <Skeleton width="100%" height={64} radius={12} />
+          </View>
+        ) : (
+          <View style={styles.centerFill}>
+            <LoopText color="ink3">{t('detail.notfound')}</LoopText>
+          </View>
+        )}
       </Screen>
     );
   }
@@ -50,35 +60,39 @@ export default function FeedbackDetailScreen() {
   const done = feedback.takeaways.filter((tk) => tk.done).length;
   const internalized = feedback.internalized;
 
-  function confirmDelete() {
-    Alert.alert(t('detail.delete.title'), t('detail.delete.msg'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('common.delete'),
-        style: 'destructive',
-        onPress: async () => {
-          haptics.warning();
-          await deleteFeedback.mutateAsync(feedback!.id);
-          router.back();
-        },
-      },
-    ]);
+  async function doDelete() {
+    haptics.warning();
+    await deleteFeedback.mutateAsync(feedback!.id);
+    setConfirmingDelete(false);
+    router.back();
   }
 
   return (
     <Screen edges={['top', 'bottom']}>
       {/* header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.headerBtn}>
+        <PressScale onPress={() => router.back()} hitSlop={8} scaleTo={LoopMotion.scale.icon} style={styles.headerBtn}>
           <Icon name="chevron-left" size={24} color={LoopColors.ink2} />
-        </Pressable>
+        </PressScale>
         <View style={styles.headerActions}>
-          <Pressable onPress={() => router.push(`/feedback/new?id=${feedback.id}`)} hitSlop={8} style={styles.headerAction}>
+          <PressScale
+            onPress={() => router.push(`/feedback/new?id=${feedback.id}`)}
+            hitSlop={8}
+            haptic
+            scaleTo={LoopMotion.scale.icon}
+            style={styles.headerAction}
+          >
             <Icon name="edit" size={21} color={LoopColors.ink3} />
-          </Pressable>
-          <Pressable onPress={confirmDelete} hitSlop={8} style={styles.headerAction}>
+          </PressScale>
+          <PressScale
+            onPress={() => setConfirmingDelete(true)}
+            hitSlop={8}
+            haptic
+            scaleTo={LoopMotion.scale.icon}
+            style={styles.headerAction}
+          >
             <Icon name="trash" size={21} color={LoopColors.ink3} />
-          </Pressable>
+          </PressScale>
         </View>
       </View>
 
@@ -193,6 +207,19 @@ export default function FeedbackDetailScreen() {
         )}
         <Button label={t('detail.action.reflect')} icon="loop" style={styles.flex} onPress={() => router.push('/chat/reflect')} />
       </View>
+
+      <ConfirmDialog
+        visible={confirmingDelete}
+        icon="trash"
+        title={t('detail.delete.title')}
+        message={t('detail.delete.msg')}
+        confirmLabel={t('common.delete')}
+        cancelLabel={t('common.cancel')}
+        destructive
+        loading={deleteFeedback.isPending}
+        onConfirm={doDelete}
+        onCancel={() => setConfirmingDelete(false)}
+      />
     </Screen>
   );
 }
@@ -231,6 +258,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  detailSkeleton: { padding: 22, gap: 14 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingTop: 12, paddingBottom: 10 },
   headerBtn: { padding: 4 },
   headerActions: { marginLeft: 'auto', flexDirection: 'row', gap: 4 },

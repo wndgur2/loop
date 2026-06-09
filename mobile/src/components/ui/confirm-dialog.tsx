@@ -1,9 +1,10 @@
 import { memo } from 'react';
-import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, StyleSheet, View } from 'react-native';
 
 import { LoopColors, LoopRadius, LoopShadow } from '@/constants/loop-theme';
 
 import { Icon, type IconName } from './icon';
+import { PressScale } from './press-scale';
 import { LoopText } from './text';
 
 type ConfirmDialogProps = {
@@ -12,10 +13,13 @@ type ConfirmDialogProps = {
   message?: string;
   icon?: IconName;
   confirmLabel: string;
-  cancelLabel: string;
+  /** Omit for a single-button info/error dialog (confirm acts as "OK"). */
+  cancelLabel?: string;
+  /** Red confirm button for destructive actions. */
+  destructive?: boolean;
   loading?: boolean;
   onConfirm: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
 };
 
 /**
@@ -29,18 +33,21 @@ export const ConfirmDialog = memo(function ConfirmDialog({
   icon,
   confirmLabel,
   cancelLabel,
+  destructive,
   loading,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  // Single-button dialogs dismiss via the confirm (OK) action.
+  const dismiss = onCancel ?? onConfirm;
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel} statusBarTranslucent>
-      <Pressable style={styles.scrim} onPress={onCancel}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={dismiss} statusBarTranslucent>
+      <Pressable style={styles.scrim} onPress={dismiss}>
         {/* Stop scrim taps from closing when interacting with the card itself. */}
         <Pressable style={styles.card} onPress={() => {}}>
           {icon && (
-            <View style={styles.iconWrap}>
-              <Icon name={icon} size={22} color={LoopColors.warmDeep} />
+            <View style={[styles.iconWrap, destructive && styles.iconWrapDanger]}>
+              <Icon name={icon} size={22} color={destructive ? LoopColors.danger : LoopColors.warmDeep} />
             </View>
           )}
           <LoopText variant="heading2" style={styles.title}>
@@ -53,28 +60,26 @@ export const ConfirmDialog = memo(function ConfirmDialog({
           )}
 
           <View style={styles.actions}>
-            <Pressable
-              onPress={onCancel}
-              disabled={loading}
-              style={({ pressed }) => [styles.btn, styles.cancelBtn, { opacity: pressed ? 0.85 : 1 }]}
-            >
-              <LoopText variant="label" color="ink2">
-                {cancelLabel}
-              </LoopText>
-            </Pressable>
-            <Pressable
+            {cancelLabel && (
+              <PressScale onPress={onCancel} disabled={loading} style={[styles.btn, styles.cancelBtn]}>
+                <LoopText variant="label" color="ink2">
+                  {cancelLabel}
+                </LoopText>
+              </PressScale>
+            )}
+            <PressScale
               onPress={onConfirm}
               disabled={loading}
-              style={({ pressed }) => [
-                styles.btn,
-                styles.confirmBtn,
-                { opacity: loading ? 0.6 : pressed ? 0.9 : 1 },
-              ]}
+              style={[styles.btn, destructive ? styles.dangerBtn : styles.confirmBtn, loading && styles.btnLoading]}
             >
-              <LoopText variant="label" color="white">
-                {confirmLabel}
-              </LoopText>
-            </Pressable>
+              {loading ? (
+                <ActivityIndicator color={LoopColors.white} size="small" />
+              ) : (
+                <LoopText variant="label" color="white">
+                  {confirmLabel}
+                </LoopText>
+              )}
+            </PressScale>
           </View>
         </Pressable>
       </Pressable>
@@ -108,6 +113,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 14,
   },
+  iconWrapDanger: { backgroundColor: LoopColors.dangerSoft },
   title: { textAlign: 'center' },
   message: { textAlign: 'center', marginTop: 8 },
   actions: { flexDirection: 'row', gap: 10, marginTop: 22, alignSelf: 'stretch' },
@@ -118,6 +124,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  btnLoading: { opacity: 0.6 },
   cancelBtn: { backgroundColor: LoopColors.fill },
   confirmBtn: { backgroundColor: LoopColors.warm },
+  dangerBtn: { backgroundColor: LoopColors.danger },
 });

@@ -1,8 +1,10 @@
+import { useRef } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { LoopColors, LoopRadius, LoopShadow } from '@/constants/loop-theme';
 
 import { Icon } from './icon';
+import { PressScale } from './press-scale';
 
 /** Live input composer — shared by tab bottom and chat screen. Controlled via value/onChangeText/onSend. */
 export function ComposerInput({
@@ -19,11 +21,14 @@ export function ComposerInput({
   disabled?: boolean;
 }) {
   const canSend = value.trim().length > 0 && !disabled;
+  const inputRef = useRef<TextInput>(null);
   return (
     <View style={styles.outer}>
-      <View style={styles.shell}>
+      {/* Tapping anywhere in the shell (icon, padding) focuses the input. */}
+      <Pressable style={styles.shell} onPress={() => inputRef.current?.focus()} android_ripple={null}>
         <Icon name="sparkle" size={19} color={LoopColors.warm} />
         <TextInput
+          ref={inputRef}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
@@ -34,14 +39,15 @@ export function ComposerInput({
           numberOfLines={1}
           style={styles.input}
         />
-        <Pressable
+        <PressScale
           onPress={() => canSend && onSend()}
           disabled={!canSend}
+          haptic
           style={[styles.send, { backgroundColor: canSend ? LoopColors.warm : LoopColors.warmSoft2 }]}
         >
           <Icon name="send" size={20} color={canSend ? LoopColors.white : LoopColors.warmDeep} />
-        </Pressable>
-      </View>
+        </PressScale>
+      </Pressable>
     </View>
   );
 }

@@ -18,6 +18,7 @@ import { Icon } from './icon';
 export const Checkbox = memo(function Checkbox({ done, onPress }: { done: boolean; onPress?: () => void }) {
   const progress = useSharedValue(done ? 1 : 0);
   const pop = useSharedValue(1);
+  const press = useSharedValue(1);
 
   useEffect(() => {
     progress.set(withTiming(done ? 1 : 0, { duration: LoopMotion.timing.fast }));
@@ -25,7 +26,7 @@ export const Checkbox = memo(function Checkbox({ done, onPress }: { done: boolea
   }, [done, progress, pop]);
 
   const boxStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pop.get() }],
+    transform: [{ scale: pop.get() * press.get() }],
     backgroundColor: interpolateColor(progress.get(), [0, 1], ['rgba(47,165,103,0)', LoopColors.good]),
     borderColor: interpolateColor(progress.get(), [0, 1], [LoopColors.line, LoopColors.good]),
   }));
@@ -40,6 +41,8 @@ export const Checkbox = memo(function Checkbox({ done, onPress }: { done: boolea
         haptics[done ? 'select' : 'success']();
         onPress?.();
       }}
+      onPressIn={() => press.set(withTiming(0.9, { duration: LoopMotion.timing.fast }))}
+      onPressOut={() => press.set(withSpring(1, LoopMotion.spring.pop))}
       hitSlop={8}
     >
       <Animated.View style={[styles.box, boxStyle]}>

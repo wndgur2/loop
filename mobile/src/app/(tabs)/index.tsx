@@ -1,9 +1,9 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
-import { FlatList, type ListRenderItem, Pressable, StyleSheet, View } from 'react-native';
+import { FlatList, type ListRenderItem, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
-import { FeedbackListSkeleton, Icon, LoopText, Screen, TabHeader } from '@/components/ui';
+import { FeedbackListSkeleton, Icon, LoopText, PressScale, ProgressBar, Screen, TabHeader } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { computeStats } from '@/features/dashboard/stats';
 import { TabComposer } from '@/features/chat/tab-composer';
@@ -53,12 +53,10 @@ export default function FeedbackHomeScreen() {
             {pct}%
           </LoopText>
         </View>
-        <View style={styles.track}>
-          <View style={[styles.fill, { width: `${pct}%` }]} />
-        </View>
+        <ProgressBar value={stats.internalizationRate} height={7} />
       </View>
     ),
-    [t, stats.internalized, stats.total, pct],
+    [t, stats.internalized, stats.total, stats.internalizationRate, pct],
   );
 
   return (
@@ -94,12 +92,12 @@ export default function FeedbackHomeScreen() {
 
 function WriteButton({ onPress, label }: { onPress: () => void; label: string }) {
   return (
-    <Pressable onPress={onPress} style={styles.writeBtn}>
+    <PressScale onPress={onPress} haptic style={styles.writeBtn}>
       <Icon name="plus" size={16} color={LoopColors.warmDeep} />
       <LoopText variant="label" color="warmDeep">
         {label}
       </LoopText>
-    </Pressable>
+    </PressScale>
   );
 }
 
@@ -124,13 +122,6 @@ const styles = StyleSheet.create({
   barWrap: { paddingBottom: 6 },
   barTop: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 7 },
   pct: { fontSize: 12 },
-  track: {
-    height: 7,
-    borderRadius: 9999,
-    backgroundColor: LoopColors.ringTrack,
-    overflow: 'hidden',
-  },
-  fill: { height: '100%', borderRadius: 9999, backgroundColor: LoopColors.warm },
   writeBtn: {
     flexDirection: 'row',
     alignItems: 'center',

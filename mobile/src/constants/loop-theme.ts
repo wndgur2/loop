@@ -19,6 +19,10 @@ export const LoopColors = {
   good: '#2FA567',
   goodSoft: '#E7F4ED',
 
+  // destructive — warm terracotta red (harmonizes with the warm palette, still reads as danger)
+  danger: '#C7553F',
+  dangerSoft: 'rgba(199, 85, 63, 0.12)',
+
   // canvas / surface
   canvas: '#FAF8F5',
   surface: '#FFFFFF',
@@ -115,6 +119,6 @@ export const LoopMotion = {
   },
   /** withTiming durations (ms) */
   timing: { fast: 140, base: 220, slow: 380 },
-  /** press scale targets — intentionally shallow (subtle) */
-  scale: { press: 0.97, squish: 0.88 },
+  /** press scale targets — intentionally shallow (subtle); icon is deeper so bare icons read */
+  scale: { press: 0.97, card: 0.98, icon: 0.86, squish: 0.88 },
 } as const;

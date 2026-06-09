@@ -7,6 +7,7 @@ export { ComposerInput } from './composer';
 export { Icon, type IconName } from './icon';
 export { ImportanceDots } from './importance-dots';
 export { PressScale, usePressScale } from './press-scale';
+export { ProgressBar } from './progress-bar';
 export { Ring } from './ring';
 export { Screen } from './screen';
 export { FeedbackListSkeleton, FeedbackRowSkeleton, InsightsSkeleton, Skeleton } from './skeleton';

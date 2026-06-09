@@ -1,10 +1,10 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
-import { Button, Icon, ImportanceDots, LoopText, Screen } from '@/components/ui';
-import { LoopColors, LoopRadius } from '@/constants/loop-theme';
+import { Button, Icon, ImportanceDots, LoopText, PressScale, Screen } from '@/components/ui';
+import { LoopColors, LoopMotion, LoopRadius } from '@/constants/loop-theme';
 import {
   type FeedbackInput,
   useCreateFeedback,
@@ -97,9 +97,9 @@ export default function FeedbackFormScreen() {
   return (
     <Screen edges={['top', 'bottom']}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.headerBack}>
+        <PressScale onPress={() => router.back()} hitSlop={8} scaleTo={LoopMotion.scale.icon} style={styles.headerBack}>
           <Icon name="close" size={24} color={LoopColors.ink2} />
-        </Pressable>
+        </PressScale>
         <LoopText variant="heading2" style={styles.headerTitle}>
           {isEdit ? t('form.edit') : t('form.new')}
         </LoopText>
@@ -120,13 +120,13 @@ export default function FeedbackFormScreen() {
               {subGoals.map((sg) => {
                 const on = sg.id === subGoalId;
                 return (
-                  <Pressable key={sg.id} onPress={() => setSubGoalId(sg.id)}>
+                  <PressScale key={sg.id} onPress={() => setSubGoalId(sg.id)} haptic="select">
                     <View style={[styles.selChip, on && styles.selChipOn]}>
                       <LoopText variant="label" color={on ? 'white' : 'ink2'}>
                         {sg.name}
                       </LoopText>
                     </View>
-                  </Pressable>
+                  </PressScale>
                 );
               })}
             </View>
@@ -137,14 +137,14 @@ export default function FeedbackFormScreen() {
             {IMPORTANCE_VALUES.map((lv) => {
               const on = lv === importance;
               return (
-                <Pressable key={lv} onPress={() => setImportance(lv)} style={styles.flex}>
+                <PressScale key={lv} onPress={() => setImportance(lv)} haptic="select" style={styles.flex}>
                   <View style={[styles.selChip, styles.impChip, on && styles.impChipOn]}>
                     <ImportanceDots level={lv} />
                     <LoopText variant="label" color={on ? 'warmDeep' : 'ink3'}>
                       {t(impLabelKey(lv))}
                     </LoopText>
                   </View>
-                </Pressable>
+                </PressScale>
               );
             })}
           </View>
@@ -180,18 +180,24 @@ export default function FeedbackFormScreen() {
                 style={[styles.input, styles.takeawayInput]}
               />
               {takeaways.length > 1 && (
-                <Pressable onPress={() => setTakeaways((cur) => cur.filter((_, j) => j !== i))} hitSlop={8} style={styles.takeawayRemove}>
+                <PressScale
+                  onPress={() => setTakeaways((cur) => cur.filter((_, j) => j !== i))}
+                  hitSlop={8}
+                  haptic
+                  scaleTo={LoopMotion.scale.icon}
+                  style={styles.takeawayRemove}
+                >
                   <Icon name="close" size={18} color={LoopColors.ink4} />
-                </Pressable>
+                </PressScale>
               )}
             </View>
           ))}
-          <Pressable onPress={() => setTakeaways((cur) => [...cur, ''])} style={styles.addRow}>
+          <PressScale onPress={() => setTakeaways((cur) => [...cur, ''])} haptic style={styles.addRow}>
             <Icon name="plus" size={18} color={LoopColors.warmDeep} />
             <LoopText variant="label" color="warmDeep">
               {t('form.addTakeaway')}
             </LoopText>
-          </Pressable>
+          </PressScale>
 
           <FieldLabel>{t('form.label.tags')}</FieldLabel>
           <TextInput

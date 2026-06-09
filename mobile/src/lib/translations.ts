@@ -14,6 +14,7 @@ const ko = {
   // common
   'common.cancel': '취소',
   'common.delete': '삭제',
+  'common.ok': '확인',
   'imp.high': '높음',
   'imp.mid': '보통',
   'imp.low': '낮음',
@@ -212,6 +213,7 @@ const en: Record<TKey, string> = {
 
   'common.cancel': 'Cancel',
   'common.delete': 'Delete',
+  'common.ok': 'OK',
   'imp.high': 'High',
   'imp.mid': 'Medium',
   'imp.low': 'Low',

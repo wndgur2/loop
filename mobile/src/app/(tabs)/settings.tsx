@@ -1,9 +1,9 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
-import { Button, Card, ConfirmDialog, Icon, LoopText, Screen, TabHeader } from '@/components/ui';
-import { LoopColors, LoopRadius } from '@/constants/loop-theme';
+import { Button, Card, ConfirmDialog, Icon, LoopText, PressScale, Screen, TabHeader } from '@/components/ui';
+import { LoopColors, LoopMotion, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
 import {
   useActiveGoal,
@@ -27,6 +27,7 @@ export default function SettingsScreen() {
   const [goalTitle, setGoalTitle] = useState('');
   const [newSub, setNewSub] = useState('');
   const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null);
+  const [errorMsg, setErrorMsg] = useState<{ title: string; message: string } | null>(null);
 
   // When the server goal arrives/changes, initialize the edit field with that value (sync during render — no effect needed).
   const [syncedGoalId, setSyncedGoalId] = useState<string | undefined>(undefined);
@@ -58,7 +59,10 @@ export default function SettingsScreen() {
       setPendingDelete(null);
     } catch {
       setPendingDelete(null);
-      Alert.alert(t('settings.subgoal.delete.failTitle'), t('settings.subgoal.delete.failMsg'));
+      setErrorMsg({
+        title: t('settings.subgoal.delete.failTitle'),
+        message: t('settings.subgoal.delete.failMsg'),
+      });
     }
   }
 
@@ -67,7 +71,7 @@ export default function SettingsScreen() {
       <TabHeader title={t('settings.title')} />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <SectionTitle first>{t('settings.section.account')}</SectionTitle>
-        <Pressable onPress={() => router.push('/account')}>
+        <PressScale onPress={() => router.push('/account')} scaleTo={LoopMotion.scale.card}>
           <Card radius={20} style={styles.accountCard}>
             <View style={styles.accountInfo}>
               {!!displayName && <LoopText variant="cardTitle">{displayName}</LoopText>}
@@ -77,7 +81,7 @@ export default function SettingsScreen() {
             </View>
             <Icon name="chevron-right" size={20} color={LoopColors.ink4} />
           </Card>
-        </Pressable>
+        </PressScale>
 
         <SectionTitle>{t('settings.section.language')}</SectionTitle>
         <View style={styles.langRow}>
@@ -107,13 +111,15 @@ export default function SettingsScreen() {
               <LoopText variant="body" color="ink2" style={styles.subName}>
                 {s.name}
               </LoopText>
-              <Pressable
+              <PressScale
                 onPress={() => setPendingDelete({ id: s.id, name: s.name })}
                 hitSlop={8}
+                haptic
+                scaleTo={LoopMotion.scale.icon}
                 style={styles.subDelete}
               >
                 <Icon name="trash" size={18} color={LoopColors.ink4} />
-              </Pressable>
+              </PressScale>
             </View>
           ))}
 
@@ -126,9 +132,9 @@ export default function SettingsScreen() {
               onSubmitEditing={addSub}
               style={styles.addInput}
             />
-            <Pressable onPress={addSub} style={styles.addBtn}>
+            <PressScale onPress={addSub} haptic style={styles.addBtn}>
               <Icon name="plus" size={20} color={LoopColors.warmDeep} />
-            </Pressable>
+            </PressScale>
           </View>
         </Card>
 
@@ -144,9 +150,19 @@ export default function SettingsScreen() {
         message={pendingDelete ? t('settings.subgoal.delete.msg', { name: pendingDelete.name }) : undefined}
         confirmLabel={t('common.delete')}
         cancelLabel={t('common.cancel')}
+        destructive
         loading={deleteSubGoal.isPending}
         onConfirm={confirmDelete}
         onCancel={() => setPendingDelete(null)}
+      />
+
+      <ConfirmDialog
+        visible={!!errorMsg}
+        icon="trash"
+        title={errorMsg?.title ?? ''}
+        message={errorMsg?.message}
+        confirmLabel={t('common.ok')}
+        onConfirm={() => setErrorMsg(null)}
       />
     </Screen>
   );
@@ -154,13 +170,13 @@ export default function SettingsScreen() {
 
 function LangPill({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
   return (
-    <Pressable onPress={onPress} style={styles.flex}>
+    <PressScale onPress={onPress} haptic="select" style={styles.flex}>
       <View style={[styles.langPill, active ? styles.langPillOn : styles.langPillOff]}>
         <LoopText variant="label" color={active ? 'warmDeep' : 'ink3'}>
           {label}
         </LoopText>
       </View>
-    </Pressable>
+    </PressScale>
   );
 }
 

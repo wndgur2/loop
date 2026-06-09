@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
-import { Button, Icon, LoopText, Screen } from '@/components/ui';
+import { Button, Icon, LoopText, PressScale, Screen } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
 import { useCreateGoalWithSubGoals } from '@/features/goals/queries';
@@ -102,28 +102,28 @@ export default function OnboardingScreen() {
           {selected.length > 0 && (
             <View style={styles.selectedWrap}>
               {selected.map((name) => (
-                <Pressable key={name} onPress={() => toggle(name)}>
+                <PressScale key={name} onPress={() => toggle(name)} haptic="select">
                   <View style={[styles.chip, styles.chipOn]}>
                     <LoopText variant="label" color="white">
                       {name}
                     </LoopText>
                     <Icon name="close" size={14} color={LoopColors.white} />
                   </View>
-                </Pressable>
+                </PressScale>
               ))}
             </View>
           )}
 
           <View style={styles.chipsWrap}>
             {suggestions.map((name) => (
-              <Pressable key={name} onPress={() => toggle(name)}>
+              <PressScale key={name} onPress={() => toggle(name)} haptic="select">
                 <View style={styles.chip}>
                   <Icon name="plus" size={14} color={LoopColors.ink3} />
                   <LoopText variant="label" color="ink2">
                     {name}
                   </LoopText>
                 </View>
-              </Pressable>
+              </PressScale>
             ))}
           </View>
 
@@ -136,9 +136,9 @@ export default function OnboardingScreen() {
               onSubmitEditing={addCustom}
               style={[styles.input, styles.customInput]}
             />
-            <Pressable onPress={addCustom} style={styles.addBtn}>
+            <PressScale onPress={addCustom} haptic style={styles.addBtn}>
               <Icon name="plus" size={20} color={LoopColors.warmDeep} />
-            </Pressable>
+            </PressScale>
           </View>
 
           {error && (

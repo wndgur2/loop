@@ -10,6 +10,8 @@ import Animated, {
 import { LoopMotion } from '@/constants/loop-theme';
 import { haptics, type HapticKind } from '@/lib/haptics';
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 /**
  * usePressScale — shared press-feedback animation. Scales content down on press-in
  * and springs back on release. Single source for the app's subtle "squish".
@@ -61,16 +63,16 @@ export function PressScale({
     onPress?.();
   };
   return (
-    <Pressable
+    <AnimatedPressable
       onPress={fire}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       disabled={disabled}
       hitSlop={hitSlop}
       android_ripple={null}
-      style={style}
+      style={[style, animatedStyle]}
     >
-      <Animated.View style={animatedStyle}>{children}</Animated.View>
-    </Pressable>
+      {children}
+    </AnimatedPressable>
   );
 }

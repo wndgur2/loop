@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { Card, Icon, InsightsSkeleton, LoopText, Ring, Screen, TabHeader } from '@/components/ui';
-import { LoopColors } from '@/constants/loop-theme';
+import { Card, Icon, InsightsSkeleton, LoopText, ProgressBar, Ring, Screen, TabHeader } from '@/components/ui';
+import { LoopColors, LoopMotion } from '@/constants/loop-theme';
 import { computeStats } from '@/features/dashboard/stats';
 import { useFeedbacks } from '@/features/feedback/queries';
 import { useSubGoals } from '@/features/goals/queries';
@@ -40,10 +41,10 @@ export default function InsightsScreen() {
             </LoopText>
           </Card>
         ) : (
-          <>
+          <Animated.View entering={FadeIn.duration(LoopMotion.timing.base)}>
             {/* Internalization rate hero */}
             <Card radius={24} style={styles.hero}>
-              <Ring value={stats.internalizationRate} size={132} stroke={10}>
+              <Ring value={stats.internalizationRate} size={132} stroke={10} animated>
                 <LoopText style={styles.heroPct}>
                   {pct}
                   <LoopText style={styles.heroPctUnit}>%</LoopText>
@@ -123,7 +124,7 @@ export default function InsightsScreen() {
                 </View>
               </>
             )}
-          </>
+          </Animated.View>
         )}
       </ScrollView>
     </Screen>
@@ -160,9 +161,7 @@ function DistRow({ label, count, fraction, caption }: { label: string; count: nu
           {count}
         </LoopText>
       </View>
-      <View style={styles.distTrack}>
-        {fraction > 0 && <View style={[styles.distFill, { width: `${Math.max(4, Math.round(fraction * 100))}%` }]} />}
-      </View>
+      <ProgressBar value={fraction} height={8} minPct={4} />
     </View>
   );
 }
@@ -193,8 +192,6 @@ const styles = StyleSheet.create({
   distCard: { padding: 16, gap: 13 },
   distHead: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 6 },
   distCaption: { marginRight: 8 },
-  distTrack: { height: 8, borderRadius: 9999, backgroundColor: LoopColors.ringTrack, overflow: 'hidden' },
-  distFill: { height: '100%', borderRadius: 9999, backgroundColor: LoopColors.warm },
   tagsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   tag: {
     flexDirection: 'row',
