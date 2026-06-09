@@ -5,7 +5,7 @@ import { LoopColors } from '@/constants/loop-theme';
 
 import { Icon } from './icon';
 
-/** Takeaway 체크박스 — done이면 green fill. demo .lp-check 이식. */
+/** Takeaway checkbox — green fill when done. Ported from demo .lp-check. */
 export const Checkbox = memo(function Checkbox({ done, onPress }: { done: boolean; onPress?: () => void }) {
   return (
     <Pressable onPress={onPress} hitSlop={8}>

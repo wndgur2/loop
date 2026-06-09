@@ -15,13 +15,13 @@ const TONE: Record<Tone, { bg: string; fg: string }> = {
 
 type ChipProps = {
   label: string;
-  /** warm=하위목표 강조, neutral=기본 회색, good=긍정 */
+  /** warm=sub-goal emphasis, neutral=default gray, good=positive */
   tone?: Tone;
   icon?: ReactNode;
   style?: ViewStyle;
 };
 
-/** 알약 칩 — 카테고리(하위목표)·태그·상태. demo .lp-chip 이식. */
+/** Pill chip — category (sub-goal), tag, status. Ported from demo .lp-chip. */
 export const Chip = memo(function Chip({ label, tone = 'neutral', icon, style }: ChipProps) {
   const palette = TONE[tone];
   return (

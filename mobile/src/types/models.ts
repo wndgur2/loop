@@ -1,6 +1,6 @@
 /**
- * 앱 도메인 모델 (camelCase) + DB Row(snake_case) 매퍼.
- * DB↔앱 경계는 여기로 일원화한다(CLAUDE.md §5·data-model.md).
+ * App domain models (camelCase) + DB Row (snake_case) mappers.
+ * The DB↔app boundary is unified here (CLAUDE.md §5 · data-model.md).
  */
 import type { Database } from './database';
 
@@ -59,7 +59,7 @@ export interface Feedback {
   createdAt: string;
 }
 
-/** 상세/목록에서 takeaway를 함께 들고 다닌다. */
+/** Carries takeaways alongside in detail/list views. */
 export interface FeedbackWithTakeaways extends Feedback {
   takeaways: Takeaway[];
 }
@@ -72,7 +72,7 @@ export interface ChatMessage {
   createdAt: string;
 }
 
-// ─────────────────────────── 매퍼 ───────────────────────────
+// ─────────────────────────── mappers ───────────────────────────
 
 export function toGoal(r: GoalRow): Goal {
   return {
@@ -115,7 +115,7 @@ export function toFeedback(r: FeedbackRow): Feedback {
   };
 }
 
-/** feedbacks + takeaways(중첩 select) 행 매핑. */
+/** Maps feedbacks + takeaways (nested select) rows. */
 export function toFeedbackWithTakeaways(r: FeedbackRow & { takeaways?: TakeawayRow[] | null }): FeedbackWithTakeaways {
   const takeaways = (r.takeaways ?? [])
     .map(toTakeaway)

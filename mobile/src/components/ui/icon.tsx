@@ -5,8 +5,8 @@ import { Circle, Path, Svg } from 'react-native-svg';
 import { LoopColors } from '@/constants/loop-theme';
 
 /**
- * Loop 아이콘 — demo/loop-icons.js의 calm rounded-stroke 글리프를 react-native-svg로 이식.
- * 24×24 viewBox, currentColor 대신 color prop. 기본 stroke 기반(softer feel).
+ * Loop icons — calm rounded-stroke glyphs from demo/loop-icons.js ported to react-native-svg.
+ * 24×24 viewBox, color prop instead of currentColor. Stroke-based by default (softer feel).
  */
 export type IconName =
   | 'home'

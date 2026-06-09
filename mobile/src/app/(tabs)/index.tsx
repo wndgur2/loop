@@ -13,7 +13,7 @@ import { useSubGoals } from '@/features/goals/queries';
 import { useT } from '@/lib/i18n';
 import type { FeedbackWithTakeaways } from '@/types/models';
 
-/** 피드백 홈 — 공통 레이아웃(헤더+본문) + 하단 작성 채팅 input. 목록은 demo B(Quiet list). */
+/** Feedback home — shared layout (header + body) + bottom write chat input. List uses demo B (Quiet list). */
 export default function FeedbackHomeScreen() {
   const router = useRouter();
   const t = useT();

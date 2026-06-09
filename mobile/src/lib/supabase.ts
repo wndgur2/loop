@@ -5,14 +5,14 @@ import 'react-native-url-polyfill/auto';
 import type { Database } from '@/types/database';
 
 /**
- * Supabase 클라이언트 (클라이언트 측).
+ * Supabase client (client side).
  *
- * - 공개 가능한 값만 사용한다: EXPO_PUBLIC_SUPABASE_URL / EXPO_PUBLIC_SUPABASE_ANON_KEY.
- * - service_role 키·Anthropic 키는 절대 클라이언트에 두지 않는다. AI 호출은 Edge Function 경유.
- *   (CLAUDE.md §6 · 보안/프라이버시)
- * - 세션은 AsyncStorage에 영속화한다.
+ * - Uses only publicly-shareable values: EXPO_PUBLIC_SUPABASE_URL / EXPO_PUBLIC_SUPABASE_ANON_KEY.
+ * - Never place the service_role key or Anthropic key on the client. AI calls go through the Edge Function.
+ *   (CLAUDE.md §6 · security/privacy)
+ * - The session persists to AsyncStorage.
  *
- * 환경변수는 .env.example을 복사해 .env를 만들고 채운다(.env는 커밋 금지).
+ * For environment variables, copy .env.example to create .env and fill it in (.env must not be committed).
  */
 let client: SupabaseClient<Database> | null = null;
 
@@ -34,8 +34,8 @@ export function getSupabase(): SupabaseClient<Database> {
       storage: AsyncStorage,
       autoRefreshToken: true,
       persistSession: true,
-      // 모바일은 URL에서 세션을 자동 감지하지 않는다. 이메일 확인 딥링크는
-      // use-auth-deep-link 가 직접 코드→세션 교환으로 처리한다(PKCE).
+      // Mobile does not auto-detect the session from the URL. The email-confirmation deep link
+      // is handled by use-auth-deep-link via a direct code→session exchange (PKCE).
       detectSessionInUrl: false,
       flowType: 'pkce',
     },

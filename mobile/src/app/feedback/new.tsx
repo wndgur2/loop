@@ -40,7 +40,7 @@ export default function FeedbackFormScreen() {
   const [tagsText, setTagsText] = useState('');
   const [error, setError] = useState<TKey | null>(null);
 
-  // 서버 데이터 도착 시 폼을 초기화 — 렌더 중 동기화(effect 불필요, React 권장 패턴).
+  // Initialize the form when server data arrives — sync during render (no effect needed, React's recommended pattern).
   const [syncedId, setSyncedId] = useState<string | null>(null);
   if (isEdit && existing && syncedId !== existing.id) {
     setSyncedId(existing.id);
@@ -52,7 +52,7 @@ export default function FeedbackFormScreen() {
     setTakeaways(existing.takeaways.length ? existing.takeaways.map((tk) => tk.text) : ['']);
     setTagsText(existing.tags.join(', '));
   }
-  // 새 작성: 하위목표 기본 선택(첫 로드 1회)
+  // New entry: default sub-goal selection (once on first load)
   if (!isEdit && subGoalId === null && subGoals.length > 0) {
     setSubGoalId(subGoals[0].id);
   }

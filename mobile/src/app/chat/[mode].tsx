@@ -49,7 +49,7 @@ export default function LoopiChatScreen() {
     setMessages((cur) => [...cur, { role: 'assistant', content }]);
   }
 
-  /** 마지막 assistant 말풍선의 content를 갱신 (스트리밍 델타 누적·최종 확정). */
+  /** Update the content of the last assistant bubble (accumulate streaming deltas / finalize). */
   function updateLastAssistant(fn: (prev: string) => string) {
     setMessages((cur) => {
       const copy = cur.slice();
@@ -76,12 +76,12 @@ export default function LoopiChatScreen() {
       try {
         sessionIdRef.current = await createChatSession(serverMode);
       } catch {
-        /* 영속 실패해도 대화는 진행 */
+        /* Keep the conversation going even if persistence fails */
       }
     }
     if (sessionIdRef.current) void saveMessage(sessionIdRef.current, 'user', trimmed);
 
-    // 스트리밍 답변을 채워 넣을 빈 말풍선을 먼저 띄운다.
+    // Show an empty bubble first to fill in with the streaming reply.
     appendAssistant('');
     try {
       const res = await streamLoopi({
@@ -89,12 +89,12 @@ export default function LoopiChatScreen() {
         messages: next,
         onDelta: (delta) => updateLastAssistant((prev) => prev + delta),
       });
-      // 최종 reply(트림본)로 확정 — 델타 누적과 미세한 공백 차이를 맞춘다.
+      // Finalize with the final reply (trimmed) — reconciles minor whitespace differences from delta accumulation.
       updateLastAssistant(() => res.reply);
       if (sessionIdRef.current) void saveMessage(sessionIdRef.current, 'assistant', res.reply);
       if (res.proposal) setProposal(res.proposal);
     } catch {
-      // 빈 말풍선이면 에러 문구로 대체, 이미 일부 받았으면 뒤에 덧붙인다.
+      // If the bubble is empty, replace it with an error message; if some text was already received, keep it.
       updateLastAssistant((prev) => (prev ? prev : t('chat.err.connect')));
     } finally {
       setSending(false);
@@ -108,14 +108,14 @@ export default function LoopiChatScreen() {
     void sendText(content);
   }
 
-  // 탭 하단 input에서 넘어온 첫 메시지를 한 번 자동 전송.
+  // Auto-send the first message passed from the bottom tab input once.
   const autoSentRef = useRef(false);
   useEffect(() => {
     if (!autoSentRef.current && typeof initial === 'string' && initial.trim()) {
       autoSentRef.current = true;
       void sendText(initial);
     }
-    // 최초 1회만 — initial은 진입 시 고정.
+    // Only once on first mount — initial is fixed at entry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initial]);
 
@@ -167,7 +167,7 @@ export default function LoopiChatScreen() {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      {/* 헤더 — airy(quiet journal) */}
+      {/* Header — airy (quiet journal) */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={8} style={styles.back}>
           <Icon name="chevron-left" size={24} color={LoopColors.ink2} />
@@ -198,7 +198,7 @@ export default function LoopiChatScreen() {
               <CoachLine key={i} text={m.content} />
             ) : null,
           )}
-          {/* 첫 토큰 전까지만 타이핑 표시 (스트리밍이 시작되면 텍스트가 대신 보인다). */}
+          {/* Show the typing indicator only until the first token (once streaming starts, text is shown instead). */}
           {sending && !lastAssistantHasText && (
             <ActivityIndicator color={LoopColors.warm} size="small" style={styles.typing} />
           )}
@@ -234,7 +234,7 @@ export default function LoopiChatScreen() {
   );
 }
 
-/** Loopi 작은 링 아바타. */
+/** Small Loopi ring avatar. */
 const CoachAvatar = memo(function CoachAvatar() {
   return (
     <View style={styles.avatar}>
@@ -243,7 +243,7 @@ const CoachAvatar = memo(function CoachAvatar() {
   );
 });
 
-/** Loopi 프롬프트 — 버블 없이 따뜻한 톤의 문장. */
+/** Loopi prompt — a warm-toned sentence without a bubble. */
 const CoachLine = memo(function CoachLine({ text }: { text: string }) {
   return (
     <LoopText color="warmDeep" style={styles.coachLine}>
@@ -252,7 +252,7 @@ const CoachLine = memo(function CoachLine({ text }: { text: string }) {
   );
 });
 
-/** 사용자 발화 — 좌측 보더로 들여쓴 저널 인용. */
+/** User utterance — a journal quote indented with a left border. */
 const UserLine = memo(function UserLine({ text }: { text: string }) {
   return (
     <View style={styles.userLine}>

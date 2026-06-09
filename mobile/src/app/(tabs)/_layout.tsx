@@ -5,13 +5,13 @@ import { Icon } from '@/components/ui';
 import { LoopColors } from '@/constants/loop-theme';
 import { useT } from '@/lib/i18n';
 
-/** 탭바 콘텐츠(아이콘+라벨) 영역 높이. 하단 안전영역은 inset으로 따로 더한다. */
+/** Height of the tab bar content (icon + label) area. The bottom safe area is added separately via inset. */
 const TAB_BAR_CONTENT_HEIGHT = 64;
 
-/** 하단 탭 4개 — 피드백(홈) · 회고 · 대시보드 · 설정. demo TabBar 톤 매칭. */
+/** Four bottom tabs — Feedback (home) · Reflect · Dashboard · Settings. Matches the demo TabBar tone. */
 export default function TabsLayout() {
   const t = useT();
-  // 기기별 하단 안전영역(홈 인디케이터·제스처 내비)을 그대로 반영해 탭바 아래에 보존한다.
+  // Reflect each device's bottom safe area (home indicator / gesture nav) and preserve it below the tab bar.
   const insets = useSafeAreaInsets();
   return (
     <Tabs
@@ -21,8 +21,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: LoopColors.ink4,
         tabBarStyle: {
           backgroundColor: LoopColors.canvas,
-          borderTopColor: LoopColors.lineSoft,
-          borderTopWidth: 1,
+          borderTopWidth: 0,
           height: TAB_BAR_CONTENT_HEIGHT + insets.bottom,
           paddingTop: 8,
           paddingBottom: insets.bottom,

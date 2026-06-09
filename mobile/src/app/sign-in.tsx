@@ -20,7 +20,7 @@ export default function SignInScreen() {
   const [displayName, setDisplayName] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<TKey | null>(null);
-  // 이메일 확인 대기 화면: 확인 메일을 보낸 주소(없으면 일반 폼).
+  // Email confirmation waiting screen: the address the confirmation mail was sent to (null shows the normal form).
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [resent, setResent] = useState(false);
 
@@ -37,7 +37,7 @@ export default function SignInScreen() {
     try {
       if (isSignUp) {
         const { needsConfirmation } = await signUp(mail, password, displayName.trim() || undefined);
-        // 확인이 필요하면 대기 화면으로, 아니면 onAuthStateChange → 루트 컨트롤러가 라우팅.
+        // If confirmation is needed, go to the waiting screen; otherwise onAuthStateChange → the root controller routes.
         if (needsConfirmation) setSentTo(mail);
       } else {
         await signIn(mail, password);

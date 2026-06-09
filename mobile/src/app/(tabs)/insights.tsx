@@ -39,7 +39,7 @@ export default function InsightsScreen() {
           </Card>
         ) : (
           <>
-            {/* 내재화율 hero */}
+            {/* Internalization rate hero */}
             <Card radius={24} style={styles.hero}>
               <Ring value={stats.internalizationRate} size={132} stroke={10}>
                 <LoopText style={styles.heroPct}>
@@ -60,7 +60,7 @@ export default function InsightsScreen() {
               </View>
             </Card>
 
-            {/* 두 지표 타일 */}
+            {/* Two metric tiles */}
             <View style={styles.tiles}>
               <MetricTile
                 label={t('dash.metric.rate')}
@@ -74,7 +74,7 @@ export default function InsightsScreen() {
               />
             </View>
 
-            {/* 하위목표별 분포 */}
+            {/* Distribution by sub-goal */}
             <SectionTitle>{t('dash.section.subgoal')}</SectionTitle>
             <Card radius={20} style={styles.distCard}>
               {Object.entries(stats.bySubGoal)
@@ -90,7 +90,7 @@ export default function InsightsScreen() {
                 ))}
             </Card>
 
-            {/* 중요도 분포 */}
+            {/* Distribution by importance */}
             <SectionTitle>{t('dash.section.importance')}</SectionTitle>
             <Card radius={20} style={styles.distCard}>
               {(['high', 'mid', 'low'] as Importance[]).map((lv) => (
@@ -103,7 +103,7 @@ export default function InsightsScreen() {
               ))}
             </Card>
 
-            {/* 태그 빈도 */}
+            {/* Tag frequency */}
             {stats.tagFrequency.length > 0 && (
               <>
                 <SectionTitle>{t('dash.section.tags')}</SectionTitle>

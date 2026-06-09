@@ -1,5 +1,5 @@
-// LLM 어댑터 진입점 — env(LLM_PROVIDER)로 프로바이더를 고르고 단일 인터페이스로 호출한다.
-// 모든 AI 호출은 이 모듈을 경유한다(CLAUDE.md §6). 새 프로바이더는 여기 등록만 추가.
+// LLM adapter entry point — pick a provider via env (LLM_PROVIDER) and call through a single interface.
+// All AI calls go through this module (CLAUDE.md §6). For a new provider, just add a registration here.
 
 import { createAnthropicProvider } from './anthropic.ts'
 import { createOpenAIProvider } from './openai.ts'
@@ -22,7 +22,7 @@ const REGISTRY: Record<string, () => LLMProvider> = {
   gemini: createGeminiProvider,
 }
 
-/** LLM_PROVIDER secret으로 프로바이더 선택 (기본 gemini). 미지원 값이면 에러. */
+/** Select the provider via the LLM_PROVIDER secret (default gemini). Errors on an unsupported value. */
 export function getProvider(): LLMProvider {
   const name = (Deno.env.get('LLM_PROVIDER') ?? 'gemini').toLowerCase()
   const factory = REGISTRY[name]
@@ -32,12 +32,12 @@ export function getProvider(): LLMProvider {
   return factory()
 }
 
-/** 선택된 프로바이더로 응답을 스트리밍한다 (text 델타 → 마지막 final). */
+/** Stream the response with the selected provider (text deltas → final at the end). */
 export function streamLLM(args: LLMCallArgs): AsyncGenerator<LLMStreamEvent> {
   return getProvider().stream(args)
 }
 
-/** 비-스트리밍 1회 호출 — 스트림을 소진해 최종 결과만 돌려준다(evals 등 비대화 경로용). */
+/** Non-streaming single call — drains the stream and returns only the final result (for non-conversational paths like evals). */
 export async function callLLM(args: LLMCallArgs): Promise<LLMResult> {
   let result: LLMResult = { text: '', toolUse: null }
   for await (const ev of streamLLM(args)) {

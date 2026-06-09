@@ -1,7 +1,7 @@
 /**
- * 채팅 세션 영속 헬퍼 — 작성/회고 공통.
- * 세션은 첫 전송 때 생성하고, 메시지는 fire-and-forget로 저장한다.
- * Edge Function은 메시지 배열을 직접 받으므로(컨텍스트는 전체 피드백) DB 메시지에 의존하지 않는다.
+ * Chat session persistence helpers — shared by write/retrospective.
+ * The session is created on the first send, and messages are saved fire-and-forget.
+ * The Edge Function receives the message array directly (context is the full feedback), so it does not depend on DB messages.
  */
 import { getSupabase } from '@/lib/supabase';
 import type { MessageRole, SessionMode } from '@/types/models';
@@ -22,7 +22,7 @@ export async function createChatSession(mode: SessionMode, subGoalId?: string | 
 }
 
 export async function saveMessage(sessionId: string, role: MessageRole, content: string): Promise<void> {
-  // 실패해도 대화 흐름을 막지 않는다(저장은 부가). 로그엔 본문 남기지 않음.
+  // A failure must not block the conversation flow (saving is auxiliary). Do not log message body.
   const { error } = await getSupabase().from('chat_messages').insert({ session_id: sessionId, role, content });
   if (error) console.warn('chat message save failed');
 }

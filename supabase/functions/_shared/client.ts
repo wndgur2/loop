@@ -1,9 +1,9 @@
 import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 
 /**
- * 요청의 Authorization(JWT)으로 **사용자 스코프** Supabase 클라이언트를 만든다.
- * → RLS가 그대로 적용되어 사용자는 자기 데이터만 읽고 쓴다(CLAUDE.md §6).
- * service_role 키는 사용하지 않는다(필요 시에만 별도 admin 클라이언트로 분리).
+ * Builds a **user-scoped** Supabase client from the request's Authorization (JWT).
+ * → RLS applies as-is, so the user only reads and writes their own data (CLAUDE.md §6).
+ * The service_role key is not used (split into a separate admin client only when needed).
  */
 export function createUserClient(req: Request): SupabaseClient {
   const authHeader = req.headers.get('Authorization') ?? '';

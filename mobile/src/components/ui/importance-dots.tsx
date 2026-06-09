@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { LoopColors } from '@/constants/loop-theme';
 import type { Importance } from '@/types/models';
 
-/** 중요도 점 3개 — high=warm 3, mid=ink 2, low=ink 1. demo .lp-imp 이식. */
+/** Three importance dots — high=warm 3, mid=ink 2, low=ink 1. Ported from demo .lp-imp. */
 export const ImportanceDots = memo(function ImportanceDots({ level }: { level: Importance }) {
   const colors = dotColors(level);
   return (

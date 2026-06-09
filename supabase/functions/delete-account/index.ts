@@ -1,9 +1,9 @@
-// 계정 삭제 Edge Function — 인증된 사용자가 "자기 자신"의 계정만 삭제한다.
-// auth.users 삭제 → profiles(on delete cascade) → goals/sub_goals/feedbacks/takeaways/chat_* 까지
-// init.sql의 연쇄 삭제로 모든 사용자 데이터가 함께 지워진다.
+// Account deletion Edge Function — an authenticated user can delete only "their own" account.
+// Deleting auth.users → profiles (on delete cascade) → goals/sub_goals/feedbacks/takeaways/chat_*
+// the cascade in init.sql removes all of the user's data together.
 //
-// 사용자 삭제는 admin API(service_role)가 필요한 권한 작업이라 반드시 서버를 경유한다(CLAUDE.md §6).
-// service_role 키는 이 함수 안에서만 쓰이고, 삭제 대상은 토큰으로 검증된 본인(user.id)으로 고정한다.
+// User deletion is a privileged operation that requires the admin API (service_role), so it must go through the server (CLAUDE.md §6).
+// The service_role key is used only inside this function, and the deletion target is fixed to the token-verified self (user.id).
 
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') return jsonResponse({ error: 'method_not_allowed' }, 405)
 
   try {
-    // 토큰으로 본인 확인(RLS 적용 사용자 클라이언트).
+    // Verify the user via token (RLS-applied user client).
     const token = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '')
     const supabase = createUserClient(req)
     const {
@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
     } = await supabase.auth.getUser(token)
     if (!user) return jsonResponse({ error: 'unauthorized' }, 401)
 
-    // 본인 id로만 admin 삭제(다른 사용자는 절대 지울 수 없음).
+    // Admin-delete only by the user's own id (other users can never be deleted).
     const admin = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
 
     return jsonResponse({ ok: true })
   } catch (err) {
-    // 본문/개인정보는 남기지 않는다(CLAUDE.md §6).
+    // Do not log message bodies or personal data (CLAUDE.md §6).
     console.error('delete-account error:', err instanceof Error ? err.message : 'unknown')
     return jsonResponse({ error: 'internal_error' }, 500)
   }

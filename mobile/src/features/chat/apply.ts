@@ -1,6 +1,6 @@
 /**
- * 회고(retrospective) proposal을 DB에 반영한다 — 확인 칩을 누른 뒤에만 호출(조용한 변경 금지).
- * 작성(create) proposal은 useCreateFeedback 훅으로 컴포넌트에서 직접 반영한다.
+ * Applies a retrospective proposal to the DB — call only after the confirm chip is pressed (no silent changes).
+ * Create proposals are applied directly in components via the useCreateFeedback hook.
  */
 import type { RetrospectiveProposal } from '@/lib/loopi';
 import { getSupabase } from '@/lib/supabase';
@@ -33,7 +33,7 @@ export async function applyRetrospective(proposal: RetrospectiveProposal): Promi
         if (error) throw error;
       }
     } else if (u.text) {
-      // id 없음 → 신규 다짐 추가
+      // No id → add a new takeaway
       const { error } = await supabase
         .from('takeaways')
         .insert({ feedback_id: proposal.feedback_id, text: u.text, done: u.done ?? false });
@@ -42,7 +42,7 @@ export async function applyRetrospective(proposal: RetrospectiveProposal): Promi
   }
 }
 
-/** 회고 변경 내용을 사람이 읽을 요약으로 — 확인 칩 위에 보여준다(언어는 t로). */
+/** Turn the retrospective changes into a human-readable summary — shown above the confirm chip (localized via t). */
 export function describeRetrospective(
   p: RetrospectiveProposal,
   t: (key: TKey, vars?: Record<string, string | number>) => string,

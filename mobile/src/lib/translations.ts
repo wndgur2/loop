@@ -1,24 +1,24 @@
 /**
- * 앱 문자열 사전 (한국어/영어). 키는 화면.용도 형태.
- * t(key, vars)로 사용하며 {var}는 런타임 치환된다. 정본 톤: 따뜻한 멘토(loopi-spec).
+ * App string dictionary (Korean/English). Keys follow a screen.purpose form.
+ * Used via t(key, vars); {var} is substituted at runtime. Canonical tone: warm mentor (loopi-spec).
  */
 export type Lang = 'ko' | 'en';
 
 const ko = {
-  // 탭
+  // tabs
   'tab.feedback': '피드백',
   'tab.reflect': '회고',
   'tab.insights': '대시보드',
   'tab.settings': '설정',
 
-  // 공통
+  // common
   'common.cancel': '취소',
   'common.delete': '삭제',
   'imp.high': '높음',
   'imp.mid': '보통',
   'imp.low': '낮음',
 
-  // 로그인
+  // sign-in
   'signin.title.signin': '다시 오셨네요',
   'signin.title.signup': '되돌아보기를 시작해요',
   'signin.subtitle': '스스로 남긴 피드백을 Loopi가 목표로 이어드려요.',
@@ -40,7 +40,7 @@ const ko = {
   'signin.confirm.resent': '확인 메일을 다시 보냈어요.',
   'signin.confirm.back': '로그인으로 돌아가기',
 
-  // 온보딩
+  // onboarding
   'ob.step1': '1. 최종 목표',
   'ob.goalTitle': '어디로 향하고 있나요?',
   'ob.goalDesc': '모든 피드백을 이 커리어 목표에 정렬해 드려요.',
@@ -54,7 +54,7 @@ const ko = {
   'ob.err.session': '세션이 만료됐어요. 다시 로그인해 주세요.',
   'ob.err.save': '저장에 실패했어요. 잠시 후 다시 시도해 주세요.',
 
-  // 피드백 홈
+  // feedback home
   'home.internalized': '내재화',
   'home.internalizedOf': '내재화 · {total}개 중 {done}개',
   'home.feedbackCount': '내 피드백',
@@ -65,7 +65,7 @@ const ko = {
   'home.takeawayDone': '{done}/{total} 실행',
   'badge.internalized': '내재화됨',
 
-  // 상세
+  // detail
   'detail.openLoop': '열린 고리',
   'detail.closed.title': '고리를 닫았어요',
   'detail.closed.sub': '내재화 완료로 표시됨',
@@ -84,7 +84,7 @@ const ko = {
   'detail.delete.title': '피드백 삭제',
   'detail.delete.msg': '이 피드백과 실천항목을 삭제할까요? 되돌릴 수 없어요.',
 
-  // 작성/수정 폼
+  // create/edit form
   'form.new': '직접 작성',
   'form.edit': '피드백 수정',
   'form.label.title': '제목',
@@ -107,7 +107,7 @@ const ko = {
   'form.err.subgoal': '하위 목표를 하나 선택해 주세요.',
   'form.err.save': '저장에 실패했어요. 잠시 후 다시 시도해 주세요.',
 
-  // 채팅 (Loopi)
+  // chat (Loopi)
   'chat.title.write': '작성',
   'chat.title.reflect': '되새김',
   'chat.sub': 'Loopi와 대화 중',
@@ -128,7 +128,7 @@ const ko = {
   'chat.err.saveFail': '저장에 실패했어요. 잠시 후 다시 시도해 주세요.',
   'chat.err.applyFail': '반영에 실패했어요. 잠시 후 다시 시도해 주세요.',
 
-  // 회고 변경 요약 (apply.ts)
+  // retrospective change summary (apply.ts)
   'retro.internalize': '이 피드백을 내재화 완료로 표시',
   'retro.deinternalize': '내재화 표시 해제',
   'retro.takeawayDone': '실천항목 하나를 실행 완료로',
@@ -137,7 +137,7 @@ const ko = {
   'retro.takeawayAdd': '새 다짐 추가: "{text}"',
   'retro.nochange': '변경할 내용이 없어요.',
 
-  // 회고 탭
+  // reflect tab
   'reflect.title': '회고',
   'reflect.subtitle': '되새길 만한 고리를 골라 떠먹여 드려요.',
   'reflect.composer': '되새기고 싶은 것을 말해 주세요…',
@@ -152,7 +152,7 @@ const ko = {
   'reflect.empty.title': '되새길 고리가 아직 없어요',
   'reflect.empty.body': '피드백을 쌓으면, 되새길 만한 것을 Loopi가 골라 드릴게요.',
 
-  // 대시보드
+  // dashboard
   'dash.title': '대시보드',
   'dash.empty.title': '아직 보여줄 통계가 없어요',
   'dash.empty.body': '피드백을 남기면 내재화율과 성장 추이가 여기에 모여요.',
@@ -167,7 +167,7 @@ const ko = {
   'dash.section.tags': '자주 등장한 태그',
   'dash.subgoal.internalized': '내재화 {n}',
 
-  // 설정
+  // settings
   'settings.title': '설정',
   'settings.section.account': '계정',
   'settings.section.goal': '최종 목표',
@@ -186,7 +186,7 @@ const ko = {
   'settings.signout.title': '로그아웃',
   'settings.signout.msg': '로그아웃할까요?',
 
-  // 계정 상세
+  // account detail
   'account.title': '계정',
   'account.section.profile': '프로필',
   'account.email': '이메일',
@@ -393,7 +393,7 @@ const en: Record<TKey, string> = {
 
 export const translations: Record<Lang, Record<TKey, string>> = { ko, en };
 
-/** 온보딩 하위목표 추천 — 언어별. 저장되는 값이므로 선택 시점의 언어 라벨로 들어간다. */
+/** Onboarding sub-goal suggestions — per language. Since these are stored values, the label of the language at selection time is saved. */
 export const SUGGESTED_SUBGOALS: Record<Lang, string[]> = {
   ko: ['협업', '커뮤니케이션', '제품 기획', '문제 정의', '의사결정', '실행력', '데이터 분석', '리더십'],
   en: ['Collaborating', 'Communication', 'Product planning', 'Problem framing', 'Decision making', 'Execution', 'Data analysis', 'Leadership'],

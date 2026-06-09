@@ -7,7 +7,7 @@ import { relativeTime } from '@/lib/date';
 import { useI18n, useT } from '@/lib/i18n';
 import type { FeedbackWithTakeaways, Importance } from '@/types/models';
 
-/** 내재화 배지 — 닫힌 고리. */
+/** Internalized badge — closed loop. */
 export const InternalizedBadge = memo(function InternalizedBadge() {
   const t = useT();
   return (
@@ -20,7 +20,7 @@ export const InternalizedBadge = memo(function InternalizedBadge() {
   );
 });
 
-/** Takeaway 실행 진척 — 막대 + n/m. */
+/** Takeaway completion progress — bars + n/m. */
 export const TakeawayProgress = memo(function TakeawayProgress({ done, total }: { done: number; total: number }) {
   const t = useT();
   return (
@@ -47,13 +47,13 @@ type FeedbackRowProps = {
   feedback: FeedbackWithTakeaways;
   subGoalName: string;
   first?: boolean;
-  /** 안정적인 핸들러(useCallback). 행은 feedback.id로 호출한다 → memo 효과 유지. */
+  /** Stable handler (useCallback). The row calls it with feedback.id → preserves memo benefit. */
   onPress: (id: string) => void;
 };
 
 /**
- * 피드백 행 — demo home B(Quiet list) 이식.
- * 좌측 importance 색막대 + 카테고리·날짜 + 제목 + (열린 고리면) 실천 진척. hairline 구분.
+ * Feedback row — ported from demo home B (Quiet list).
+ * Left importance color bar + category/date + title + (if open loop) takeaway progress. Hairline separator.
  */
 export const FeedbackRow = memo(function FeedbackRow({ feedback, subGoalName, first, onPress }: FeedbackRowProps) {
   const { lang } = useI18n();
@@ -61,7 +61,7 @@ export const FeedbackRow = memo(function FeedbackRow({ feedback, subGoalName, fi
   const done = feedback.takeaways.filter((tk) => tk.done).length;
 
   return (
-    <Pressable onPress={() => onPress(feedback.id)} style={pressedStyle}>
+    <Pressable onPress={() => onPress(feedback.id)}>
       <View style={[styles.row, first && styles.rowFirst]}>
         <View style={[styles.impBar, { backgroundColor: IMP_BAR[feedback.importance] }]} />
         <View style={styles.content}>
@@ -92,8 +92,6 @@ export const FeedbackRow = memo(function FeedbackRow({ feedback, subGoalName, fi
     </Pressable>
   );
 });
-
-const pressedStyle = ({ pressed }: { pressed: boolean }) => ({ opacity: pressed ? 0.6 : 1 });
 
 const styles = StyleSheet.create({
   badge: {

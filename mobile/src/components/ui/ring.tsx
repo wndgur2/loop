@@ -14,7 +14,7 @@ type RingProps = {
   children?: ReactNode;
 };
 
-/** 진척 링 — 내재화율의 시각 모티프(닫히는 고리). demo home Ring 이식. */
+/** Progress ring — visual motif for internalization rate (closing loop). Ported from demo home Ring. */
 export const Ring = memo(function Ring({
   value,
   size = 92,

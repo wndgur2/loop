@@ -1,6 +1,6 @@
 /**
- * 최종 목표(goals) · 하위 목표(sub_goals) 데이터 훅.
- * MVP는 활성 목표 1개. sub_goals는 RLS가 사용자 소유 목표로 스코프하므로 전체 select로 충분.
+ * Data hooks for goals (final goals) and sub_goals.
+ * MVP has 1 active goal. RLS scopes sub_goals to the user's own goals, so a full select is sufficient.
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -40,7 +40,7 @@ export function useSubGoals() {
   });
 }
 
-/** 온보딩: 최종 목표 1개 + 하위목표 다중을 한 번에 생성. */
+/** Onboarding: create 1 final goal + multiple sub-goals at once. */
 export function useCreateGoalWithSubGoals() {
   const qc = useQueryClient();
   return useMutation({
@@ -94,7 +94,7 @@ export function useDeleteSubGoal() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      // 연결 피드백이 있으면 DB가 restrict로 막는다(data-model). 에러를 그대로 올린다.
+      // If linked feedbacks exist, the DB blocks it via restrict (data-model). Propagate the error as-is.
       const { error } = await getSupabase().from('sub_goals').delete().eq('id', id);
       if (error) throw error;
     },

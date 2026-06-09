@@ -10,7 +10,7 @@ type CardProps = ViewProps & {
   style?: ViewStyle | ViewStyle[];
 };
 
-/** 흰 surface 카드 — hairline border + soft shadow. demo .lp-card 이식. */
+/** White surface card — hairline border + soft shadow. Ported from demo .lp-card. */
 export const Card = memo(function Card({ children, radius = LoopRadius['2xl'], padded = true, style, ...rest }: CardProps) {
   return (
     <View style={[styles.base, { borderRadius: radius, padding: padded ? 17 : 0 }, style as ViewStyle]} {...rest}>

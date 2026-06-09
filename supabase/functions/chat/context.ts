@@ -1,9 +1,9 @@
 import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 
 /**
- * Loopi 컨텍스트 = 사용자의 **전체 피드백 + 하위 목표**(loopi-spec §5).
- * RLS 클라이언트로 조회하므로 자기 데이터만 나온다.
- * 반환 문자열은 시스템 프롬프트에 캐시되는 블록으로 주입한다(프롬프트 캐싱).
+ * Loopi context = the user's **full feedback + sub-goals** (loopi-spec §5).
+ * Queried via the RLS client, so only the user's own data is returned.
+ * The returned string is injected as a cached block in the system prompt (prompt caching).
  */
 export async function buildContext(supabase: SupabaseClient): Promise<string> {
   const [{ data: subGoals }, { data: feedbacks }] = await Promise.all([
@@ -28,16 +28,16 @@ export async function buildContext(supabase: SupabaseClient): Promise<string> {
         `category(sub_goal_id): ${f.sub_goal_id} · importance: ${f.importance} · internalized: ${f.internalized}`,
         `situation: ${f.situation}`,
         `root_cause: ${f.root_cause}`,
-        takeaways ? `takeaways:\n${takeaways}` : 'takeaways: (없음)',
+        takeaways ? `takeaways:\n${takeaways}` : 'takeaways: (none)',
       ].join('\n');
     })
     .join('\n\n');
 
   return [
-    '## 사용자의 하위 목표 (= category 후보, 이 중 하나만 배정 가능)',
-    subGoalLines || '(아직 없음)',
+    "## User's sub-goals (= category candidates, assign exactly one of these)",
+    subGoalLines || '(none yet)',
     '',
-    '## 사용자의 전체 피드백 (반복 감지·되새김의 근거)',
-    feedbackBlocks || '(아직 없음)',
+    "## User's full feedback (basis for repetition detection & revisiting)",
+    feedbackBlocks || '(none yet)',
   ].join('\n');
 }

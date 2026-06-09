@@ -39,7 +39,7 @@ function RootNavigator() {
   const segments = useSegments();
   const router = useRouter();
 
-  // 이메일 확인 링크(딥링크) → 세션 교환. 세션이 서면 아래 라우팅 effect 가 이어받는다.
+  // Email confirmation link (deep link) → session exchange. Once a session is set, the routing effect below takes over.
   useAuthDeepLink();
 
   useEffect(() => {
@@ -56,7 +56,7 @@ function RootNavigator() {
       if (seg0 !== 'onboarding') router.replace('/onboarding');
       return;
     }
-    // 인증 완료 + 목표 있음 → 앱 본체로
+    // Authenticated + has a goal → go to the main app
     if (seg0 === 'sign-in' || seg0 === 'onboarding') router.replace('/');
   }, [loading, session, goal, goalLoading, segments, router]);
 

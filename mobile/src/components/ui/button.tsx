@@ -17,7 +17,7 @@ type ButtonProps = {
   style?: ViewStyle;
 };
 
-/** 기본 액션 버튼 — primary=warm 채움, secondary=surface+border. */
+/** Default action button — primary=warm fill, secondary=surface+border. */
 export const Button = memo(function Button({
   label,
   onPress,
@@ -57,7 +57,7 @@ export const Button = memo(function Button({
   );
 });
 
-/** 아이콘만 있는 정사각 버튼 (상세 화면 액션 등). */
+/** Icon-only square button (e.g. detail-screen actions). */
 export const IconButton = memo(function IconButton({
   icon,
   onPress,
@@ -72,7 +72,10 @@ export const IconButton = memo(function IconButton({
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.iconBtn, { width: size, height: size, opacity: pressed ? 0.85 : 1 }]}
+      style={({ pressed }) => [
+        styles.iconBtn,
+        { width: size, height: size, opacity: pressed ? 0.85 : 1 },
+      ]}
     >
       <View>
         <Icon name={icon} size={22} color={color} />

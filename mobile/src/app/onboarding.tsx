@@ -12,7 +12,7 @@ import { SUGGESTED_SUBGOALS, type TKey } from '@/lib/translations';
 export default function OnboardingScreen() {
   const { session } = useAuth();
   const { t, lang } = useI18n();
-  // AI 추천 자리 — MVP는 정본 직군 후보를 정적으로 떠먹인다(언어별, Edge Function 추천은 v1.1).
+  // Placeholder for AI recommendations — the MVP statically serves canonical role candidates (per language; Edge Function recommendations land in v1.1).
   const SUGGESTED = SUGGESTED_SUBGOALS[lang];
   const create = useCreateGoalWithSubGoals();
   const [title, setTitle] = useState('');
@@ -53,7 +53,7 @@ export default function OnboardingScreen() {
           source: SUGGESTED.includes(name) ? 'ai_suggested' : 'user_added',
         })),
       });
-      // 성공 → goal 쿼리 무효화 → 루트 컨트롤러가 탭으로 라우팅.
+      // Success → invalidate the goal query → the root controller routes to the tabs.
     } catch {
       setError('ob.err.save');
     }

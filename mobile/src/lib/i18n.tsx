@@ -20,12 +20,12 @@ function format(template: string, vars?: Vars): string {
   return template.replace(/\{(\w+)\}/g, (_, k: string) => (k in vars ? String(vars[k]) : `{${k}}`));
 }
 
-/** 언어 설정을 앱 전역에 제공. 선택값은 AsyncStorage에 영속. 기본 한국어. */
+/** Provides the language setting app-wide. The selection persists to AsyncStorage. Default is Korean. */
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>('ko');
 
   useEffect(() => {
-    // 비동기 로드 → 저장된 언어 복원(렌더 차단하지 않음). 언마운트 후 setState 방지.
+    // Async load → restore the saved language (does not block render). Prevent setState after unmount.
     let mounted = true;
     AsyncStorage.getItem(STORAGE_KEY).then((v) => {
       if (mounted && (v === 'ko' || v === 'en')) setLangState(v);
@@ -56,7 +56,7 @@ export function useI18n(): I18nState {
   return ctx;
 }
 
-/** 자주 쓰는 t만 필요할 때. */
+/** When only the frequently-used t is needed. */
 export function useT() {
   return useI18n().t;
 }

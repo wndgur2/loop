@@ -7,7 +7,7 @@ import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
 import { useI18n } from '@/lib/i18n';
 
-// 파괴적 액션 전용 빨강(팔레트엔 채도색이 warm 하나뿐이라 여기서만 쓰는 일회성 리터럴).
+// Red reserved for destructive actions (the palette has only one saturated color, warm, so this is a one-off literal used only here).
 const DANGER = '#C0392B';
 
 export default function AccountScreen() {
@@ -19,7 +19,7 @@ export default function AccountScreen() {
   const currentName = (session?.user.user_metadata?.display_name as string | undefined) ?? '';
 
   const [name, setName] = useState(currentName);
-  // 세션의 이름이 바뀌면(저장 성공 후) 입력값을 그 값으로 동기화(렌더 중 — effect 불필요).
+  // When the session's name changes (after a successful save), sync the input value to it (during render — no effect needed).
   const [syncedName, setSyncedName] = useState(currentName);
   if (currentName !== syncedName) {
     setSyncedName(currentName);
@@ -59,7 +59,7 @@ export default function AccountScreen() {
         onPress: async () => {
           setDeleting(true);
           try {
-            // 성공 시 deleteAccount가 로그아웃 → 루트 네비게이터가 sign-in으로 보낸다.
+            // On success, deleteAccount signs out → the root navigator sends the user to sign-in.
             await deleteAccount();
           } catch {
             setDeleting(false);

@@ -1,7 +1,7 @@
--- Loop 초기 스키마
--- 정본: documents/data-model.md · 보안: CLAUDE.md §6
--- 원칙: 모든 사용자 데이터 테이블에 RLS 활성화 + select/insert/update/delete 4정책.
---       자식 테이블 소유권은 부모를 통해(EXISTS) 검증한다. DB가 최종 방어선.
+-- Loop initial schema
+-- Canonical source: documents/data-model.md · security: CLAUDE.md §6
+-- Principle: enable RLS on every user-data table + 4 policies for select/insert/update/delete.
+--            Child-table ownership is verified through the parent (EXISTS). The DB is the last line of defense.
 
 -- ────────────────────────── Enums (data-model.md §3) ──────────────────────────
 create type importance as enum ('high', 'mid', 'low');
@@ -10,7 +10,7 @@ create type session_mode as enum ('write', 'retrospective');
 create type session_status as enum ('active', 'completed', 'abandoned');
 create type message_role as enum ('user', 'assistant');
 
--- ────────────────────────── profiles (auth.users와 1:1) ──────────────────────────
+-- ────────────────────────── profiles (1:1 with auth.users) ──────────────────────────
 create table profiles (
   id           uuid primary key references auth.users (id) on delete cascade,
   display_name text,
@@ -29,7 +29,7 @@ create policy "profiles_update_own" on profiles
 create policy "profiles_delete_own" on profiles
   for delete using (id = auth.uid());
 
--- ────────────────────────── goals — 최종 목표 (MVP 1개) ──────────────────────────
+-- ────────────────────────── goals — final goal (1 in MVP) ──────────────────────────
 create table goals (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid        not null references profiles (id) on delete cascade,
@@ -51,7 +51,7 @@ create policy "goals_update_own" on goals
 create policy "goals_delete_own" on goals
   for delete using (user_id = auth.uid());
 
--- ────────────────────────── sub_goals — 하위 목표 (= category) ──────────────────────────
+-- ────────────────────────── sub_goals — sub-goals (= category) ──────────────────────────
 create table sub_goals (
   id         uuid primary key default gen_random_uuid(),
   goal_id    uuid            not null references goals (id) on delete cascade,
@@ -64,7 +64,7 @@ create index sub_goals_goal_id_idx on sub_goals (goal_id);
 
 alter table sub_goals enable row level security;
 
--- 소유권: 부모 goals 를 통해 검증
+-- Ownership: verified through the parent goals
 create policy "sub_goals_select_own" on sub_goals
   for select using (
     exists (select 1 from goals g where g.id = sub_goals.goal_id and g.user_id = auth.uid())
@@ -84,13 +84,13 @@ create policy "sub_goals_delete_own" on sub_goals
     exists (select 1 from goals g where g.id = sub_goals.goal_id and g.user_id = auth.uid())
   );
 
--- ────────────────────────── chat_sessions — AI 대화 세션 ──────────────────────────
--- feedbacks.session_id 가 참조하므로 feedbacks 보다 먼저 만든다.
+-- ────────────────────────── chat_sessions — AI conversation session ──────────────────────────
+-- Created before feedbacks because feedbacks.session_id references it.
 create table chat_sessions (
   id           uuid primary key default gen_random_uuid(),
   user_id      uuid           not null references profiles (id) on delete cascade,
   mode         session_mode   not null,
-  -- 회고는 더 이상 하위목표로 스코프하지 않음 → 보통 null ("영역 통째" 카드 진입 시 참고용)
+  -- Retrospective is no longer scoped by sub-goal → usually null (kept for reference when entering via a "whole area" card)
   sub_goal_id  uuid           references sub_goals (id) on delete set null,
   status       session_status not null default 'active',
   created_at   timestamptz    not null default now(),
@@ -109,15 +109,15 @@ create policy "chat_sessions_update_own" on chat_sessions
 create policy "chat_sessions_delete_own" on chat_sessions
   for delete using (user_id = auth.uid());
 
--- ────────────────────────── feedbacks — 회고 1건 (Canonical Template) ──────────────────────────
+-- ────────────────────────── feedbacks — one reflection (Canonical Template) ──────────────────────────
 create table feedbacks (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid        not null references profiles (id) on delete cascade,
   session_id      uuid        references chat_sessions (id) on delete set null,
   title           text        not null,
-  situation       text        not null,  -- 템플릿 ## Feedback
-  root_cause      text        not null,  -- 템플릿 ## Root cause
-  -- category = 하위목표. NOT NULL (미분류 없음). 연결 피드백이 있으면 하위목표 삭제 차단(restrict).
+  situation       text        not null,  -- template ## Feedback
+  root_cause      text        not null,  -- template ## Root cause
+  -- category = sub-goal. NOT NULL (no uncategorized). Blocks deleting a sub-goal that has linked feedback (restrict).
   sub_goal_id     uuid        not null references sub_goals (id) on delete restrict,
   importance      importance  not null default 'mid',
   tags            text[]      not null default '{}',
@@ -140,7 +140,7 @@ create policy "feedbacks_update_own" on feedbacks
 create policy "feedbacks_delete_own" on feedbacks
   for delete using (user_id = auth.uid());
 
--- ────────────────────────── takeaways — 실천항목 (개별 done 추적) ──────────────────────────
+-- ────────────────────────── takeaways — action items (per-item done tracking) ──────────────────────────
 create table takeaways (
   id          uuid primary key default gen_random_uuid(),
   feedback_id uuid        not null references feedbacks (id) on delete cascade,
@@ -154,7 +154,7 @@ create index takeaways_feedback_id_idx on takeaways (feedback_id);
 
 alter table takeaways enable row level security;
 
--- 소유권: 부모 feedbacks 를 통해 검증
+-- Ownership: verified through the parent feedbacks
 create policy "takeaways_select_own" on takeaways
   for select using (
     exists (select 1 from feedbacks f where f.id = takeaways.feedback_id and f.user_id = auth.uid())
@@ -174,7 +174,7 @@ create policy "takeaways_delete_own" on takeaways
     exists (select 1 from feedbacks f where f.id = takeaways.feedback_id and f.user_id = auth.uid())
   );
 
--- ────────────────────────── chat_messages — 세션 내 메시지 ──────────────────────────
+-- ────────────────────────── chat_messages — messages within a session ──────────────────────────
 create table chat_messages (
   id         uuid primary key default gen_random_uuid(),
   session_id uuid         not null references chat_sessions (id) on delete cascade,
@@ -186,7 +186,7 @@ create index chat_messages_session_id_idx on chat_messages (session_id);
 
 alter table chat_messages enable row level security;
 
--- 소유권: 부모 chat_sessions 를 통해 검증
+-- Ownership: verified through the parent chat_sessions
 create policy "chat_messages_select_own" on chat_messages
   for select using (
     exists (select 1 from chat_sessions s where s.id = chat_messages.session_id and s.user_id = auth.uid())
@@ -206,8 +206,8 @@ create policy "chat_messages_delete_own" on chat_messages
     exists (select 1 from chat_sessions s where s.id = chat_messages.session_id and s.user_id = auth.uid())
   );
 
--- ────────────────────────── 가입 시 profiles 자동 생성 트리거 ──────────────────────────
--- SECURITY DEFINER + search_path='' (Supabase 권장 하드닝). 모든 객체를 풀 네임으로 참조.
+-- ────────────────────────── trigger to auto-create profiles on sign-up ──────────────────────────
+-- SECURITY DEFINER + search_path='' (Supabase-recommended hardening). Reference all objects by full name.
 create function public.handle_new_user()
 returns trigger
 language plpgsql

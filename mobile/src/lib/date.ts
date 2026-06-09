@@ -1,6 +1,6 @@
 import type { Lang } from './translations';
 
-/** 상대 시간 — "오늘/어제/N일 전/N주 전" · "today/yesterday/Nd ago/Nw ago". */
+/** Relative time — "오늘/어제/N일 전/N주 전" · "today/yesterday/Nd ago/Nw ago". */
 export function relativeTime(iso: string, lang: Lang = 'ko'): string {
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return '';
@@ -22,7 +22,7 @@ export function relativeTime(iso: string, lang: Lang = 'ko'): string {
   return new Date(iso).toLocaleDateString(locale, { month: 'short', day: 'numeric' });
 }
 
-/** 절대 날짜 — "2026년 5월 29일" · "May 29, 2026". */
+/** Absolute date — "2026년 5월 29일" · "May 29, 2026". */
 export function fullDate(iso: string, lang: Lang = 'ko'): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';

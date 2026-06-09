@@ -1,4 +1,4 @@
-// 공용 CORS 헤더. 앱(Expo)에서 Edge Function 호출 시 필요.
+// Shared CORS headers. Required when the app (Expo) calls Edge Functions.
 export const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers':

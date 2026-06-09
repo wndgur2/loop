@@ -6,8 +6,8 @@ import { LoopColors } from '@/constants/loop-theme';
 import { LoopText } from './text';
 
 /**
- * 4개 탭 공통 헤더 — (선택 브랜드 아이콘) 제목(좌) + 선택 액션(우).
- * 모든 탭이 같은 패딩·타이포를 쓰도록 한 곳에서 관리한다.
+ * Shared header for the 4 tabs — (optional brand icon) title (left) + optional action (right).
+ * Managed in one place so every tab uses the same padding and typography.
  */
 export const TabHeader = memo(function TabHeader({
   title,

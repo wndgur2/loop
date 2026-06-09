@@ -1,5 +1,5 @@
-// Anthropic Messages API 어댑터 (Claude API 레퍼런스 기준).
-// 키는 secret(ANTHROPIC_API_KEY)에서만 읽는다 — 클라이언트 노출 금지(CLAUDE.md §6).
+// Anthropic Messages API adapter (per the Claude API reference).
+// The key is read only from a secret (ANTHROPIC_API_KEY) — never expose it to the client (CLAUDE.md §6).
 
 import {
   ensureOk,
@@ -16,7 +16,7 @@ import {
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const DEFAULT_MODEL = 'claude-opus-4-8';
 
-/** Messages streaming 이벤트(필요한 필드만). 정본: Claude API SSE 스펙. */
+/** Messages streaming event (only the fields we need). Canonical source: Claude API SSE spec. */
 interface AnthropicEvent {
   type: string;
   content_block?: { type?: string; name?: string };
@@ -29,7 +29,7 @@ export function createAnthropicProvider(): LLMProvider {
     async *stream({ system, messages, tool }: LLMCallArgs): AsyncGenerator<LLMStreamEvent> {
       const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
       if (!apiKey) throw new Error('ANTHROPIC_API_KEY 미설정');
-      // 비용/지연 튜닝은 secret(ANTHROPIC_MODEL 또는 공통 CHAT_MODEL)으로 오버라이드.
+      // Override for cost/latency tuning via a secret (ANTHROPIC_MODEL or the shared CHAT_MODEL).
       const model = resolveModel('ANTHROPIC_MODEL', DEFAULT_MODEL);
 
       const res = await fetch(ANTHROPIC_URL, {
@@ -43,7 +43,7 @@ export function createAnthropicProvider(): LLMProvider {
           model,
           max_tokens: MAX_TOKENS,
           thinking: { type: 'adaptive' },
-          system, // 마지막 블록에 cache_control → tools+system 프롬프트 캐싱
+          system, // cache_control on the last block → caches the tools+system prompt
           messages,
           tools: [{ name: tool.name, description: tool.description, input_schema: tool.input_schema }],
           tool_choice: { type: 'auto' },
@@ -54,7 +54,7 @@ export function createAnthropicProvider(): LLMProvider {
 
       let text = '';
       let toolName: string | null = null;
-      let toolJson = ''; // tool_use input은 input_json_delta로 쪼개져 와 끝에서 합쳐 파싱한다.
+      let toolJson = ''; // tool_use input arrives split across input_json_delta; join and parse at the end.
       for await (const payload of sseData(res)) {
         const ev = JSON.parse(payload) as AnthropicEvent;
         if (ev.type === 'content_block_start' && ev.content_block?.type === 'tool_use') {
@@ -68,7 +68,7 @@ export function createAnthropicProvider(): LLMProvider {
           } else if (d?.type === 'input_json_delta' && d.partial_json) {
             toolJson += d.partial_json;
           }
-          // thinking_delta는 사용자 답변이 아니므로 흘리지 않는다.
+          // thinking_delta is not part of the user-facing answer, so it is not streamed.
         }
       }
 

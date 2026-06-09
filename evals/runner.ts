@@ -1,17 +1,17 @@
 /**
- * evals/runner.ts — Loopi 품질 평가 러너 (스켈레톤)
+ * evals/runner.ts — Loopi quality evaluation runner (skeleton)
  *
- * 시나리오 → Loopi 호출 → 구조화 출력 → 채점 → 리포트.
- * 채점 기준: documents/eval-rubric.md
- * Loopi 계약: documents/loopi-spec.md (4절 출력 스키마)
- * 데이터 모델: documents/data-model.md · 정본 형태: documents/feature-spec.md
+ * Scenario → call Loopi → structured output → scoring → report.
+ * Scoring rubric: documents/eval-rubric.md
+ * Loopi contract: documents/loopi-spec.md (§4 output schema)
+ * Data model: documents/data-model.md · canonical shape: documents/feature-spec.md
  *
- * NOTE: 프로젝트 스캐폴딩 전이라 실제 배선(TODO)은 비어 있습니다.
- *       지금 고정하는 것은 "인터페이스 계약"입니다 — Loopi 코드와 eval이 같은
- *       타입을 공유하도록.
+ * NOTE: Before project scaffolding, the actual wiring (TODO) is empty.
+ *       What we fix now is the "interface contract" — so that the Loopi code
+ *       and the eval share the same types.
  */
 
-// --- 시나리오 / 출력 / 채점 타입 (loopi-spec.md, data-model.md와 일치) ---
+// --- Scenario / output / scoring types (matching loopi-spec.md, data-model.md) ---
 
 export type Importance = "high" | "mid" | "low";
 export type SessionMode = "write" | "retrospective";
@@ -21,9 +21,9 @@ export interface Scenario {
   mode: SessionMode;
   description: string;
   user_turns: string[];
-  /** 사용자의 최종 목표 + 하위 목표(=category 후보) */
+  /** User's final goal + sub-goals (= category candidates) */
   goal_context?: { goal: string; sub_goals: string[] };
-  /** 회고 모드: 대상 하위목표와 기존 피드백 컨텍스트 */
+  /** Retrospective mode: target sub-goal and existing feedback context */
   sub_goal?: string;
   existing_feedbacks?: {
     title: string;
@@ -32,23 +32,23 @@ export interface Scenario {
     takeaways: string[];
   }[];
   expect?: {
-    // write 모드
-    expected_category?: string; // 기대 하위목표(category)
-    requires_category?: boolean; // 항상 하나의 하위목표가 배정돼야 함
+    // write mode
+    expected_category?: string; // expected sub-goal (category)
+    requires_category?: boolean; // exactly one sub-goal must always be assigned
     min_takeaways?: number;
     importance_in?: Importance[];
-    // retrospective 모드
+    // retrospective mode
     should_review_uninternalized?: boolean;
     may_update_internalization?: boolean;
   };
 }
 
-/** loopi-spec.md 4절 구조화 출력 계약 (write 모드 산출물 = Canonical Template) */
+/** loopi-spec.md §4 structured output contract (write mode artifact = Canonical Template) */
 export interface ChatOutput {
   title: string;
-  situation: string; // 템플릿 ## Feedback
+  situation: string; // template ## Feedback
   root_cause: string;
-  category: string; // 사용자의 하위 목표 중 하나 (필수, 미분류 불가)
+  category: string; // one of the user's sub-goals (required, cannot be uncategorized)
   importance: Importance;
   tags: string[];
   takeaways: { text: string; done?: boolean }[];
@@ -64,30 +64,30 @@ export interface ScenarioScore {
   notes: string;
 }
 
-// --- 러너 골격 ---
+// --- Runner skeleton ---
 
-/** Loopi Edge Function을 호출해 대화를 진행한다. write는 구조화 출력, retrospective는 상태 갱신 의도를 반환. */
+/** Calls the Loopi Edge Function to run the conversation. write returns structured output, retrospective returns state-update intent. */
 async function runChat(_scenario: Scenario): Promise<{
   transcript: { role: "user" | "assistant"; content: string }[];
-  output: ChatOutput | null; // write 모드에서만 채워짐
+  output: ChatOutput | null; // filled only in write mode
 }> {
-  // TODO: supabase/functions/chat 호출 (mode 분기). 프롬프트 캐싱 적용.
-  //       ANTHROPIC_API_KEY는 환경변수/secret에서.
+  // TODO: call supabase/functions/chat (branch on mode). Apply prompt caching.
+  //       Read ANTHROPIC_API_KEY from env var / secret.
   throw new Error("not implemented — 프로젝트 스캐폴딩 후 배선");
 }
 
-/** D1~D4: 구조화 출력 + expect 비교(자동). D5~D6: LLM-as-judge. */
+/** D1~D4: structured output + expect comparison (automatic). D5~D6: LLM-as-judge. */
 async function score(
   _scenario: Scenario,
   _result: Awaited<ReturnType<typeof runChat>>,
 ): Promise<ScenarioScore> {
-  // TODO: eval-rubric.md 1·2절 규칙 구현.
-  //       하드 실패 우선 판정: 스키마 위반 / category 미배정 / 평가·훈계.
+  // TODO: implement eval-rubric.md §1·§2 rules.
+  //       Hard-fail takes priority: schema violation / category unassigned / judging or lecturing.
   throw new Error("not implemented");
 }
 
 export async function runAll(_scenarios: Scenario[]): Promise<ScenarioScore[]> {
-  // TODO: 시나리오 로드 → runChat → score → reports/ 에 저장.
-  //       직전 버전 대비 델타 집계.
+  // TODO: load scenarios → runChat → score → save to reports/.
+  //       Aggregate delta vs the previous version.
   throw new Error("not implemented");
 }

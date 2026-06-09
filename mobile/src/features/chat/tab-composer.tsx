@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { ComposerInput } from '@/components/ui';
 
 /**
- * 피드백·회고 탭 하단 공통 채팅 input.
- * 포커스하면 키보드가 열리고, 전송하면 해당 채팅방(작성/회고)으로 진입하며 첫 메시지를 넘긴다.
+ * Shared chat input at the bottom of the feedback/retrospective tabs.
+ * Focusing opens the keyboard; sending enters the corresponding chat (write/retrospective) and passes the first message.
  */
 export function TabComposer({ mode, placeholder }: { mode: 'write' | 'reflect'; placeholder: string }) {
   const router = useRouter();

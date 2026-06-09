@@ -1,4 +1,4 @@
-/** 대시보드/홈 파생 지표 — 전체 피드백에서 계산(data-model §5). */
+/** Dashboard/home derived metrics — computed from all feedbacks (data-model §5). */
 import type { FeedbackWithTakeaways, Importance } from '@/types/models';
 
 export interface FeedbackStats {
@@ -11,9 +11,9 @@ export interface FeedbackStats {
   /** 0..1 */
   takeawayRate: number;
   byImportance: Record<Importance, number>;
-  /** subGoalId → 개수/내재화 */
+  /** subGoalId → count/internalized */
   bySubGoal: Record<string, { count: number; internalized: number }>;
-  /** 태그 빈도 (내림차순) */
+  /** Tag frequency (descending) */
   tagFrequency: { tag: string; count: number }[];
 }
 

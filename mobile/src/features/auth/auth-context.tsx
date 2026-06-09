@@ -5,8 +5,9 @@ import { createContext, type ReactNode, useContext, useEffect, useMemo, useState
 import { getSupabase } from '@/lib/supabase';
 
 /**
- * 저장돼 있던 리프레시 토큰이 서버에서 무효(만료·회전·DB 리셋·유저 삭제)가 됐을 때
- * supabase-js 가 내는 에러. 기능적으로는 "그냥 로그아웃 상태"이므로 조용히 회복한다.
+ * The error supabase-js throws when a stored refresh token has become invalid on
+ * the server (expired, rotated, DB reset, user deleted). Functionally this is just
+ * "logged out", so recover silently.
  */
 function isInvalidRefreshTokenError(error: unknown): boolean {
   if (!error) return false;
@@ -15,30 +16,30 @@ function isInvalidRefreshTokenError(error: unknown): boolean {
 }
 
 /**
- * 무효 리프레시 토큰을 만나면 storage 에 남은 stale 세션을 비운다(scope: 'local').
- * 정리하지 않으면 다음 실행마다 같은 토큰으로 갱신을 재시도해 에러가 반복된다.
+ * On an invalid refresh token, clear the stale session left in storage (scope: 'local').
+ * Without cleanup, every launch retries refreshing with the same token and the error repeats.
  */
 async function clearStaleSession(supabase: SupabaseClient): Promise<void> {
   try {
     await supabase.auth.signOut({ scope: 'local' });
   } catch {
-    // storage 정리는 best-effort — 실패해도 로그아웃 상태로 진행한다.
+    // Storage cleanup is best-effort — proceed as logged out even if it fails.
   }
 }
 
 /**
- * 이메일 확인 링크가 돌아올 리다이렉트 URL.
+ * The redirect URL the email confirmation link returns to.
  *
- * 기본값(`Linking.createURL`)은 실행 환경에 따라 달라진다:
- *   - standalone 빌드 → loop://auth-callback  (정상)
- *   - Expo Go(dev)    → exp://<LAN-IP>/--/auth-callback
- *   - 웹(dev/preview)  → http://localhost:8081/auth-callback  ← localhost!
- * 이메일은 보통 다른 기기에서 열리므로 localhost/LAN 주소로 가면 확인 링크가 깨진다.
+ * The default (`Linking.createURL`) varies by runtime:
+ *   - standalone build → loop://auth-callback  (correct)
+ *   - Expo Go(dev)     → exp://<LAN-IP>/--/auth-callback
+ *   - web(dev/preview)  → http://localhost:8081/auth-callback  ← localhost!
+ * Email is usually opened on a different device, so a localhost/LAN address breaks the link.
  *
- * 그래서 운영·프리뷰에서는 `EXPO_PUBLIC_AUTH_REDIRECT_URL`(예: loop://auth-callback)로
- * 고정한다. 이 값은 Supabase 대시보드의 Redirect URLs 허용목록(로컬은 config.toml의
- * additional_redirect_urls)에 반드시 등록되어 있어야 GoTrue 가 그대로 사용한다. 없으면
- * GoTrue 는 프로젝트 Site URL(기본 localhost)로 폴백한다.
+ * So in production/preview we pin it with `EXPO_PUBLIC_AUTH_REDIRECT_URL` (e.g. loop://auth-callback).
+ * This value must be registered in the Redirect URLs allowlist in the Supabase dashboard
+ * (locally, additional_redirect_urls in config.toml) for GoTrue to use it as-is. Otherwise
+ * GoTrue falls back to the project Site URL (localhost by default).
  */
 export function authRedirectUrl(): string {
   const configured = process.env.EXPO_PUBLIC_AUTH_REDIRECT_URL?.trim();
@@ -50,12 +51,12 @@ type AuthState = {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  /** 이메일 확인이 켜져 있으면 세션 없이 needsConfirmation=true 를 돌려준다. */
+  /** When email confirmation is enabled, returns needsConfirmation=true with no session. */
   signUp: (email: string, password: string, displayName?: string) => Promise<{ needsConfirmation: boolean }>;
   resendConfirmation: (email: string) => Promise<void>;
-  /** 표시 이름 변경. user_metadata(표시 기준)와 profiles(정본 저장소)를 함께 갱신. */
+  /** Change display name. Updates both user_metadata (display source) and profiles (source of truth). */
   updateDisplayName: (name: string) => Promise<void>;
-  /** 본인 계정·모든 데이터 영구 삭제(Edge Function 경유) 후 로그아웃. */
+  /** Permanently delete own account and all data (via Edge Function), then sign out. */
   deleteAccount: () => Promise<void>;
   signOut: () => Promise<void>;
 };
@@ -63,8 +64,8 @@ type AuthState = {
 const AuthContext = createContext<AuthState | null>(null);
 
 /**
- * Supabase Auth 세션을 앱 전역에 제공. 세션은 AsyncStorage에 영속(getSupabase).
- * 토큰 만료/갱신은 supabase-js가 처리하고 onAuthStateChange로 반영한다.
+ * Provides the Supabase Auth session app-wide. The session is persisted in AsyncStorage (getSupabase).
+ * Token expiry/refresh is handled by supabase-js and reflected via onAuthStateChange.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -74,8 +75,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = getSupabase();
     let mounted = true;
 
-    // 시작 시 storage 의 세션을 복구한다. 리프레시 토큰이 무효면 supabase-js 가
-    // 갱신을 시도하다 error 를 돌려준다 → stale 세션을 비우고 로그아웃 상태로 떨어진다.
+    // Restore the session from storage on start. If the refresh token is invalid, supabase-js
+    // attempts a refresh and returns an error → clear the stale session and fall back to logged out.
     supabase.auth
       .getSession()
       .then(async ({ data, error }) => {
@@ -90,14 +91,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       })
       .catch(async (error: unknown) => {
-        // getSession 이 throw 하는 경로(무효 토큰 등)도 동일하게 회복한다.
+        // Recover the same way for paths where getSession throws (invalid token, etc.).
         if (isInvalidRefreshTokenError(error)) await clearStaleSession(supabase);
         if (!mounted) return;
         setSession(null);
         setLoading(false);
       });
 
-    // 백그라운드 자동 갱신 실패는 SIGNED_OUT(next=null)으로 들어온다 → 그대로 반영.
+    // Background auto-refresh failures arrive as SIGNED_OUT (next=null) → reflect as-is.
     const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next);
     });
@@ -126,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           },
         });
         if (error) throw error;
-        // 이메일 확인이 켜져 있으면 session 이 없다 → 확인 대기 상태.
+        // When email confirmation is enabled there is no session → awaiting confirmation.
         return { needsConfirmation: !data.session };
       },
       async resendConfirmation(email) {
@@ -140,17 +141,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       async updateDisplayName(name) {
         const supabase = getSupabase();
         const trimmed = name.trim();
-        // user_metadata 갱신 → onAuthStateChange(USER_UPDATED)로 세션 반영(화면이 읽는 값).
+        // Update user_metadata → session reflected via onAuthStateChange(USER_UPDATED) (the value screens read).
         const { error } = await supabase.auth.updateUser({ data: { display_name: trimmed } });
         if (error) throw error;
-        // 정본 저장소(profiles)도 동기화. RLS가 본인 행으로 스코프.
+        // Sync the source-of-truth store (profiles) too. RLS scopes to the user's own row.
         if (session) {
           await supabase.from('profiles').update({ display_name: trimmed }).eq('id', session.user.id);
         }
       },
       async deleteAccount() {
         const supabase = getSupabase();
-        // 권한 작업 → Edge Function(service_role)이 본인 계정과 연쇄 데이터를 삭제(CLAUDE.md §6).
+        // Privileged operation → the Edge Function (service_role) deletes the account and cascading data (CLAUDE.md §6).
         const { error } = await supabase.functions.invoke('delete-account', { method: 'POST' });
         if (error) throw error;
         await supabase.auth.signOut();

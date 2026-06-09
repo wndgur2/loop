@@ -1,5 +1,5 @@
-// Google Gemini generateContent API 어댑터 (function calling).
-// 키는 secret(GEMINI_API_KEY)에서만 읽는다 — 클라이언트 노출 금지(CLAUDE.md §6).
+// Google Gemini generateContent API adapter (function calling).
+// The key is read only from a secret (GEMINI_API_KEY) — never expose it to the client (CLAUDE.md §6).
 
 import {
   ensureOk,
@@ -20,7 +20,7 @@ interface GeminiPart {
   text?: string;
   functionCall?: { name?: string; args?: Record<string, unknown> };
 }
-/** streamGenerateContent의 각 SSE 청크(부분 응답). */
+/** Each SSE chunk (partial response) from streamGenerateContent. */
 interface GeminiChunk {
   candidates?: { content?: { parts?: GeminiPart[] } }[];
 }
@@ -33,7 +33,7 @@ export function createGeminiProvider(): LLMProvider {
       if (!apiKey) throw new Error('GEMINI_API_KEY 미설정');
       const model = resolveModel('GEMINI_MODEL', DEFAULT_MODEL);
 
-      // alt=sse 로 받아야 청크가 text/event-stream으로 온다(기본은 JSON 배열).
+      // Must request alt=sse so chunks arrive as text/event-stream (default is a JSON array).
       const res = await fetch(`${GEMINI_BASE}/${model}:streamGenerateContent?alt=sse`, {
         method: 'POST',
         headers: {

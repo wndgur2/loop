@@ -1,21 +1,21 @@
 /**
- * Loop 디자인 토큰 — demo/loop.css의 "정돈된 따뜻함" 팔레트를 RN으로 이식.
- * 단일 warm clay/honey 액센트 + 따뜻한 캔버스 + 차분한 라운드.
- * 정본 디자인: demo/ (Claude Design handoff). MVP는 라이트 모드 우선.
+ * Loop design tokens — ports demo/loop.css's "ordered warmth" palette to RN.
+ * Single warm clay/honey accent + warm canvas + calm rounding.
+ * Source-of-truth design: demo/ (Claude Design handoff). MVP prioritizes light mode.
  */
 
 export const LoopColors = {
-  // warm accent (UI 유일의 채도색)
+  // warm accent (the only saturated color in the UI)
   warm: '#DD8A4F',
   warmHover: '#CD7A3E',
-  warmDeep: '#B06A33', // light 위 텍스트/아이콘
+  warmDeep: '#B06A33', // text/icons on light
   warmPress: '#9E5C2A',
   warmSoft: '#FBF1E8', // tinted surface
   warmSoft2: '#F5E4D4', // chip / fill
-  warmLine: '#EAD3BD', // warm 위 hairline
+  warmLine: '#EAD3BD', // hairline on warm
   ringTrack: '#EFE6DC', // progress ring track
 
-  // calm positive (내재화 / done)
+  // calm positive (internalized / done)
   good: '#2FA567',
   goodSoft: '#E7F4ED',
 
@@ -23,7 +23,7 @@ export const LoopColors = {
   canvas: '#FAF8F5',
   surface: '#FFFFFF',
 
-  // warm-leaning neutrals (텍스트)
+  // warm-leaning neutrals (text)
   ink: '#1F1D1B',
   ink2: 'rgba(40, 36, 33, 0.78)',
   ink3: 'rgba(48, 43, 39, 0.56)',
@@ -37,7 +37,7 @@ export const LoopColors = {
 
 export type LoopColor = keyof typeof LoopColors;
 
-/** 4px 그리드 */
+/** 4px grid */
 export const LoopSpace = {
   2: 2,
   4: 4,
@@ -66,11 +66,11 @@ export const LoopRadius = {
 } as const;
 
 /**
- * 타입 스케일 — Wanted/loop.css에서 자주 쓰는 조합을 추렸다.
- * RN은 `font` 단축속성이 없으므로 객체로 둔다.
+ * Type scale — distilled from the combinations frequently used in Wanted/loop.css.
+ * RN has no `font` shorthand, so these are kept as objects.
  */
 export const LoopType = {
-  // 큰 숫자/타이틀
+  // large numbers/titles
   hero: { fontSize: 46, fontWeight: '700', letterSpacing: -1.3 },
   title: { fontSize: 24, fontWeight: '700', letterSpacing: -0.55 },
   heading: { fontSize: 22, fontWeight: '700', letterSpacing: -0.42 },
@@ -81,11 +81,11 @@ export const LoopType = {
   label: { fontSize: 13, fontWeight: '600' },
   caption: { fontSize: 12, fontWeight: '500' },
   small: { fontSize: 11.5, fontWeight: '600' },
-  // 대문자 eyebrow
+  // uppercase eyebrow
   eyebrow: { fontSize: 11, fontWeight: '700', letterSpacing: 0.9, textTransform: 'uppercase' },
 } as const;
 
-/** iOS 스타일 소프트 섀도 (RN shadow* + elevation). */
+/** iOS-style soft shadow (RN shadow* + elevation). */
 export const LoopShadow = {
   card: {
     shadowColor: '#3C322A',

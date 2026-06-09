@@ -1,6 +1,6 @@
 /**
- * 피드백(feedbacks) + 실천항목(takeaways) 데이터 훅.
- * 작성(직접 폼·AI proposal 공통)·조회·내재화/실행 토글·수정·삭제.
+ * Data hooks for feedbacks + takeaways.
+ * Create (shared by direct form and AI proposal), read, internalize/done toggles, update, delete.
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -116,7 +116,7 @@ export function useUpdateFeedback() {
         .eq('id', input.id);
       if (error) throw error;
 
-      // takeaways는 단순 동기화: 기존 삭제 후 재삽입(MVP 규모에서 충분).
+      // takeaways are synced simply: delete existing then re-insert (sufficient at MVP scale).
       await supabase.from('takeaways').delete().eq('feedback_id', input.id);
       const items = input.takeaways.map((t) => t.trim()).filter(Boolean);
       if (items.length > 0) {
@@ -170,7 +170,7 @@ export function useDeleteFeedback() {
   const qc = useQueryClient();
   return useMutation<void, Error, string>({
     mutationFn: async (id) => {
-      // takeaways는 ON DELETE CASCADE로 함께 삭제된다(마이그레이션).
+      // takeaways are deleted together via ON DELETE CASCADE (migration).
       const { error } = await getSupabase().from('feedbacks').delete().eq('id', id);
       if (error) throw error;
     },

@@ -27,7 +27,7 @@ export default function SettingsScreen() {
   const [goalTitle, setGoalTitle] = useState('');
   const [newSub, setNewSub] = useState('');
 
-  // 서버 목표가 도착/변경되면 편집 필드를 그 값으로 초기화(렌더 중 동기화 — effect 불필요).
+  // When the server goal arrives/changes, initialize the edit field with that value (sync during render — no effect needed).
   const [syncedGoalId, setSyncedGoalId] = useState<string | undefined>(undefined);
   if (goal && goal.id !== syncedGoalId) {
     setSyncedGoalId(goal.id);
@@ -72,7 +72,7 @@ export default function SettingsScreen() {
       <TabHeader title={t('settings.title')} />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <SectionTitle first>{t('settings.section.account')}</SectionTitle>
-        <Pressable onPress={() => router.push('/account')} style={({ pressed }) => pressed && styles.pressed}>
+        <Pressable onPress={() => router.push('/account')}>
           <Card radius={20} style={styles.accountCard}>
             <View style={styles.accountInfo}>
               {!!displayName && <LoopText variant="cardTitle">{displayName}</LoopText>}
@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: 22, paddingBottom: 24 },
   accountCard: { padding: 16, flexDirection: 'row', alignItems: 'center' },
   accountInfo: { flex: 1, gap: 4 },
-  pressed: { opacity: 0.85 },
   langRow: { flexDirection: 'row', gap: 8 },
   langPill: { height: 46, borderRadius: LoopRadius.xl, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   langPillOn: { borderColor: LoopColors.warm, backgroundColor: LoopColors.warmSoft },

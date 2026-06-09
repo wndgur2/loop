@@ -4,7 +4,7 @@ import { LoopColors, LoopRadius, LoopShadow } from '@/constants/loop-theme';
 
 import { Icon } from './icon';
 
-/** 라이브 입력 컴포저 — 탭 하단·채팅 화면 공통. value/onChangeText/onSend 제어. */
+/** Live input composer — shared by tab bottom and chat screen. Controlled via value/onChangeText/onSend. */
 export function ComposerInput({
   value,
   onChangeText,
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     paddingRight: 6,
     ...LoopShadow.strong,
   },
-  // 단일 행 입력 — 아이콘·전송 버튼과 수직 중앙 정렬(멀티라인 top-align 문제 제거).
+  // Single-line input — vertically centered with the icon and send button (avoids multiline top-align issue).
   input: { flex: 1, fontSize: 14.5, fontWeight: '500', color: LoopColors.ink, padding: 0, margin: 0 },
   send: { width: 38, height: 38, borderRadius: LoopRadius.full, alignItems: 'center', justifyContent: 'center' },
 });

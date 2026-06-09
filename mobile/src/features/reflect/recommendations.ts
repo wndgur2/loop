@@ -1,7 +1,8 @@
 /**
- * 회고 추천 카드 — 대화 시작 *전*에 떠야 하므로 서버 쿼리(여기선 클라이언트 계산)로 만든다.
- * 종류(feature-spec F9): 오늘의 되새김 · 또 반복됐어요 · 영역 통째 되짚기.
- * 랭킹 세부 가중치는 추후 튜닝(미결) — 진입·구조만 확정.
+ * Retrospective recommendation cards — must appear *before* a conversation starts, so they are built
+ * from a server query (here, client-side computation).
+ * Kinds (feature-spec F9): today's reflection · it happened again · revisit the whole area.
+ * Detailed ranking weights to be tuned later (open) — only the entry points and structure are fixed.
  */
 import type { FeedbackWithTakeaways, Importance } from '@/types/models';
 
@@ -21,7 +22,7 @@ export function buildRetroCards(feedbacks: FeedbackWithTakeaways[]): RetroCard[]
   const open = feedbacks.filter((f) => !f.internalized);
   const cards: RetroCard[] = [];
 
-  // 1) 오늘의 되새김 — 미내재화 중 importance↑·오래됨↑ 단건
+  // 1) Today's reflection — a single non-internalized item with higher importance and older age
   const today = [...open].sort((a, b) => {
     const w = IMPORTANCE_WEIGHT[b.importance] - IMPORTANCE_WEIGHT[a.importance];
     if (w !== 0) return w;
@@ -38,7 +39,7 @@ export function buildRetroCards(feedbacks: FeedbackWithTakeaways[]): RetroCard[]
     });
   }
 
-  // 2) 또 반복됐어요 — 같은 하위목표에서 열린 고리 2개+
+  // 2) It happened again — 2+ open loops within the same sub-goal
   const openBySub = new Map<string, FeedbackWithTakeaways[]>();
   for (const f of open) {
     const arr = openBySub.get(f.subGoalId) ?? [];
@@ -57,7 +58,7 @@ export function buildRetroCards(feedbacks: FeedbackWithTakeaways[]): RetroCard[]
     });
   }
 
-  // 3) 영역 통째 되짚기 — 열린 고리가 가장 많은 하위목표
+  // 3) Revisit the whole area — the sub-goal with the most open loops
   const allBySub = new Map<string, { total: number; internalized: number; open: number }>();
   for (const f of feedbacks) {
     const b = allBySub.get(f.subGoalId) ?? { total: 0, internalized: 0, open: 0 };

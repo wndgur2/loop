@@ -4,7 +4,7 @@ import { type Edge, SafeAreaView } from 'react-native-safe-area-context';
 
 import { LoopColors } from '@/constants/loop-theme';
 
-/** warm 캔버스 위 화면 컨테이너. edges로 안전영역 선택. */
+/** Screen container over the warm canvas. Select safe-area insets via edges. */
 export function Screen({
   children,
   edges = ['top'],
