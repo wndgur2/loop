@@ -1,11 +1,11 @@
 import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Icon, LoopText, PressScale } from '@/components/ui';
+import { Checkbox, Icon, LoopText, PressScale } from '@/components/ui';
 import { LoopColors, LoopMotion } from '@/constants/loop-theme';
 import { relativeTime } from '@/lib/date';
 import { useI18n, useT } from '@/lib/i18n';
-import type { FeedbackWithTakeaways, Importance } from '@/types/models';
+import type { FeedbackWithTakeaways, Importance, Takeaway } from '@/types/models';
 
 /** Internalized badge — closed loop. */
 export const InternalizedBadge = memo(function InternalizedBadge() {
@@ -21,13 +21,22 @@ export const InternalizedBadge = memo(function InternalizedBadge() {
 });
 
 /** Takeaway completion progress — bars + n/m. */
-export const TakeawayProgress = memo(function TakeawayProgress({ done, total }: { done: number; total: number }) {
+export const TakeawayProgress = memo(function TakeawayProgress({
+  done,
+  total,
+}: {
+  done: number;
+  total: number;
+}) {
   const t = useT();
   return (
     <View style={styles.progressRow}>
       <View style={styles.bars}>
         {Array.from({ length: total }).map((_, i) => (
-          <View key={i} style={[styles.bar, { backgroundColor: i < done ? LoopColors.warm : LoopColors.line }]} />
+          <View
+            key={i}
+            style={[styles.bar, { backgroundColor: i < done ? LoopColors.warm : LoopColors.line }]}
+          />
         ))}
       </View>
       <LoopText variant="small" color="ink3" style={styles.progressLabel}>
@@ -55,7 +64,12 @@ type FeedbackRowProps = {
  * Feedback row — ported from demo home B (Quiet list).
  * Left importance color bar + category/date + title + (if open loop) takeaway progress. Hairline separator.
  */
-export const FeedbackRow = memo(function FeedbackRow({ feedback, subGoalName, first, onPress }: FeedbackRowProps) {
+export const FeedbackRow = memo(function FeedbackRow({
+  feedback,
+  subGoalName,
+  first,
+  onPress,
+}: FeedbackRowProps) {
   const { lang } = useI18n();
   const total = feedback.takeaways.length;
   const done = feedback.takeaways.filter((tk) => tk.done).length;
@@ -93,6 +107,32 @@ export const FeedbackRow = memo(function FeedbackRow({ feedback, subGoalName, fi
   );
 });
 
+/** Takeaway checklist with done strikethrough — detail screen. */
+export function TakeawayChecklist({
+  takeaways,
+  onToggle,
+}: {
+  takeaways: Takeaway[];
+  onToggle: (takeawayId: string, done: boolean) => void;
+}) {
+  return (
+    <View style={styles.checklist}>
+      {takeaways.map((tk) => (
+        <View key={tk.id} style={styles.checkRow}>
+          <Checkbox done={tk.done} onPress={() => onToggle(tk.id, !tk.done)} />
+          <LoopText
+            variant="bodyTight"
+            color={tk.done ? 'ink4' : 'ink'}
+            style={[styles.checkText, tk.done && styles.checkDone]}
+          >
+            {tk.text}
+          </LoopText>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   badge: {
     flexDirection: 'row',
@@ -125,4 +165,15 @@ const styles = StyleSheet.create({
   check: { marginLeft: 'auto' },
   title: { fontSize: 14.5 },
   progressWrap: { marginTop: 8 },
+  checklist: { borderTopWidth: 1, borderTopColor: LoopColors.lineSoft },
+  checkRow: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'flex-start',
+    paddingVertical: 13,
+    borderBottomWidth: 1,
+    borderBottomColor: LoopColors.lineSoft,
+  },
+  checkText: { flex: 1 },
+  checkDone: { textDecorationLine: 'line-through' },
 });

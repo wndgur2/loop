@@ -43,3 +43,11 @@ export function getSupabase(): SupabaseClient<Database> {
 
   return client;
 }
+
+/** Current signed-in user id — throws when there is no session (mutations require auth). */
+export async function requireUserId(): Promise<string> {
+  const { data } = await getSupabase().auth.getSession();
+  const id = data.session?.user.id;
+  if (!id) throw new Error('로그인이 필요합니다.');
+  return id;
+}

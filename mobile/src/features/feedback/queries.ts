@@ -2,10 +2,10 @@
  * Data hooks for feedbacks + takeaways.
  * Create (shared by direct form and AI proposal), read, internalize/done toggles, update, delete.
  */
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
 
 import { qk } from '@/lib/query-keys';
-import { getSupabase } from '@/lib/supabase';
+import { getSupabase, requireUserId } from '@/lib/supabase';
 import {
   type Feedback,
   type FeedbackWithTakeaways,
@@ -16,11 +16,10 @@ import {
 const SELECT_WITH_TAKEAWAYS =
   '*, takeaways(id, feedback_id, text, done, done_at, sort_order, created_at)';
 
-async function currentUserId(): Promise<string> {
-  const { data } = await getSupabase().auth.getSession();
-  const id = data.session?.user.id;
-  if (!id) throw new Error('로그인이 필요합니다.');
-  return id;
+/** Refresh both the list and the single-feedback cache after a mutation. */
+function invalidateFeedback(qc: QueryClient, feedbackId: string) {
+  qc.invalidateQueries({ queryKey: qk.feedbacks });
+  qc.invalidateQueries({ queryKey: qk.feedback(feedbackId) });
 }
 
 export interface FeedbackInput {
@@ -69,7 +68,7 @@ export function useCreateFeedback() {
   return useMutation<Feedback, Error, FeedbackInput>({
     mutationFn: async (input) => {
       const supabase = getSupabase();
-      const userId = await currentUserId();
+      const userId = await requireUserId();
       const { data: fb, error } = await supabase
         .from('feedbacks')
         .insert({
@@ -125,10 +124,7 @@ export function useUpdateFeedback() {
         if (tErr) throw tErr;
       }
     },
-    onSuccess: (_d, v) => {
-      qc.invalidateQueries({ queryKey: qk.feedbacks });
-      qc.invalidateQueries({ queryKey: qk.feedback(v.id) });
-    },
+    onSuccess: (_d, v) => invalidateFeedback(qc, v.id),
   });
 }
 
@@ -142,10 +138,7 @@ export function useToggleTakeaway() {
         .eq('id', takeawayId);
       if (error) throw error;
     },
-    onSuccess: (_d, v) => {
-      qc.invalidateQueries({ queryKey: qk.feedback(v.feedbackId) });
-      qc.invalidateQueries({ queryKey: qk.feedbacks });
-    },
+    onSuccess: (_d, v) => invalidateFeedback(qc, v.feedbackId),
   });
 }
 
@@ -159,10 +152,7 @@ export function useSetInternalized() {
         .eq('id', feedbackId);
       if (error) throw error;
     },
-    onSuccess: (_d, v) => {
-      qc.invalidateQueries({ queryKey: qk.feedback(v.feedbackId) });
-      qc.invalidateQueries({ queryKey: qk.feedbacks });
-    },
+    onSuccess: (_d, v) => invalidateFeedback(qc, v.feedbackId),
   });
 }
 

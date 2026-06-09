@@ -3,8 +3,8 @@ import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { LoopMark } from '@/components/loop-mark';
-import { Button, LoopText, PressScale, Screen } from '@/components/ui';
-import { LoopColors, LoopRadius } from '@/constants/loop-theme';
+import { Button, LoopText, PressScale, Screen, TextField } from '@/components/ui';
+import { authMessageKey } from '@/features/auth/auth-errors';
 import { useAuth } from '@/features/auth/auth-context';
 import { useT } from '@/lib/i18n';
 import type { TKey } from '@/lib/translations';
@@ -123,7 +123,7 @@ export default function SignInScreen() {
             <>
               <View style={styles.fields}>
                 {isSignUp && (
-                  <Field
+                  <TextField
                     placeholder={t('field.name')}
                     value={displayName}
                     onChangeText={setDisplayName}
@@ -133,7 +133,7 @@ export default function SignInScreen() {
                     onSubmitEditing={() => emailRef.current?.focus()}
                   />
                 )}
-                <Field
+                <TextField
                   ref={emailRef}
                   placeholder={t('field.email')}
                   value={email}
@@ -145,7 +145,7 @@ export default function SignInScreen() {
                   submitBehavior="submit"
                   onSubmitEditing={() => passwordRef.current?.focus()}
                 />
-                <Field
+                <TextField
                   ref={passwordRef}
                   placeholder={t('field.password')}
                   value={password}
@@ -170,7 +170,10 @@ export default function SignInScreen() {
                 style={styles.submit}
               />
 
-              <PressScale onPress={() => setMode(isSignUp ? 'sign-in' : 'sign-up')} style={styles.toggle}>
+              <PressScale
+                onPress={() => setMode(isSignUp ? 'sign-in' : 'sign-up')}
+                style={styles.toggle}
+              >
                 <LoopText variant="label" color="ink3">
                   {isSignUp ? t('signin.toggle.toSignin') : t('signin.toggle.toSignup')}
                 </LoopText>
@@ -183,13 +186,6 @@ export default function SignInScreen() {
   );
 }
 
-function Field({
-  ref,
-  ...props
-}: React.ComponentProps<typeof TextInput> & { ref?: React.Ref<TextInput> }) {
-  return <TextInput ref={ref} {...props} placeholderTextColor={LoopColors.ink4} style={styles.field} />;
-}
-
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   scroll: { flexGrow: 1, justifyContent: 'center', padding: 28 },
@@ -200,22 +196,4 @@ const styles = StyleSheet.create({
   error: { marginTop: 14 },
   submit: { marginTop: 22 },
   toggle: { marginTop: 18, alignItems: 'center' },
-  field: {
-    backgroundColor: LoopColors.surface,
-    borderWidth: 1,
-    borderColor: LoopColors.line,
-    borderRadius: LoopRadius.xl,
-    paddingHorizontal: 16,
-    paddingVertical: 15,
-    fontSize: 15,
-    color: LoopColors.ink,
-  },
 });
-
-function authMessageKey(e: unknown): TKey {
-  const msg = e instanceof Error ? e.message : String(e);
-  if (/already registered|already exists/i.test(msg)) return 'signin.err.exists';
-  if (/invalid login|invalid credentials/i.test(msg)) return 'signin.err.invalid';
-  if (/password/i.test(msg)) return 'signin.err.password';
-  return 'signin.err.generic';
-}

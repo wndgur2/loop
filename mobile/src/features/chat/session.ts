@@ -3,14 +3,15 @@
  * The session is created on the first send, and messages are saved fire-and-forget.
  * The Edge Function receives the message array directly (context is the full feedback), so it does not depend on DB messages.
  */
-import { getSupabase } from '@/lib/supabase';
+import { getSupabase, requireUserId } from '@/lib/supabase';
 import type { MessageRole, SessionMode } from '@/types/models';
 
-export async function createChatSession(mode: SessionMode, subGoalId?: string | null): Promise<string> {
+export async function createChatSession(
+  mode: SessionMode,
+  subGoalId?: string | null,
+): Promise<string> {
   const supabase = getSupabase();
-  const { data: sess } = await supabase.auth.getSession();
-  const userId = sess.session?.user.id;
-  if (!userId) throw new Error('로그인이 필요합니다.');
+  const userId = await requireUserId();
 
   const { data, error } = await supabase
     .from('chat_sessions')
@@ -21,9 +22,15 @@ export async function createChatSession(mode: SessionMode, subGoalId?: string | 
   return data.id;
 }
 
-export async function saveMessage(sessionId: string, role: MessageRole, content: string): Promise<void> {
+export async function saveMessage(
+  sessionId: string,
+  role: MessageRole,
+  content: string,
+): Promise<void> {
   // A failure must not block the conversation flow (saving is auxiliary). Do not log message body.
-  const { error } = await getSupabase().from('chat_messages').insert({ session_id: sessionId, role, content });
+  const { error } = await getSupabase()
+    .from('chat_messages')
+    .insert({ session_id: sessionId, role, content });
   if (error) console.warn('chat message save failed');
 }
 

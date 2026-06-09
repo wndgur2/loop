@@ -3,13 +3,22 @@ import { useCallback, useMemo } from 'react';
 import { FlatList, type ListRenderItem, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
-import { FeedbackListSkeleton, Icon, LoopText, PressScale, ProgressBar, Screen, TabHeader } from '@/components/ui';
+import {
+  EmptyState,
+  FeedbackListSkeleton,
+  Icon,
+  LoopText,
+  PressScale,
+  ProgressBar,
+  Screen,
+  TabHeader,
+} from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { computeStats } from '@/features/dashboard/stats';
 import { TabComposer } from '@/features/chat/tab-composer';
 import { FeedbackRow } from '@/features/feedback/components';
 import { useFeedbacks } from '@/features/feedback/queries';
-import { useSubGoals } from '@/features/goals/queries';
+import { useSubGoalName } from '@/features/goals/use-sub-goal-name';
 import { useT } from '@/lib/i18n';
 import type { FeedbackWithTakeaways } from '@/types/models';
 
@@ -18,12 +27,7 @@ export default function FeedbackHomeScreen() {
   const router = useRouter();
   const t = useT();
   const { data: feedbacks = [], isLoading } = useFeedbacks();
-  const { data: subGoals = [] } = useSubGoals();
-
-  const subGoalName = useMemo(() => {
-    const map = new Map(subGoals.map((s) => [s.id, s.name]));
-    return (id: string) => map.get(id) ?? '—';
-  }, [subGoals]);
+  const subGoalName = useSubGoalName();
 
   const stats = useMemo(() => computeStats(feedbacks), [feedbacks]);
   const pct = Math.round(stats.internalizationRate * 100);
@@ -76,7 +80,13 @@ export default function FeedbackHomeScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={isLoading ? null : listHeader}
-          ListEmptyComponent={isLoading ? <FeedbackListSkeleton /> : <EmptyState />}
+          ListEmptyComponent={
+            isLoading ? (
+              <FeedbackListSkeleton />
+            ) : (
+              <EmptyState plain title={t('home.empty.title')} body={t('home.empty.body')} />
+            )
+          }
           removeClippedSubviews
           maxToRenderPerBatch={10}
           windowSize={5}
@@ -101,21 +111,6 @@ function WriteButton({ onPress, label }: { onPress: () => void; label: string })
   );
 }
 
-function EmptyState() {
-  const t = useT();
-  return (
-    <View style={styles.empty}>
-      <Icon name="loop" size={28} color={LoopColors.warm} />
-      <LoopText variant="cardTitle" style={styles.emptyTitle}>
-        {t('home.empty.title')}
-      </LoopText>
-      <LoopText variant="bodyTight" color="ink3" style={styles.emptyBody}>
-        {t('home.empty.body')}
-      </LoopText>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   listContent: { paddingHorizontal: 22, paddingBottom: 12 },
@@ -134,7 +129,4 @@ const styles = StyleSheet.create({
     backgroundColor: LoopColors.surface,
   },
   bottomSpacer: { height: 6 },
-  empty: { alignItems: 'center', paddingVertical: 40, paddingHorizontal: 14 },
-  emptyTitle: { marginTop: 12, textAlign: 'center' },
-  emptyBody: { marginTop: 6, textAlign: 'center' },
 });

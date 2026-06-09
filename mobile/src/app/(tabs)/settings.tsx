@@ -1,8 +1,20 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { Button, Card, ConfirmDialog, Icon, LoopText, PressScale, Screen, TabHeader } from '@/components/ui';
+import {
+  Button,
+  Card,
+  ConfirmDialog,
+  Icon,
+  LoopText,
+  PressScale,
+  Screen,
+  SectionLabel,
+  SelectChip,
+  TabHeader,
+  TextField,
+} from '@/components/ui';
 import { LoopColors, LoopMotion, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
 import {
@@ -12,6 +24,7 @@ import {
   useSubGoals,
   useUpdateGoal,
 } from '@/features/goals/queries';
+import { useSyncFromServer } from '@/hooks/use-sync-from-server';
 import { useI18n } from '@/lib/i18n';
 
 export default function SettingsScreen() {
@@ -29,12 +42,8 @@ export default function SettingsScreen() {
   const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null);
   const [errorMsg, setErrorMsg] = useState<{ title: string; message: string } | null>(null);
 
-  // When the server goal arrives/changes, initialize the edit field with that value (sync during render — no effect needed).
-  const [syncedGoalId, setSyncedGoalId] = useState<string | undefined>(undefined);
-  if (goal && goal.id !== syncedGoalId) {
-    setSyncedGoalId(goal.id);
-    setGoalTitle(goal.title);
-  }
+  // When the server goal arrives/changes, initialize the edit field with that value.
+  useSyncFromServer(goal?.id, () => setGoalTitle(goal!.title));
 
   const email = session?.user.email ?? '';
   const displayName = (session?.user.user_metadata?.display_name as string | undefined) ?? '';
@@ -70,7 +79,7 @@ export default function SettingsScreen() {
     <Screen edges={['top']}>
       <TabHeader title={t('settings.title')} />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <SectionTitle first>{t('settings.section.account')}</SectionTitle>
+        <SectionLabel first>{t('settings.section.account')}</SectionLabel>
         <PressScale onPress={() => router.push('/account')} scaleTo={LoopMotion.scale.card}>
           <Card radius={20} style={styles.accountCard}>
             <View style={styles.accountInfo}>
@@ -83,27 +92,48 @@ export default function SettingsScreen() {
           </Card>
         </PressScale>
 
-        <SectionTitle>{t('settings.section.language')}</SectionTitle>
+        <SectionLabel>{t('settings.section.language')}</SectionLabel>
         <View style={styles.langRow}>
-          <LangPill label="한국어" active={lang === 'ko'} onPress={() => setLang('ko')} />
-          <LangPill label="English" active={lang === 'en'} onPress={() => setLang('en')} />
+          <SelectChip
+            label="한국어"
+            selected={lang === 'ko'}
+            onPress={() => setLang('ko')}
+            tone="soft"
+            height={46}
+            style={styles.flex}
+            chipStyle={styles.langChip}
+          />
+          <SelectChip
+            label="English"
+            selected={lang === 'en'}
+            onPress={() => setLang('en')}
+            tone="soft"
+            height={46}
+            style={styles.flex}
+            chipStyle={styles.langChip}
+          />
         </View>
 
-        <SectionTitle>{t('settings.section.goal')}</SectionTitle>
+        <SectionLabel>{t('settings.section.goal')}</SectionLabel>
         <Card radius={20} style={styles.goalCard}>
-          <TextInput
+          <TextField
+            variant="underline"
             value={goalTitle}
             onChangeText={setGoalTitle}
             placeholder={t('settings.goalPlaceholder')}
-            placeholderTextColor={LoopColors.ink4}
-            style={styles.goalInput}
           />
           {goalChanged && (
-            <Button label={t('settings.goalSave')} height={42} loading={updateGoal.isPending} onPress={saveGoal} style={styles.goalSave} />
+            <Button
+              label={t('settings.goalSave')}
+              height={42}
+              loading={updateGoal.isPending}
+              onPress={saveGoal}
+              style={styles.goalSave}
+            />
           )}
         </Card>
 
-        <SectionTitle>{t('settings.section.subgoals')}</SectionTitle>
+        <SectionLabel>{t('settings.section.subgoals')}</SectionLabel>
         <Card radius={20} style={styles.subCard}>
           {subGoals.map((s, i) => (
             <View key={s.id} style={[styles.subRow, i > 0 && styles.subDivider]}>
@@ -124,11 +154,10 @@ export default function SettingsScreen() {
           ))}
 
           <View style={styles.addRow}>
-            <TextInput
+            <TextField
               value={newSub}
               onChangeText={setNewSub}
               placeholder={t('settings.addSubgoal')}
-              placeholderTextColor={LoopColors.ink4}
               onSubmitEditing={addSub}
               style={styles.addInput}
             />
@@ -147,7 +176,9 @@ export default function SettingsScreen() {
         visible={!!pendingDelete}
         icon="trash"
         title={t('settings.subgoal.delete.title')}
-        message={pendingDelete ? t('settings.subgoal.delete.msg', { name: pendingDelete.name }) : undefined}
+        message={
+          pendingDelete ? t('settings.subgoal.delete.msg', { name: pendingDelete.name }) : undefined
+        }
         confirmLabel={t('common.delete')}
         cancelLabel={t('common.cancel')}
         destructive
@@ -168,47 +199,22 @@ export default function SettingsScreen() {
   );
 }
 
-function LangPill({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
-  return (
-    <PressScale onPress={onPress} haptic="select" style={styles.flex}>
-      <View style={[styles.langPill, active ? styles.langPillOn : styles.langPillOff]}>
-        <LoopText variant="label" color={active ? 'warmDeep' : 'ink3'}>
-          {label}
-        </LoopText>
-      </View>
-    </PressScale>
-  );
-}
-
-function SectionTitle({ children, first }: { children: React.ReactNode; first?: boolean }) {
-  return (
-    <LoopText variant="eyebrow" color="ink4" style={[styles.sectionTitle, first && styles.sectionTitleFirst]}>
-      {children}
-    </LoopText>
-  );
-}
-
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   scroll: { paddingHorizontal: 22, paddingBottom: 24 },
   accountCard: { padding: 16, flexDirection: 'row', alignItems: 'center' },
   accountInfo: { flex: 1, gap: 4 },
   langRow: { flexDirection: 'row', gap: 8 },
-  langPill: { height: 46, borderRadius: LoopRadius.xl, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  langPillOn: { borderColor: LoopColors.warm, backgroundColor: LoopColors.warmSoft },
-  langPillOff: { borderColor: LoopColors.line, backgroundColor: LoopColors.surface },
+  langChip: { borderRadius: LoopRadius.xl },
   goalCard: { padding: 16 },
-  goalInput: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: LoopColors.ink,
-    borderBottomWidth: 1,
-    borderBottomColor: LoopColors.lineSoft,
-    paddingVertical: 8,
-  },
   goalSave: { marginTop: 14 },
   subCard: { padding: 8 },
-  subRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 10 },
+  subRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+  },
   subDivider: { borderTopWidth: 1, borderTopColor: LoopColors.lineSoft },
   subName: { flex: 1, marginLeft: 10 },
   subDelete: { padding: 4 },
@@ -216,11 +222,11 @@ const styles = StyleSheet.create({
   addInput: {
     flex: 1,
     backgroundColor: LoopColors.canvas,
+    borderWidth: 0,
     borderRadius: LoopRadius.lg,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
-    color: LoopColors.ink,
   },
   addBtn: {
     width: 40,
@@ -231,6 +237,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tagline: { textAlign: 'center', marginTop: 20 },
-  sectionTitle: { marginTop: 24, marginBottom: 11 },
-  sectionTitleFirst: { marginTop: 4 },
 });

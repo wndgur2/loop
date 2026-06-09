@@ -2,26 +2,31 @@ import { useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { Card, Icon, InsightsSkeleton, LoopText, ProgressBar, Ring, Screen, TabHeader } from '@/components/ui';
+import {
+  Card,
+  EmptyState,
+  InsightsSkeleton,
+  LoopText,
+  Ring,
+  Screen,
+  SectionLabel,
+  TabHeader,
+} from '@/components/ui';
 import { LoopColors, LoopMotion } from '@/constants/loop-theme';
+import { DistRow, MetricTile } from '@/features/dashboard/components';
 import { computeStats } from '@/features/dashboard/stats';
 import { useFeedbacks } from '@/features/feedback/queries';
-import { useSubGoals } from '@/features/goals/queries';
+import { useSubGoalName } from '@/features/goals/use-sub-goal-name';
 import { useT } from '@/lib/i18n';
-import type { TKey } from '@/lib/translations';
+import { impLabelKey } from '@/lib/importance';
 import type { Importance } from '@/types/models';
-
-function impLabelKey(imp: Importance): TKey {
-  return imp === 'high' ? 'imp.high' : imp === 'low' ? 'imp.low' : 'imp.mid';
-}
 
 export default function InsightsScreen() {
   const t = useT();
   const { data: feedbacks = [], isLoading } = useFeedbacks();
-  const { data: subGoals = [] } = useSubGoals();
+  const subGoalName = useSubGoalName();
   const stats = useMemo(() => computeStats(feedbacks), [feedbacks]);
 
-  const subGoalName = (id: string) => subGoals.find((s) => s.id === id)?.name ?? '—';
   const pct = Math.round(stats.internalizationRate * 100);
 
   return (
@@ -31,15 +36,7 @@ export default function InsightsScreen() {
         {isLoading ? (
           <InsightsSkeleton />
         ) : stats.total === 0 ? (
-          <Card radius={22} style={styles.emptyCard}>
-            <Icon name="chart" size={28} color={LoopColors.warm} />
-            <LoopText variant="cardTitle" style={styles.emptyTitle}>
-              {t('dash.empty.title')}
-            </LoopText>
-            <LoopText variant="bodyTight" color="ink3" style={styles.emptyBody}>
-              {t('dash.empty.body')}
-            </LoopText>
-          </Card>
+          <EmptyState icon="chart" title={t('dash.empty.title')} body={t('dash.empty.body')} />
         ) : (
           <Animated.View entering={FadeIn.duration(LoopMotion.timing.base)}>
             {/* Internalization rate hero */}
@@ -68,17 +65,23 @@ export default function InsightsScreen() {
               <MetricTile
                 label={t('dash.metric.rate')}
                 value={`${pct}%`}
-                sub={t('dash.metric.rateSub', { internalized: stats.internalized, total: stats.total })}
+                sub={t('dash.metric.rateSub', {
+                  internalized: stats.internalized,
+                  total: stats.total,
+                })}
               />
               <MetricTile
                 label={t('dash.metric.takeaway')}
                 value={`${Math.round(stats.takeawayRate * 100)}%`}
-                sub={t('dash.metric.takeawaySub', { done: stats.takeawayDone, total: stats.takeawayTotal })}
+                sub={t('dash.metric.takeawaySub', {
+                  done: stats.takeawayDone,
+                  total: stats.takeawayTotal,
+                })}
               />
             </View>
 
             {/* Distribution by sub-goal */}
-            <SectionTitle>{t('dash.section.subgoal')}</SectionTitle>
+            <SectionLabel style={styles.section}>{t('dash.section.subgoal')}</SectionLabel>
             <Card radius={20} style={styles.distCard}>
               {Object.entries(stats.bySubGoal)
                 .sort((a, b) => b[1].count - a[1].count)
@@ -94,7 +97,7 @@ export default function InsightsScreen() {
             </Card>
 
             {/* Distribution by importance */}
-            <SectionTitle>{t('dash.section.importance')}</SectionTitle>
+            <SectionLabel style={styles.section}>{t('dash.section.importance')}</SectionLabel>
             <Card radius={20} style={styles.distCard}>
               {(['high', 'mid', 'low'] as Importance[]).map((lv) => (
                 <DistRow
@@ -109,7 +112,7 @@ export default function InsightsScreen() {
             {/* Tag frequency */}
             {stats.tagFrequency.length > 0 && (
               <>
-                <SectionTitle>{t('dash.section.tags')}</SectionTitle>
+                <SectionLabel style={styles.section}>{t('dash.section.tags')}</SectionLabel>
                 <View style={styles.tagsWrap}>
                   {stats.tagFrequency.slice(0, 12).map(({ tag, count }) => (
                     <View key={tag} style={styles.tag}>
@@ -131,67 +134,17 @@ export default function InsightsScreen() {
   );
 }
 
-function MetricTile({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <Card radius={20} style={styles.tile}>
-      <LoopText variant="eyebrow" color="ink4">
-        {label}
-      </LoopText>
-      <LoopText style={styles.tileValue}>{value}</LoopText>
-      <LoopText variant="caption" color="ink4" style={styles.tileSub}>
-        {sub}
-      </LoopText>
-    </Card>
-  );
-}
-
-function DistRow({ label, count, fraction, caption }: { label: string; count: number; fraction: number; caption?: string }) {
-  return (
-    <View>
-      <View style={styles.distHead}>
-        <LoopText variant="label" color="ink2" numberOfLines={1} style={styles.flex}>
-          {label}
-        </LoopText>
-        {caption && (
-          <LoopText variant="caption" color="ink4" style={styles.distCaption}>
-            {caption}
-          </LoopText>
-        )}
-        <LoopText variant="label" color="ink">
-          {count}
-        </LoopText>
-      </View>
-      <ProgressBar value={fraction} height={8} minPct={4} />
-    </View>
-  );
-}
-
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <LoopText variant="eyebrow" color="ink4" style={styles.sectionTitle}>
-      {children}
-    </LoopText>
-  );
-}
-
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   scroll: { paddingHorizontal: 22, paddingBottom: 24 },
-  emptyCard: { padding: 24, alignItems: 'center' },
-  emptyTitle: { marginTop: 12, textAlign: 'center' },
-  emptyBody: { marginTop: 6, textAlign: 'center' },
   hero: { padding: 22, flexDirection: 'row', alignItems: 'center', gap: 20 },
   heroPct: { fontSize: 32, lineHeight: 38, fontWeight: '700', letterSpacing: -0.8 },
   heroPctUnit: { fontSize: 16, color: LoopColors.ink4, fontWeight: '700' },
   heroEyebrow: { marginTop: 2 },
   heroSub: { marginTop: 8 },
   tiles: { flexDirection: 'row', gap: 12, marginTop: 12 },
-  tile: { flex: 1, padding: 16 },
-  tileValue: { fontSize: 28, lineHeight: 34, fontWeight: '700', letterSpacing: -0.6, marginTop: 8, color: LoopColors.warmDeep },
-  tileSub: { marginTop: 4 },
+  section: { marginTop: 26 },
   distCard: { padding: 16, gap: 13 },
-  distHead: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 6 },
-  distCaption: { marginRight: 8 },
   tagsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   tag: {
     flexDirection: 'row',
@@ -204,5 +157,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     height: 32,
   },
-  sectionTitle: { marginTop: 26, marginBottom: 11 },
 });

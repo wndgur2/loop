@@ -1,41 +1,45 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { Button, Checkbox, Chip, ConfirmDialog, Icon, IconButton, ImportanceDots, LoopText, PressScale, Screen, Skeleton } from '@/components/ui';
-import { LoopColors, LoopMotion } from '@/constants/loop-theme';
-import { fullDate, relativeTime } from '@/lib/date';
-import { haptics } from '@/lib/haptics';
+import {
+  Button,
+  Chip,
+  ConfirmDialog,
+  HeaderAction,
+  Icon,
+  IconButton,
+  ImportanceDots,
+  LoopText,
+  Screen,
+  ScreenHeader,
+  SectionLabel,
+  Skeleton,
+} from '@/components/ui';
+import { LoopColors } from '@/constants/loop-theme';
+import { TakeawayChecklist } from '@/features/feedback/components';
 import {
   useDeleteFeedback,
   useFeedback,
   useSetInternalized,
   useToggleTakeaway,
 } from '@/features/feedback/queries';
-import { useSubGoals } from '@/features/goals/queries';
+import { useSubGoalName } from '@/features/goals/use-sub-goal-name';
+import { fullDate, relativeTime } from '@/lib/date';
+import { haptics } from '@/lib/haptics';
 import { useI18n } from '@/lib/i18n';
-import type { TKey } from '@/lib/translations';
-import type { Importance } from '@/types/models';
-
-function impLabelKey(imp: Importance): TKey {
-  return imp === 'high' ? 'imp.high' : imp === 'low' ? 'imp.low' : 'imp.mid';
-}
+import { impLabelKey } from '@/lib/importance';
 
 export default function FeedbackDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { t, lang } = useI18n();
   const { data: feedback, isLoading } = useFeedback(id);
-  const { data: subGoals = [] } = useSubGoals();
+  const subGoalName = useSubGoalName();
   const toggleTakeaway = useToggleTakeaway();
   const setInternalized = useSetInternalized();
   const deleteFeedback = useDeleteFeedback();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
-
-  const subGoalName = useMemo(
-    () => subGoals.find((s) => s.id === feedback?.subGoalId)?.name ?? '—',
-    [subGoals, feedback?.subGoalId],
-  );
 
   if (!feedback) {
     return (
@@ -69,58 +73,32 @@ export default function FeedbackDetailScreen() {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      {/* header */}
-      <View style={styles.header}>
-        <PressScale onPress={() => router.back()} hitSlop={8} scaleTo={LoopMotion.scale.icon} style={styles.headerBtn}>
-          <Icon name="chevron-left" size={24} color={LoopColors.ink2} />
-        </PressScale>
-        <View style={styles.headerActions}>
-          <PressScale
-            onPress={() => router.push(`/feedback/new?id=${feedback.id}`)}
-            hitSlop={8}
-            haptic
-            scaleTo={LoopMotion.scale.icon}
-            style={styles.headerAction}
-          >
-            <Icon name="edit" size={21} color={LoopColors.ink3} />
-          </PressScale>
-          <PressScale
-            onPress={() => setConfirmingDelete(true)}
-            hitSlop={8}
-            haptic
-            scaleTo={LoopMotion.scale.icon}
-            style={styles.headerAction}
-          >
-            <Icon name="trash" size={21} color={LoopColors.ink3} />
-          </PressScale>
-        </View>
-      </View>
+      <ScreenHeader
+        onBack={() => router.back()}
+        right={
+          <>
+            <HeaderAction
+              icon="edit"
+              onPress={() => router.push(`/feedback/new?id=${feedback.id}`)}
+            />
+            <HeaderAction icon="trash" onPress={() => setConfirmingDelete(true)} />
+          </>
+        }
+      />
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        {internalized ? (
-          <View style={styles.closedBanner}>
-            <View style={styles.closedIcon}>
-              <Icon name="check" size={19} color={LoopColors.white} />
-            </View>
-            <View>
-              <LoopText variant="label" color="good">
-                {t('detail.closed.title')}
-              </LoopText>
-              <LoopText variant="caption" color="ink3" style={styles.closedSub}>
-                {t('detail.closed.sub')}
-              </LoopText>
-            </View>
-          </View>
-        ) : (
-          <StatusPill />
-        )}
+        {internalized ? <ClosedBanner /> : <StatusPill />}
 
         <LoopText variant="heading" style={styles.title}>
           {feedback.title}
         </LoopText>
 
         <MetaRow label={t('detail.meta.subgoal')}>
-          <Chip label={subGoalName} tone="warm" icon={<Icon name="target" size={13} color={LoopColors.warmDeep} />} />
+          <Chip
+            label={subGoalName(feedback.subGoalId)}
+            tone="warm"
+            icon={<Icon name="target" size={13} color={LoopColors.warmDeep} />}
+          />
         </MetaRow>
         <MetaRow label={t('detail.meta.importance')}>
           <View style={styles.impValue}>
@@ -151,23 +129,12 @@ export default function FeedbackDetailScreen() {
         {total > 0 && (
           <>
             <SectionLabel>{t('detail.section.takeaways', { done, total })}</SectionLabel>
-            <View style={styles.takeawayList}>
-              {feedback.takeaways.map((tk) => (
-                <View key={tk.id} style={styles.takeawayRow}>
-                  <Checkbox
-                    done={tk.done}
-                    onPress={() => toggleTakeaway.mutate({ feedbackId: feedback.id, takeawayId: tk.id, done: !tk.done })}
-                  />
-                  <LoopText
-                    variant="bodyTight"
-                    color={tk.done ? 'ink4' : 'ink'}
-                    style={[styles.takeawayText, tk.done && styles.takeawayDone]}
-                  >
-                    {tk.text}
-                  </LoopText>
-                </View>
-              ))}
-            </View>
+            <TakeawayChecklist
+              takeaways={feedback.takeaways}
+              onToggle={(takeawayId, nextDone) =>
+                toggleTakeaway.mutate({ feedbackId: feedback.id, takeawayId, done: nextDone })
+              }
+            />
           </>
         )}
 
@@ -176,7 +143,11 @@ export default function FeedbackDetailScreen() {
             <SectionLabel>{t('detail.section.tags')}</SectionLabel>
             <View style={styles.tagsWrap}>
               {feedback.tags.map((tag) => (
-                <Chip key={tag} label={tag} icon={<Icon name="tag" size={12} color={LoopColors.ink3} />} />
+                <Chip
+                  key={tag}
+                  label={tag}
+                  icon={<Icon name="tag" size={12} color={LoopColors.ink3} />}
+                />
               ))}
             </View>
           </>
@@ -205,7 +176,12 @@ export default function FeedbackDetailScreen() {
             }
           />
         )}
-        <Button label={t('detail.action.reflect')} icon="loop" style={styles.flex} onPress={() => router.push('/chat/reflect')} />
+        <Button
+          label={t('detail.action.reflect')}
+          icon="loop"
+          style={styles.flex}
+          onPress={() => router.push('/chat/reflect')}
+        />
       </View>
 
       <ConfirmDialog
@@ -221,6 +197,25 @@ export default function FeedbackDetailScreen() {
         onCancel={() => setConfirmingDelete(false)}
       />
     </Screen>
+  );
+}
+
+function ClosedBanner() {
+  const { t } = useI18n();
+  return (
+    <View style={styles.closedBanner}>
+      <View style={styles.closedIcon}>
+        <Icon name="check" size={19} color={LoopColors.white} />
+      </View>
+      <View>
+        <LoopText variant="label" color="good">
+          {t('detail.closed.title')}
+        </LoopText>
+        <LoopText variant="caption" color="ink3" style={styles.closedSub}>
+          {t('detail.closed.sub')}
+        </LoopText>
+      </View>
+    </View>
   );
 }
 
@@ -247,22 +242,10 @@ function MetaRow({ label, children }: { label: string; children: React.ReactNode
   );
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <LoopText variant="eyebrow" color="ink4" style={styles.sectionLabel}>
-      {children}
-    </LoopText>
-  );
-}
-
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   detailSkeleton: { padding: 22, gap: 14 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingTop: 12, paddingBottom: 10 },
-  headerBtn: { padding: 4 },
-  headerActions: { marginLeft: 'auto', flexDirection: 'row', gap: 4 },
-  headerAction: { padding: 6 },
   scroll: { paddingHorizontal: 22, paddingBottom: 16 },
   closedBanner: {
     flexDirection: 'row',
@@ -284,17 +267,6 @@ const styles = StyleSheet.create({
   closedSub: { marginTop: 2 },
   title: { lineHeight: 31, marginBottom: 6 },
   impValue: { flexDirection: 'row', alignItems: 'center', gap: 7 },
-  takeawayList: { borderTopWidth: 1, borderTopColor: LoopColors.lineSoft },
-  takeawayRow: {
-    flexDirection: 'row',
-    gap: 12,
-    alignItems: 'flex-start',
-    paddingVertical: 13,
-    borderBottomWidth: 1,
-    borderBottomColor: LoopColors.lineSoft,
-  },
-  takeawayText: { flex: 1 },
-  takeawayDone: { textDecorationLine: 'line-through' },
   tagsWrap: { flexDirection: 'row', gap: 7, flexWrap: 'wrap' },
   footer: { flexDirection: 'row', gap: 10, paddingHorizontal: 22, paddingTop: 10 },
   statusPill: {
@@ -320,5 +292,4 @@ const styles = StyleSheet.create({
     borderBottomColor: LoopColors.lineSoft,
   },
   metaLabel: { width: 76 },
-  sectionLabel: { marginTop: 24, marginBottom: 9 },
 });

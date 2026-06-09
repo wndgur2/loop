@@ -1,10 +1,22 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { Button, Card, ConfirmDialog, Icon, LoopText, PressScale, Screen } from '@/components/ui';
-import { LoopColors, LoopMotion, LoopRadius } from '@/constants/loop-theme';
+import {
+  Button,
+  Card,
+  ConfirmDialog,
+  Icon,
+  LoopText,
+  PressScale,
+  Screen,
+  ScreenHeader,
+  SectionLabel,
+  TextField,
+} from '@/components/ui';
+import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
+import { useSyncFromServer } from '@/hooks/use-sync-from-server';
 import { useI18n } from '@/lib/i18n';
 
 export default function AccountScreen() {
@@ -16,17 +28,16 @@ export default function AccountScreen() {
   const currentName = (session?.user.user_metadata?.display_name as string | undefined) ?? '';
 
   const [name, setName] = useState(currentName);
-  // When the session's name changes (after a successful save), sync the input value to it (during render — no effect needed).
-  const [syncedName, setSyncedName] = useState(currentName);
-  if (currentName !== syncedName) {
-    setSyncedName(currentName);
-    setName(currentName);
-  }
+  // When the session's name changes (after a successful save), sync the input value to it.
+  useSyncFromServer(currentName, setName);
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [dialog, setDialog] = useState<
-    { kind: 'signout' } | { kind: 'delete' } | { kind: 'info'; title: string; message?: string } | null
+    | { kind: 'signout' }
+    | { kind: 'delete' }
+    | { kind: 'info'; title: string; message?: string }
+    | null
   >(null);
 
   const nameChanged = name.trim().length > 0 && name.trim() !== currentName;
@@ -61,15 +72,10 @@ export default function AccountScreen() {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      <View style={styles.header}>
-        <PressScale onPress={() => router.back()} hitSlop={8} scaleTo={LoopMotion.scale.icon} style={styles.headerBtn}>
-          <Icon name="chevron-left" size={24} color={LoopColors.ink2} />
-        </PressScale>
-        <LoopText variant="heading2">{t('account.title')}</LoopText>
-      </View>
+      <ScreenHeader onBack={() => router.back()} title={t('account.title')} />
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <SectionTitle>{t('account.section.profile')}</SectionTitle>
+        <SectionLabel first>{t('account.section.profile')}</SectionLabel>
         <Card radius={20} style={styles.card}>
           <LoopText variant="caption" color="ink4">
             {t('account.email')}
@@ -83,21 +89,38 @@ export default function AccountScreen() {
           <LoopText variant="caption" color="ink4">
             {t('account.name')}
           </LoopText>
-          <TextInput
+          <TextField
+            variant="underline"
             value={name}
             onChangeText={setName}
             placeholder={t('account.namePlaceholder')}
-            placeholderTextColor={LoopColors.ink4}
             style={styles.nameInput}
           />
           {nameChanged && (
-            <Button label={t('account.nameSave')} height={42} loading={saving} onPress={saveName} style={styles.nameSave} />
+            <Button
+              label={t('account.nameSave')}
+              height={42}
+              loading={saving}
+              onPress={saveName}
+              style={styles.nameSave}
+            />
           )}
         </Card>
 
-        <Button label={t('account.signout')} variant="secondary" onPress={() => setDialog({ kind: 'signout' })} style={styles.signout} />
+        <Button
+          label={t('account.signout')}
+          variant="secondary"
+          onPress={() => setDialog({ kind: 'signout' })}
+          style={styles.signout}
+        />
 
-        <PressScale onPress={() => setDialog({ kind: 'delete' })} disabled={deleting} hitSlop={6} haptic style={styles.deleteRow}>
+        <PressScale
+          onPress={() => setDialog({ kind: 'delete' })}
+          disabled={deleting}
+          hitSlop={6}
+          haptic
+          style={styles.deleteRow}
+        >
           <Icon name="trash" size={18} color={LoopColors.danger} />
           <LoopText variant="label" style={[styles.deleteLabel, deleting && styles.deleteDisabled]}>
             {t('account.delete')}
@@ -139,31 +162,12 @@ export default function AccountScreen() {
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <LoopText variant="eyebrow" color="ink4" style={styles.sectionTitle}>
-      {children}
-    </LoopText>
-  );
-}
-
 const styles = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingTop: 12, paddingBottom: 10 },
-  headerBtn: { padding: 4 },
   scroll: { paddingHorizontal: 22, paddingBottom: 24 },
-  sectionTitle: { marginTop: 4, marginBottom: 11 },
   card: { padding: 16 },
   email: { marginTop: 4 },
   divider: { height: 1, backgroundColor: LoopColors.lineSoft, marginVertical: 16 },
-  nameInput: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: LoopColors.ink,
-    borderBottomWidth: 1,
-    borderBottomColor: LoopColors.lineSoft,
-    paddingVertical: 8,
-    marginTop: 4,
-  },
+  nameInput: { marginTop: 4 },
   nameSave: { marginTop: 14 },
   signout: { marginTop: 28 },
   deleteRow: {

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
-import { Button, Icon, LoopText, PressScale, Screen } from '@/components/ui';
+import { Button, Icon, LoopText, PressScale, Screen, SelectChip, TextField } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { useAuth } from '@/features/auth/auth-context';
 import { useCreateGoalWithSubGoals } from '@/features/goals/queries';
@@ -73,20 +73,13 @@ export default function OnboardingScreen() {
             {t('ob.goalDesc')}
           </LoopText>
 
-          <TextInput
-            value={title}
-            onChangeText={setTitle}
-            placeholder={t('ob.goalPlaceholder')}
-            placeholderTextColor={LoopColors.ink4}
-            style={styles.input}
-          />
-          <TextInput
+          <TextField value={title} onChangeText={setTitle} placeholder={t('ob.goalPlaceholder')} />
+          <TextField
             value={description}
             onChangeText={setDescription}
             placeholder={t('ob.goalDescPlaceholder')}
-            placeholderTextColor={LoopColors.ink4}
             multiline
-            style={[styles.input, styles.descInput]}
+            style={styles.descInput}
           />
 
           <LoopText variant="eyebrow" color="ink4" style={styles.step2}>
@@ -102,39 +95,38 @@ export default function OnboardingScreen() {
           {selected.length > 0 && (
             <View style={styles.selectedWrap}>
               {selected.map((name) => (
-                <PressScale key={name} onPress={() => toggle(name)} haptic="select">
-                  <View style={[styles.chip, styles.chipOn]}>
-                    <LoopText variant="label" color="white">
-                      {name}
-                    </LoopText>
-                    <Icon name="close" size={14} color={LoopColors.white} />
-                  </View>
-                </PressScale>
+                <SelectChip
+                  key={name}
+                  label={name}
+                  selected
+                  onPress={() => toggle(name)}
+                  height={38}
+                  trailing={<Icon name="close" size={14} color={LoopColors.white} />}
+                />
               ))}
             </View>
           )}
 
           <View style={styles.chipsWrap}>
             {suggestions.map((name) => (
-              <PressScale key={name} onPress={() => toggle(name)} haptic="select">
-                <View style={styles.chip}>
-                  <Icon name="plus" size={14} color={LoopColors.ink3} />
-                  <LoopText variant="label" color="ink2">
-                    {name}
-                  </LoopText>
-                </View>
-              </PressScale>
+              <SelectChip
+                key={name}
+                label={name}
+                selected={false}
+                onPress={() => toggle(name)}
+                height={38}
+                leading={<Icon name="plus" size={14} color={LoopColors.ink3} />}
+              />
             ))}
           </View>
 
           <View style={styles.customRow}>
-            <TextInput
+            <TextField
               value={custom}
               onChangeText={setCustom}
               placeholder={t('ob.addPlaceholder')}
-              placeholderTextColor={LoopColors.ink4}
               onSubmitEditing={addCustom}
-              style={[styles.input, styles.customInput]}
+              style={styles.customInput}
             />
             <PressScale onPress={addCustom} haptic style={styles.addBtn}>
               <Icon name="plus" size={20} color={LoopColors.warmDeep} />
@@ -147,7 +139,13 @@ export default function OnboardingScreen() {
             </LoopText>
           )}
 
-          <Button label={t('ob.cta')} onPress={submit} disabled={!canSubmit} loading={create.isPending} style={styles.submit} />
+          <Button
+            label={t('ob.cta')}
+            onPress={submit}
+            disabled={!canSubmit}
+            loading={create.isPending}
+            style={styles.submit}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
@@ -161,31 +159,9 @@ const styles = StyleSheet.create({
   lead: { marginTop: 8, marginBottom: 18 },
   step2: { marginTop: 32 },
   subLead: { marginTop: 8, marginBottom: 16 },
-  input: {
-    backgroundColor: LoopColors.surface,
-    borderWidth: 1,
-    borderColor: LoopColors.line,
-    borderRadius: LoopRadius.xl,
-    paddingHorizontal: 16,
-    paddingVertical: 15,
-    fontSize: 15,
-    color: LoopColors.ink,
-  },
   descInput: { marginTop: 12, minHeight: 64, textAlignVertical: 'top' },
   selectedWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 },
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 13,
-    height: 38,
-    borderRadius: LoopRadius.full,
-    borderWidth: 1,
-    borderColor: LoopColors.line,
-    backgroundColor: LoopColors.surface,
-  },
-  chipOn: { backgroundColor: LoopColors.warm, borderColor: LoopColors.warm },
   customRow: { flexDirection: 'row', gap: 8, marginTop: 14, alignItems: 'center' },
   customInput: { flex: 1, paddingVertical: 11 },
   addBtn: {

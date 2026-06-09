@@ -6,6 +6,7 @@ import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import {
   Button,
   Card,
+  EmptyState,
   Icon,
   type IconName,
   LoopText,
@@ -17,26 +18,16 @@ import {
 import { LoopColors, LoopMotion } from '@/constants/loop-theme';
 import { TabComposer } from '@/features/chat/tab-composer';
 import { useFeedbacks } from '@/features/feedback/queries';
-import { useSubGoals } from '@/features/goals/queries';
+import { useSubGoalName } from '@/features/goals/use-sub-goal-name';
 import { buildRetroCards, type RetroCard } from '@/features/reflect/recommendations';
 import { useT } from '@/lib/i18n';
-import type { TKey } from '@/lib/translations';
-import type { Importance } from '@/types/models';
-
-function impLabelKey(imp: Importance): TKey {
-  return imp === 'high' ? 'imp.high' : imp === 'low' ? 'imp.low' : 'imp.mid';
-}
+import { impLabelKey } from '@/lib/importance';
 
 export default function ReflectScreen() {
   const router = useRouter();
   const t = useT();
   const { data: feedbacks = [], isLoading } = useFeedbacks();
-  const { data: subGoals = [] } = useSubGoals();
-
-  const subGoalName = useMemo(() => {
-    const map = new Map(subGoals.map((s) => [s.id, s.name]));
-    return (id: string) => map.get(id) ?? '—';
-  }, [subGoals]);
+  const subGoalName = useSubGoalName();
 
   const cards = useMemo(() => buildRetroCards(feedbacks), [feedbacks]);
   const startReflect = () => router.push('/chat/reflect');
@@ -55,7 +46,9 @@ export default function ReflectScreen() {
             {cards.map((card, i) => (
               <RetroCardView key={i} card={card} subGoalName={subGoalName} onPress={startReflect} />
             ))}
-            {cards.length === 0 && !isLoading && <EmptyReflect />}
+            {cards.length === 0 && !isLoading && (
+              <EmptyState title={t('reflect.empty.title')} body={t('reflect.empty.body')} />
+            )}
           </View>
         </ScrollView>
 
@@ -169,21 +162,6 @@ function Kind({
   );
 }
 
-function EmptyReflect() {
-  const t = useT();
-  return (
-    <Card radius={22} style={styles.empty}>
-      <Icon name="loop" size={28} color={LoopColors.warm} />
-      <LoopText variant="cardTitle" style={styles.emptyTitle}>
-        {t('reflect.empty.title')}
-      </LoopText>
-      <LoopText variant="bodyTight" color="ink3" style={styles.emptyBody}>
-        {t('reflect.empty.body')}
-      </LoopText>
-    </Card>
-  );
-}
-
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   scroll: { paddingHorizontal: 22, paddingBottom: 16 },
@@ -210,7 +188,4 @@ const styles = StyleSheet.create({
   areaOpen: { marginTop: 3 },
   kind: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   kindLabel: { letterSpacing: 0.4, textTransform: 'uppercase' },
-  empty: { padding: 24, alignItems: 'center' },
-  emptyTitle: { marginTop: 12, textAlign: 'center' },
-  emptyBody: { marginTop: 6, textAlign: 'center' },
 });

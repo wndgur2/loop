@@ -1,10 +1,21 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
-import { Button, Icon, ImportanceDots, LoopText, PressScale, Screen } from '@/components/ui';
-import { LoopColors, LoopMotion, LoopRadius } from '@/constants/loop-theme';
+import {
+  Button,
+  Icon,
+  ImportanceDots,
+  LoopText,
+  PressScale,
+  Screen,
+  ScreenHeader,
+  SectionLabel,
+  SelectChip,
+  TextField,
+} from '@/components/ui';
+import { LoopColors, LoopMotion } from '@/constants/loop-theme';
 import {
   type FeedbackInput,
   useCreateFeedback,
@@ -12,13 +23,11 @@ import {
   useUpdateFeedback,
 } from '@/features/feedback/queries';
 import { useSubGoals } from '@/features/goals/queries';
+import { useSyncFromServer } from '@/hooks/use-sync-from-server';
 import { useT } from '@/lib/i18n';
+import { impLabelKey } from '@/lib/importance';
 import type { TKey } from '@/lib/translations';
 import { IMPORTANCE_VALUES, type Importance } from '@/types/models';
-
-function impLabelKey(imp: Importance): TKey {
-  return imp === 'high' ? 'imp.high' : imp === 'low' ? 'imp.low' : 'imp.mid';
-}
 
 export default function FeedbackFormScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -40,10 +49,9 @@ export default function FeedbackFormScreen() {
   const [tagsText, setTagsText] = useState('');
   const [error, setError] = useState<TKey | null>(null);
 
-  // Initialize the form when server data arrives — sync during render (no effect needed, React's recommended pattern).
-  const [syncedId, setSyncedId] = useState<string | null>(null);
-  if (isEdit && existing && syncedId !== existing.id) {
-    setSyncedId(existing.id);
+  // Initialize the form when the server row arrives (edit mode).
+  useSyncFromServer(isEdit ? existing?.id : null, () => {
+    if (!existing) return;
     setTitle(existing.title);
     setSubGoalId(existing.subGoalId);
     setImportance(existing.importance);
@@ -51,7 +59,7 @@ export default function FeedbackFormScreen() {
     setRootCause(existing.rootCause);
     setTakeaways(existing.takeaways.length ? existing.takeaways.map((tk) => tk.text) : ['']);
     setTagsText(existing.tags.join(', '));
-  }
+  });
   // New entry: default sub-goal selection (once on first load)
   if (!isEdit && subGoalId === null && subGoals.length > 0) {
     setSubGoalId(subGoals[0].id);
@@ -96,88 +104,76 @@ export default function FeedbackFormScreen() {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      <View style={styles.header}>
-        <PressScale onPress={() => router.back()} hitSlop={8} scaleTo={LoopMotion.scale.icon} style={styles.headerBack}>
-          <Icon name="close" size={24} color={LoopColors.ink2} />
-        </PressScale>
-        <LoopText variant="heading2" style={styles.headerTitle}>
-          {isEdit ? t('form.edit') : t('form.new')}
-        </LoopText>
-      </View>
+      <ScreenHeader
+        onBack={() => router.back()}
+        backIcon="close"
+        title={isEdit ? t('form.edit') : t('form.new')}
+      />
 
       <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <FieldLabel>{t('form.label.title')}</FieldLabel>
-          <TextInput value={title} onChangeText={setTitle} placeholder={t('form.ph.title')} placeholderTextColor={LoopColors.ink4} style={styles.input} />
+          <SectionLabel style={styles.firstLabel}>{t('form.label.title')}</SectionLabel>
+          <TextField value={title} onChangeText={setTitle} placeholder={t('form.ph.title')} />
 
-          <FieldLabel>{t('form.label.subgoal')}</FieldLabel>
+          <SectionLabel>{t('form.label.subgoal')}</SectionLabel>
           {subGoals.length === 0 ? (
             <LoopText variant="caption" color="ink4">
               {t('form.nosubgoal')}
             </LoopText>
           ) : (
             <View style={styles.chipsWrap}>
-              {subGoals.map((sg) => {
-                const on = sg.id === subGoalId;
-                return (
-                  <PressScale key={sg.id} onPress={() => setSubGoalId(sg.id)} haptic="select">
-                    <View style={[styles.selChip, on && styles.selChipOn]}>
-                      <LoopText variant="label" color={on ? 'white' : 'ink2'}>
-                        {sg.name}
-                      </LoopText>
-                    </View>
-                  </PressScale>
-                );
-              })}
+              {subGoals.map((sg) => (
+                <SelectChip
+                  key={sg.id}
+                  label={sg.name}
+                  selected={sg.id === subGoalId}
+                  onPress={() => setSubGoalId(sg.id)}
+                />
+              ))}
             </View>
           )}
 
-          <FieldLabel>{t('form.label.importance')}</FieldLabel>
+          <SectionLabel>{t('form.label.importance')}</SectionLabel>
           <View style={styles.impRow}>
-            {IMPORTANCE_VALUES.map((lv) => {
-              const on = lv === importance;
-              return (
-                <PressScale key={lv} onPress={() => setImportance(lv)} haptic="select" style={styles.flex}>
-                  <View style={[styles.selChip, styles.impChip, on && styles.impChipOn]}>
-                    <ImportanceDots level={lv} />
-                    <LoopText variant="label" color={on ? 'warmDeep' : 'ink3'}>
-                      {t(impLabelKey(lv))}
-                    </LoopText>
-                  </View>
-                </PressScale>
-              );
-            })}
+            {IMPORTANCE_VALUES.map((lv) => (
+              <SelectChip
+                key={lv}
+                label={t(impLabelKey(lv))}
+                selected={lv === importance}
+                onPress={() => setImportance(lv)}
+                tone="soft"
+                leading={<ImportanceDots level={lv} />}
+                style={styles.flex}
+              />
+            ))}
           </View>
 
-          <FieldLabel>{t('form.label.situation')}</FieldLabel>
-          <TextInput
+          <SectionLabel>{t('form.label.situation')}</SectionLabel>
+          <TextField
             value={situation}
             onChangeText={setSituation}
             placeholder={t('form.ph.situation')}
-            placeholderTextColor={LoopColors.ink4}
             multiline
-            style={[styles.input, styles.multiline]}
+            style={styles.multiline}
           />
 
-          <FieldLabel>{t('form.label.rootcause')}</FieldLabel>
-          <TextInput
+          <SectionLabel>{t('form.label.rootcause')}</SectionLabel>
+          <TextField
             value={rootCause}
             onChangeText={setRootCause}
             placeholder={t('form.ph.rootcause')}
-            placeholderTextColor={LoopColors.ink4}
             multiline
-            style={[styles.input, styles.multiline]}
+            style={styles.multiline}
           />
 
-          <FieldLabel>{t('form.label.takeaways')}</FieldLabel>
+          <SectionLabel>{t('form.label.takeaways')}</SectionLabel>
           {takeaways.map((val, i) => (
             <View key={i} style={styles.takeawayRow}>
-              <TextInput
+              <TextField
                 value={val}
                 onChangeText={(v) => setTakeaways((cur) => cur.map((x, j) => (j === i ? v : x)))}
                 placeholder={t('form.ph.takeaway', { n: i + 1 })}
-                placeholderTextColor={LoopColors.ink4}
-                style={[styles.input, styles.takeawayInput]}
+                style={styles.takeawayInput}
               />
               {takeaways.length > 1 && (
                 <PressScale
@@ -192,21 +188,23 @@ export default function FeedbackFormScreen() {
               )}
             </View>
           ))}
-          <PressScale onPress={() => setTakeaways((cur) => [...cur, ''])} haptic style={styles.addRow}>
+          <PressScale
+            onPress={() => setTakeaways((cur) => [...cur, ''])}
+            haptic
+            style={styles.addRow}
+          >
             <Icon name="plus" size={18} color={LoopColors.warmDeep} />
             <LoopText variant="label" color="warmDeep">
               {t('form.addTakeaway')}
             </LoopText>
           </PressScale>
 
-          <FieldLabel>{t('form.label.tags')}</FieldLabel>
-          <TextInput
+          <SectionLabel>{t('form.label.tags')}</SectionLabel>
+          <TextField
             value={tagsText}
             onChangeText={setTagsText}
             placeholder={t('form.ph.tags')}
-            placeholderTextColor={LoopColors.ink4}
             autoCapitalize="none"
-            style={styles.input}
           />
 
           {error && (
@@ -215,54 +213,25 @@ export default function FeedbackFormScreen() {
             </LoopText>
           )}
 
-          <Button label={isEdit ? t('form.saveEdit') : t('form.save')} onPress={save} loading={busy} style={styles.submit} />
+          <Button
+            label={isEdit ? t('form.saveEdit') : t('form.save')}
+            onPress={save}
+            loading={busy}
+            style={styles.submit}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
   );
 }
 
-function FieldLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <LoopText variant="eyebrow" color="ink4" style={styles.fieldLabel}>
-      {children}
-    </LoopText>
-  );
-}
-
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8 },
-  headerBack: { padding: 4 },
-  headerTitle: { marginLeft: 8 },
-  scroll: { padding: 22, paddingBottom: 40 },
-  fieldLabel: { marginTop: 22, marginBottom: 9 },
-  input: {
-    backgroundColor: LoopColors.surface,
-    borderWidth: 1,
-    borderColor: LoopColors.line,
-    borderRadius: LoopRadius.xl,
-    paddingHorizontal: 16,
-    paddingVertical: 13,
-    fontSize: 15,
-    color: LoopColors.ink,
-  },
+  scroll: { paddingHorizontal: 22, paddingTop: 14, paddingBottom: 40 },
+  firstLabel: { marginTop: 0 },
   multiline: { minHeight: 92, textAlignVertical: 'top' },
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  selChip: {
-    paddingHorizontal: 14,
-    height: 40,
-    borderRadius: LoopRadius.full,
-    borderWidth: 1,
-    borderColor: LoopColors.line,
-    backgroundColor: LoopColors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  selChipOn: { backgroundColor: LoopColors.warm, borderColor: LoopColors.warm },
   impRow: { flexDirection: 'row', gap: 8 },
-  impChip: { flexDirection: 'row', justifyContent: 'center', gap: 7 },
-  impChipOn: { backgroundColor: LoopColors.warmSoft, borderColor: LoopColors.warmLine },
   takeawayRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginBottom: 8 },
   takeawayInput: { flex: 1 },
   takeawayRemove: { padding: 6 },
