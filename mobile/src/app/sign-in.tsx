@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
@@ -23,6 +23,9 @@ export default function SignInScreen() {
   // Email confirmation waiting screen: the address the confirmation mail was sent to (null shows the normal form).
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [resent, setResent] = useState(false);
+  // Refs to move focus forward on Enter (name → email → password); the password field submits.
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
 
   const isSignUp = mode === 'sign-up';
 
@@ -125,22 +128,32 @@ export default function SignInScreen() {
                     value={displayName}
                     onChangeText={setDisplayName}
                     autoCapitalize="words"
+                    returnKeyType="next"
+                    submitBehavior="submit"
+                    onSubmitEditing={() => emailRef.current?.focus()}
                   />
                 )}
                 <Field
+                  ref={emailRef}
                   placeholder={t('field.email')}
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoComplete="email"
+                  returnKeyType="next"
+                  submitBehavior="submit"
+                  onSubmitEditing={() => passwordRef.current?.focus()}
                 />
                 <Field
+                  ref={passwordRef}
                   placeholder={t('field.password')}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry
                   autoCapitalize="none"
+                  returnKeyType={isSignUp ? 'done' : 'go'}
+                  onSubmitEditing={submit}
                 />
               </View>
 
@@ -170,8 +183,11 @@ export default function SignInScreen() {
   );
 }
 
-function Field(props: React.ComponentProps<typeof TextInput>) {
-  return <TextInput {...props} placeholderTextColor={LoopColors.ink4} style={styles.field} />;
+function Field({
+  ref,
+  ...props
+}: React.ComponentProps<typeof TextInput> & { ref?: React.Ref<TextInput> }) {
+  return <TextInput ref={ref} {...props} placeholderTextColor={LoopColors.ink4} style={styles.field} />;
 }
 
 const styles = StyleSheet.create({
