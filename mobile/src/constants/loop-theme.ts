@@ -102,3 +102,19 @@ export const LoopShadow = {
     elevation: 3,
   },
 } as const;
+
+/**
+ * Motion tokens — keep interactions subtle. Springs drive press feedback,
+ * timings drive entrances. Reuses the tab "squish" feel tuned in (tabs)/_layout.
+ */
+export const LoopMotion = {
+  spring: {
+    squish: { damping: 20, stiffness: 360, mass: 0.4 }, // tab press
+    press: { damping: 20, stiffness: 340, mass: 0.5 }, // buttons / cards
+    pop: { damping: 16, stiffness: 380, mass: 0.5 }, // checkbox toggle
+  },
+  /** withTiming durations (ms) */
+  timing: { fast: 140, base: 220, slow: 380 },
+  /** press scale targets — intentionally shallow (subtle) */
+  scale: { press: 0.97, squish: 0.88 },
+} as const;

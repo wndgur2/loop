@@ -1,22 +1,52 @@
-import { memo } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { memo, useEffect } from 'react';
+import { Pressable, StyleSheet } from 'react-native';
+import Animated, {
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 
-import { LoopColors } from '@/constants/loop-theme';
+import { LoopColors, LoopMotion } from '@/constants/loop-theme';
+import { haptics } from '@/lib/haptics';
 
 import { Icon } from './icon';
 
-/** Takeaway checkbox — green fill when done. Ported from demo .lp-check. */
+/** Takeaway checkbox — green fill when done, with a subtle pop + check fade-in. Ported from demo .lp-check. */
 export const Checkbox = memo(function Checkbox({ done, onPress }: { done: boolean; onPress?: () => void }) {
+  const progress = useSharedValue(done ? 1 : 0);
+  const pop = useSharedValue(1);
+
+  useEffect(() => {
+    progress.set(withTiming(done ? 1 : 0, { duration: LoopMotion.timing.fast }));
+    pop.set(withSequence(withTiming(1.06, { duration: 90 }), withSpring(1, LoopMotion.spring.pop)));
+  }, [done, progress, pop]);
+
+  const boxStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pop.get() }],
+    backgroundColor: interpolateColor(progress.get(), [0, 1], ['rgba(47,165,103,0)', LoopColors.good]),
+    borderColor: interpolateColor(progress.get(), [0, 1], [LoopColors.line, LoopColors.good]),
+  }));
+  const checkStyle = useAnimatedStyle(() => ({
+    opacity: progress.get(),
+    transform: [{ scale: 0.6 + 0.4 * progress.get() }],
+  }));
+
   return (
-    <Pressable onPress={onPress} hitSlop={8}>
-      <View
-        style={[
-          styles.box,
-          done ? styles.done : styles.idle,
-        ]}
-      >
-        {done && <Icon name="check-sm" size={14} color={LoopColors.white} />}
-      </View>
+    <Pressable
+      onPress={() => {
+        haptics[done ? 'select' : 'success']();
+        onPress?.();
+      }}
+      hitSlop={8}
+    >
+      <Animated.View style={[styles.box, boxStyle]}>
+        <Animated.View style={checkStyle}>
+          <Icon name="check-sm" size={14} color={LoopColors.white} />
+        </Animated.View>
+      </Animated.View>
     </Pressable>
   );
 });
@@ -30,6 +60,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  idle: { borderColor: LoopColors.line, backgroundColor: 'transparent' },
-  done: { borderColor: LoopColors.good, backgroundColor: LoopColors.good },
 });

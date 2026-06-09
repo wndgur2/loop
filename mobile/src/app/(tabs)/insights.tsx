@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { Card, Icon, LoopText, Ring, Screen, TabHeader } from '@/components/ui';
+import { Card, Icon, InsightsSkeleton, LoopText, Ring, Screen, TabHeader } from '@/components/ui';
 import { LoopColors } from '@/constants/loop-theme';
 import { computeStats } from '@/features/dashboard/stats';
 import { useFeedbacks } from '@/features/feedback/queries';
@@ -27,7 +27,9 @@ export default function InsightsScreen() {
     <Screen edges={['top']}>
       <TabHeader title={t('dash.title')} />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        {stats.total === 0 && !isLoading ? (
+        {isLoading ? (
+          <InsightsSkeleton />
+        ) : stats.total === 0 ? (
           <Card radius={22} style={styles.emptyCard}>
             <Icon name="chart" size={28} color={LoopColors.warm} />
             <LoopText variant="cardTitle" style={styles.emptyTitle}>

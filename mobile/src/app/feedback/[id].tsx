@@ -5,6 +5,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Checkbox, Chip, Icon, IconButton, ImportanceDots, LoopText, Screen } from '@/components/ui';
 import { LoopColors } from '@/constants/loop-theme';
 import { fullDate, relativeTime } from '@/lib/date';
+import { haptics } from '@/lib/haptics';
 import {
   useDeleteFeedback,
   useFeedback,
@@ -56,6 +57,7 @@ export default function FeedbackDetailScreen() {
         text: t('common.delete'),
         style: 'destructive',
         onPress: async () => {
+          haptics.warning();
           await deleteFeedback.mutateAsync(feedback!.id);
           router.back();
         },
@@ -178,7 +180,16 @@ export default function FeedbackDetailScreen() {
             onPress={() => setInternalized.mutate({ feedbackId: feedback.id, internalized: false })}
           />
         ) : (
-          <IconButton icon="check" color={LoopColors.good} onPress={() => setInternalized.mutate({ feedbackId: feedback.id, internalized: true })} />
+          <IconButton
+            icon="check"
+            color={LoopColors.good}
+            onPress={() =>
+              setInternalized.mutate(
+                { feedbackId: feedback.id, internalized: true },
+                { onSuccess: () => haptics.success() },
+              )
+            }
+          />
         )}
         <Button label={t('detail.action.reflect')} icon="loop" style={styles.flex} onPress={() => router.push('/chat/reflect')} />
       </View>

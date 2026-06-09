@@ -1,9 +1,12 @@
 import { memo } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, type ViewStyle } from 'react-native';
+import Animated from 'react-native-reanimated';
 
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
+import { haptics } from '@/lib/haptics';
 
 import { Icon, type IconName } from './icon';
+import { usePressScale } from './press-scale';
 import { LoopText } from './text';
 
 type ButtonProps = {
@@ -30,29 +33,40 @@ export const Button = memo(function Button({
 }: ButtonProps) {
   const isPrimary = variant === 'primary';
   const fg = isPrimary ? LoopColors.white : LoopColors.ink2;
+  const { animatedStyle, onPressIn, onPressOut } = usePressScale();
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        haptics.tap();
+        onPress?.();
+      }}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
       disabled={disabled || loading}
-      style={({ pressed }) => [
-        styles.base,
-        { height },
-        isPrimary ? styles.primary : styles.secondary,
-        { opacity: disabled ? 0.5 : pressed ? 0.9 : 1 },
-        style,
-      ]}
+      android_ripple={null}
+      style={style}
     >
-      {loading ? (
-        <ActivityIndicator color={fg} />
-      ) : (
-        <>
-          {icon && <Icon name={icon} size={19} color={fg} />}
-          <LoopText variant="label" color={fg} style={styles.label}>
-            {label}
-          </LoopText>
-        </>
-      )}
+      <Animated.View
+        style={[
+          styles.base,
+          { height },
+          isPrimary ? styles.primary : styles.secondary,
+          { opacity: disabled ? 0.5 : 1 },
+          animatedStyle,
+        ]}
+      >
+        {loading ? (
+          <ActivityIndicator color={fg} />
+        ) : (
+          <>
+            {icon && <Icon name={icon} size={19} color={fg} />}
+            <LoopText variant="label" color={fg} style={styles.label}>
+              {label}
+            </LoopText>
+          </>
+        )}
+      </Animated.View>
     </Pressable>
   );
 });
@@ -69,17 +83,20 @@ export const IconButton = memo(function IconButton({
   color?: string;
   size?: number;
 }) {
+  const { animatedStyle, onPressIn, onPressOut } = usePressScale();
   return (
     <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.iconBtn,
-        { width: size, height: size, opacity: pressed ? 0.85 : 1 },
-      ]}
+      onPress={() => {
+        haptics.tap();
+        onPress?.();
+      }}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
+      android_ripple={null}
     >
-      <View>
+      <Animated.View style={[styles.iconBtn, { width: size, height: size }, animatedStyle]}>
         <Icon name={icon} size={22} color={color} />
-      </View>
+      </Animated.View>
     </Pressable>
   );
 });

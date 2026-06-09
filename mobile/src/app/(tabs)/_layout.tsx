@@ -1,44 +1,49 @@
 import { Tabs } from 'expo-router';
 import type { BottomTabBarButtonProps } from 'expo-router/build/react-navigation/bottom-tabs';
 import { Pressable, StyleSheet } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Icon } from '@/components/ui';
-import { LoopColors } from '@/constants/loop-theme';
+import { Icon, usePressScale } from '@/components/ui';
+import { LoopColors, LoopMotion } from '@/constants/loop-theme';
+import { haptics } from '@/lib/haptics';
 import { useT } from '@/lib/i18n';
 
 /** Height of the tab bar content (icon + label) area. The bottom safe area is added separately via inset. */
 const TAB_BAR_CONTENT_HEIGHT = 64;
 
-/** Squish spring — snappy, slightly bouncy. */
-const SQUISH_SPRING = { damping: 20, stiffness: 360, mass: 0.4 };
-
 /**
  * Tab button with no platform press feedback (no Android ripple / iOS opacity dim).
- * Instead the content squishes (scales down) while pressed and springs back on release.
+ * Instead the content squishes (scales down) while pressed and springs back, plus a light haptic.
  */
 function SquishTabButton({
   children,
   style,
+  onPress,
   onPressIn,
   onPressOut,
   ref: _ref,
   ...rest
 }: BottomTabBarButtonProps) {
-  const scale = useSharedValue(1);
-  const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.get() }] }));
+  const { animatedStyle, onPressIn: scaleIn, onPressOut: scaleOut } = usePressScale({
+    scaleTo: LoopMotion.scale.squish,
+    spring: LoopMotion.spring.squish,
+  });
   return (
     <Pressable
       {...rest}
       style={style}
       android_ripple={null}
+      onPress={(e) => {
+        haptics.tap();
+        onPress?.(e);
+      }}
       onPressIn={(e) => {
-        scale.set(withSpring(0.88, SQUISH_SPRING));
+        scaleIn();
         onPressIn?.(e);
       }}
       onPressOut={(e) => {
-        scale.set(withSpring(1, SQUISH_SPRING));
+        scaleOut();
         onPressOut?.(e);
       }}
     >

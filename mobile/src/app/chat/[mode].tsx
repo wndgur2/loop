@@ -10,6 +10,7 @@ import { applyRetrospective, describeRetrospective } from '@/features/chat/apply
 import { completeSession, createChatSession, saveMessage } from '@/features/chat/session';
 import { useCreateFeedback } from '@/features/feedback/queries';
 import { useSubGoals } from '@/features/goals/queries';
+import { haptics } from '@/lib/haptics';
 import { useI18n, useT } from '@/lib/i18n';
 import { type ChatProposal, type FeedbackProposal, type LoopiMessage, streamLoopi } from '@/lib/loopi';
 import { qk } from '@/lib/query-keys';
@@ -140,6 +141,7 @@ export default function LoopiChatScreen() {
         sessionId: sessionIdRef.current,
       });
       if (sessionIdRef.current) void completeSession(sessionIdRef.current);
+      haptics.success();
       setProposal(null);
       router.replace(`/feedback/${fb.id}`);
     } catch {
@@ -156,6 +158,7 @@ export default function LoopiChatScreen() {
       qc.invalidateQueries({ queryKey: qk.feedbacks });
       qc.invalidateQueries({ queryKey: qk.feedback(p.feedback_id) });
       if (sessionIdRef.current) void completeSession(sessionIdRef.current);
+      haptics.success();
       setProposal(null);
       appendAssistant(t('chat.applied'));
     } catch {

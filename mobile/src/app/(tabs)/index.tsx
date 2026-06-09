@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { FlatList, type ListRenderItem, Pressable, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
-import { Icon, LoopText, Screen, TabHeader } from '@/components/ui';
+import { FeedbackListSkeleton, Icon, LoopText, Screen, TabHeader } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
 import { computeStats } from '@/features/dashboard/stats';
 import { TabComposer } from '@/features/chat/tab-composer';
@@ -77,8 +77,8 @@ export default function FeedbackHomeScreen() {
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
-          ListHeaderComponent={listHeader}
-          ListEmptyComponent={!isLoading ? <EmptyState /> : null}
+          ListHeaderComponent={isLoading ? null : listHeader}
+          ListEmptyComponent={isLoading ? <FeedbackListSkeleton /> : <EmptyState />}
           removeClippedSubviews
           maxToRenderPerBatch={10}
           windowSize={5}
