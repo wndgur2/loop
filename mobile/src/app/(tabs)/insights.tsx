@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
@@ -24,6 +24,9 @@ import type { Importance } from '@/types/models';
 export default function InsightsScreen() {
   const t = useT();
   const { data: feedbacks = [], isLoading } = useFeedbacks();
+  // Fade content in only when it replaces the skeleton (mounted while loading);
+  // with cached data the entering animation would stack on top of the tab transition.
+  const [showedSkeleton] = useState(isLoading);
   const subGoalName = useSubGoalName();
   const stats = useMemo(() => computeStats(feedbacks), [feedbacks]);
 
@@ -38,7 +41,9 @@ export default function InsightsScreen() {
         ) : stats.total === 0 ? (
           <EmptyState icon="chart" title={t('dash.empty.title')} body={t('dash.empty.body')} />
         ) : (
-          <Animated.View entering={FadeIn.duration(LoopMotion.timing.base)}>
+          <Animated.View
+            entering={showedSkeleton ? FadeIn.duration(LoopMotion.timing.base) : undefined}
+          >
             {/* Internalization rate hero */}
             <Card radius={24} style={styles.hero}>
               <Ring value={stats.internalizationRate} size={132} stroke={10} animated>
