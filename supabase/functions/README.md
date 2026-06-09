@@ -33,7 +33,7 @@ functions/
 - **컨텍스트 = 전체 피드백 + 하위목표**(두 모드 공통). RLS 클라이언트로 조회 → 자기 데이터만.
 - **모드당 툴 1개**: 작성 = `create_feedback`(피드백 1건 생성안) · 회고 = `update_feedback`(내재화/done/다짐 수정안).
 - **확인 후 커밋**: 함수는 DB를 직접 바꾸지 않고 `proposal`만 반환한다. 클라이언트가 확인 칩으로 사용자 동의를 받아 RLS mutation으로 반영한다(조용한 변경 금지).
-- **LLM 프로바이더는 `LLM_PROVIDER` secret으로 선택**: `anthropic`(기본) · `openai` · `gemini`. 어댑터는 `llm/`에 격리되어 호출부(`index.ts`)는 프로바이더를 모른다. 고른 프로바이더의 키만 설정한다(`ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY`).
+- **LLM 프로바이더는 `LLM_PROVIDER` secret으로 선택**: `gemini`(기본) · `anthropic` · `openai`. 어댑터는 `llm/`에 격리되어 호출부(`index.ts`)는 프로바이더를 모른다. 고른 프로바이더의 키만 설정한다(`ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY`).
 - **모델도 env로 선택**: 우선순위 `{PROVIDER}_MODEL`(`ANTHROPIC_MODEL`/`OPENAI_MODEL`/`GEMINI_MODEL`) → 공통 `CHAT_MODEL` → 기본값. 기본값: anthropic `claude-opus-4-8` · openai `gpt-5.4` · gemini `gemini-3.5-flash`. 프로바이더별 가능한 모델 목록은 [.env.example](../.env.example) 참고(공식 문서 기준).
 - 품질 평가는 `evals/` + `eval-loopi` 스킬로 회귀 검출.
 

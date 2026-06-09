@@ -35,7 +35,9 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: t('tab.feedback'),
-          tabBarIcon: ({ color, focused }) => <Icon name={focused ? 'home-fill' : 'home'} size={24} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Icon name={focused ? 'home-fill' : 'home'} size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen

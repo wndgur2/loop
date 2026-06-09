@@ -22,9 +22,9 @@ const REGISTRY: Record<string, () => LLMProvider> = {
   gemini: createGeminiProvider,
 }
 
-/** LLM_PROVIDER secret으로 프로바이더 선택 (기본 anthropic). 미지원 값이면 에러. */
+/** LLM_PROVIDER secret으로 프로바이더 선택 (기본 gemini). 미지원 값이면 에러. */
 export function getProvider(): LLMProvider {
-  const name = (Deno.env.get('LLM_PROVIDER') ?? 'anthropic').toLowerCase()
+  const name = (Deno.env.get('LLM_PROVIDER') ?? 'gemini').toLowerCase()
   const factory = REGISTRY[name]
   if (!factory) {
     throw new Error(`지원하지 않는 LLM_PROVIDER: ${name} (anthropic | openai | gemini)`)

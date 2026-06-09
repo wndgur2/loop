@@ -48,6 +48,12 @@
         "projectId": "81a99a05-77a6-4e0c-99e0-ff5be218a8a7"
       }
     },
-    "owner": "wndgur2"
+    "owner": "wndgur2",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/81a99a05-77a6-4e0c-99e0-ff5be218a8a7"
+    }
   }
 }
