@@ -1,5 +1,11 @@
 import { useEffect } from 'react';
-import { StyleSheet, View, type DimensionValue, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  type DimensionValue,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -19,15 +25,26 @@ type SkeletonProps = {
 };
 
 /** Single shimmer block — a soft opacity pulse. Compose into screen-shaped presets below. */
-export function Skeleton({ width = '100%', height = 16, radius = LoopRadius.md, style }: SkeletonProps) {
+export function Skeleton({
+  width = '100%',
+  height = 16,
+  radius = LoopRadius.md,
+  style,
+}: SkeletonProps) {
   const pulse = useSharedValue(0.5);
   useEffect(() => {
-    pulse.set(withRepeat(withTiming(1, { duration: 900, easing: Easing.inOut(Easing.ease) }), -1, true));
+    pulse.set(
+      withRepeat(withTiming(1, { duration: 900, easing: Easing.inOut(Easing.ease) }), -1, true),
+    );
   }, [pulse]);
   const animatedStyle = useAnimatedStyle(() => ({ opacity: pulse.get() }));
   return (
     <Animated.View
-      style={[{ width, height, borderRadius: radius, backgroundColor: LoopColors.fill }, animatedStyle, style]}
+      style={[
+        { width, height, borderRadius: radius, backgroundColor: LoopColors.fill },
+        animatedStyle,
+        style,
+      ]}
     />
   );
 }

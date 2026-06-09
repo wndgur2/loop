@@ -7,7 +7,13 @@ import { LoopColors } from '@/constants/loop-theme';
 import { LoopText } from './ui/text';
 
 /** Loop logo — closing-loop mark + wordmark. Ported from demo LoopMark. */
-export const LoopMark = memo(function LoopMark({ height = 22, color = LoopColors.ink }: { height?: number; color?: string }) {
+export const LoopMark = memo(function LoopMark({
+  height = 22,
+  color = LoopColors.ink,
+}: {
+  height?: number;
+  color?: string;
+}) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: height * 0.42 }}>
       <Svg width={height * 1.04} height={height} viewBox="0 0 26 25" fill="none">
@@ -18,7 +24,9 @@ export const LoopMark = memo(function LoopMark({ height = 22, color = LoopColors
           strokeLinecap="round"
         />
       </Svg>
-      <LoopText style={{ fontSize: height * 0.92, fontWeight: '700', letterSpacing: -height * 0.02, color }}>
+      <LoopText
+        style={{ fontSize: height * 0.92, fontWeight: '700', letterSpacing: -height * 0.02, color }}
+      >
         Loop
       </LoopText>
     </View>

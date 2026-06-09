@@ -11,9 +11,18 @@ type CardProps = ViewProps & {
 };
 
 /** White surface card — hairline border + soft shadow. Ported from demo .lp-card. */
-export const Card = memo(function Card({ children, radius = LoopRadius['2xl'], padded = true, style, ...rest }: CardProps) {
+export const Card = memo(function Card({
+  children,
+  radius = LoopRadius['2xl'],
+  padded = true,
+  style,
+  ...rest
+}: CardProps) {
   return (
-    <View style={[styles.base, { borderRadius: radius, padding: padded ? 17 : 0 }, style as ViewStyle]} {...rest}>
+    <View
+      style={[styles.base, { borderRadius: radius, padding: padded ? 17 : 0 }, style as ViewStyle]}
+      {...rest}
+    >
       {children}
     </View>
   );

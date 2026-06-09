@@ -52,7 +52,11 @@ type AuthState = {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   /** When email confirmation is enabled, returns needsConfirmation=true with no session. */
-  signUp: (email: string, password: string, displayName?: string) => Promise<{ needsConfirmation: boolean }>;
+  signUp: (
+    email: string,
+    password: string,
+    displayName?: string,
+  ) => Promise<{ needsConfirmation: boolean }>;
   resendConfirmation: (email: string) => Promise<void>;
   /** Change display name. Updates both user_metadata (display source) and profiles (source of truth). */
   updateDisplayName: (name: string) => Promise<void>;
@@ -146,7 +150,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (error) throw error;
         // Sync the source-of-truth store (profiles) too. RLS scopes to the user's own row.
         if (session) {
-          await supabase.from('profiles').update({ display_name: trimmed }).eq('id', session.user.id);
+          await supabase
+            .from('profiles')
+            .update({ display_name: trimmed })
+            .eq('id', session.user.id);
         }
       },
       async deleteAccount() {

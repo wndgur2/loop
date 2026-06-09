@@ -25,7 +25,11 @@ function SquishTabButton({
   ref: _ref,
   ...rest
 }: BottomTabBarButtonProps) {
-  const { animatedStyle, onPressIn: scaleIn, onPressOut: scaleOut } = usePressScale({
+  const {
+    animatedStyle,
+    onPressIn: scaleIn,
+    onPressOut: scaleOut,
+  } = usePressScale({
     scaleTo: LoopMotion.scale.squish,
     spring: LoopMotion.spring.squish,
   });

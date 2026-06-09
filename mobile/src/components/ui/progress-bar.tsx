@@ -32,15 +32,21 @@ export function ProgressBar({
   const clamped = Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
   const progress = useSharedValue(0);
   useEffect(() => {
-    progress.set(withTiming(clamped, { duration: LoopMotion.timing.slow, easing: Easing.out(Easing.cubic) }));
+    progress.set(
+      withTiming(clamped, { duration: LoopMotion.timing.slow, easing: Easing.out(Easing.cubic) }),
+    );
   }, [clamped, progress]);
   const fillStyle = useAnimatedStyle(() => {
     const p = progress.get();
     return { width: `${p <= 0 ? 0 : Math.max(minPct, p * 100)}%` };
   });
   return (
-    <View style={[{ height, borderRadius: 9999, backgroundColor: track, overflow: 'hidden' }, style]}>
-      <Animated.View style={[{ height: '100%', borderRadius: 9999, backgroundColor: color }, fillStyle]} />
+    <View
+      style={[{ height, borderRadius: 9999, backgroundColor: track, overflow: 'hidden' }, style]}
+    >
+      <Animated.View
+        style={[{ height: '100%', borderRadius: 9999, backgroundColor: color }, fillStyle]}
+      />
     </View>
   );
 }

@@ -11,7 +11,12 @@ export type LoopTextProps = TextProps & {
 };
 
 /** Text applying the Loop type scale. variant=token, color=LoopColors key or arbitrary color. */
-export const LoopText = memo(function LoopText({ variant = 'body', color = 'ink', style, ...rest }: LoopTextProps) {
+export const LoopText = memo(function LoopText({
+  variant = 'body',
+  color = 'ink',
+  style,
+  ...rest
+}: LoopTextProps) {
   const resolved = (LoopColors as Record<string, string>)[color] ?? color;
   return <Text style={[LoopType[variant] as TextStyle, { color: resolved }, style]} {...rest} />;
 });

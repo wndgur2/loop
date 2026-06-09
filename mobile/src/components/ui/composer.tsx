@@ -25,7 +25,11 @@ export function ComposerInput({
   return (
     <View style={styles.outer}>
       {/* Tapping anywhere in the shell (icon, padding) focuses the input. */}
-      <Pressable style={styles.shell} onPress={() => inputRef.current?.focus()} android_ripple={null}>
+      <Pressable
+        style={styles.shell}
+        onPress={() => inputRef.current?.focus()}
+        android_ripple={null}
+      >
         <Icon name="sparkle" size={19} color={LoopColors.warm} />
         <TextInput
           ref={inputRef}
@@ -43,7 +47,10 @@ export function ComposerInput({
           onPress={() => canSend && onSend()}
           disabled={!canSend}
           haptic
-          style={[styles.send, { backgroundColor: canSend ? LoopColors.warm : LoopColors.warmSoft2 }]}
+          style={[
+            styles.send,
+            { backgroundColor: canSend ? LoopColors.warm : LoopColors.warmSoft2 },
+          ]}
         >
           <Icon name="send" size={20} color={canSend ? LoopColors.white : LoopColors.warmDeep} />
         </PressScale>
@@ -69,6 +76,19 @@ const styles = StyleSheet.create({
     ...LoopShadow.strong,
   },
   // Single-line input — vertically centered with the icon and send button (avoids multiline top-align issue).
-  input: { flex: 1, fontSize: 14.5, fontWeight: '500', color: LoopColors.ink, padding: 0, margin: 0 },
-  send: { width: 38, height: 38, borderRadius: LoopRadius.full, alignItems: 'center', justifyContent: 'center' },
+  input: {
+    flex: 1,
+    fontSize: 14.5,
+    fontWeight: '500',
+    color: LoopColors.ink,
+    padding: 0,
+    margin: 0,
+  },
+  send: {
+    width: 38,
+    height: 38,
+    borderRadius: LoopRadius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

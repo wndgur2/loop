@@ -41,13 +41,23 @@ export const ConfirmDialog = memo(function ConfirmDialog({
   // Single-button dialogs dismiss via the confirm (OK) action.
   const dismiss = onCancel ?? onConfirm;
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={dismiss} statusBarTranslucent>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={dismiss}
+      statusBarTranslucent
+    >
       <Pressable style={styles.scrim} onPress={dismiss}>
         {/* Stop scrim taps from closing when interacting with the card itself. */}
         <Pressable style={styles.card} onPress={() => {}}>
           {icon && (
             <View style={[styles.iconWrap, destructive && styles.iconWrapDanger]}>
-              <Icon name={icon} size={22} color={destructive ? LoopColors.danger : LoopColors.warmDeep} />
+              <Icon
+                name={icon}
+                size={22}
+                color={destructive ? LoopColors.danger : LoopColors.warmDeep}
+              />
             </View>
           )}
           <LoopText variant="heading2" style={styles.title}>
@@ -61,7 +71,11 @@ export const ConfirmDialog = memo(function ConfirmDialog({
 
           <View style={styles.actions}>
             {cancelLabel && (
-              <PressScale onPress={onCancel} disabled={loading} style={[styles.btn, styles.cancelBtn]}>
+              <PressScale
+                onPress={onCancel}
+                disabled={loading}
+                style={[styles.btn, styles.cancelBtn]}
+              >
                 <LoopText variant="label" color="ink2">
                   {cancelLabel}
                 </LoopText>
@@ -70,7 +84,11 @@ export const ConfirmDialog = memo(function ConfirmDialog({
             <PressScale
               onPress={onConfirm}
               disabled={loading}
-              style={[styles.btn, destructive ? styles.dangerBtn : styles.confirmBtn, loading && styles.btnLoading]}
+              style={[
+                styles.btn,
+                destructive ? styles.dangerBtn : styles.confirmBtn,
+                loading && styles.btnLoading,
+              ]}
             >
               {loading ? (
                 <ActivityIndicator color={LoopColors.white} size="small" />

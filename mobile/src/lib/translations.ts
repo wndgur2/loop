@@ -36,7 +36,8 @@ const ko = {
   'signin.err.password': '비밀번호는 6자 이상이어야 해요.',
   'signin.err.generic': '문제가 생겼어요. 잠시 후 다시 시도해 주세요.',
   'signin.confirm.title': '이메일을 확인해 주세요',
-  'signin.confirm.body': '{email}로 확인 링크를 보냈어요. 메일의 링크를 누르면 자동으로 로그인돼요.',
+  'signin.confirm.body':
+    '{email}로 확인 링크를 보냈어요. 메일의 링크를 누르면 자동으로 로그인돼요.',
   'signin.confirm.resend': '확인 메일 다시 보내기',
   'signin.confirm.resent': '확인 메일을 다시 보냈어요.',
   'signin.confirm.back': '로그인으로 돌아가기',
@@ -62,7 +63,8 @@ const ko = {
   'home.directWrite': '직접 작성',
   'home.composer': '오늘 마음에 남은 순간이 있나요?',
   'home.empty.title': '첫 피드백을 시작해 보세요',
-  'home.empty.body': '아래에 오늘 있었던 일을 적으면 Loopi가 근본 원인과 실천항목을 함께 정리해 드려요.',
+  'home.empty.body':
+    '아래에 오늘 있었던 일을 적으면 Loopi가 근본 원인과 실천항목을 함께 정리해 드려요.',
   'home.takeawayDone': '{done}/{total} 실행',
   'badge.internalized': '내재화됨',
 
@@ -234,7 +236,8 @@ const en: Record<TKey, string> = {
   'signin.err.password': 'Password must be at least 6 characters.',
   'signin.err.generic': 'Something went wrong. Please try again.',
   'signin.confirm.title': 'Check your email',
-  'signin.confirm.body': 'We sent a confirmation link to {email}. Tap the link and you’ll be signed in automatically.',
+  'signin.confirm.body':
+    'We sent a confirmation link to {email}. Tap the link and you’ll be signed in automatically.',
   'signin.confirm.resend': 'Resend confirmation email',
   'signin.confirm.resent': 'Confirmation email resent.',
   'signin.confirm.back': 'Back to log in',
@@ -259,7 +262,7 @@ const en: Record<TKey, string> = {
   'home.composer': 'A moment that stayed with you today?',
   'home.empty.title': 'Start your first reflection',
   'home.empty.body':
-    "Jot down what happened below and Loopi will draw out the root cause and takeaways with you.",
+    'Jot down what happened below and Loopi will draw out the root cause and takeaways with you.',
   'home.takeawayDone': '{done}/{total} done',
   'badge.internalized': 'Internalized',
 
@@ -397,6 +400,24 @@ export const translations: Record<Lang, Record<TKey, string>> = { ko, en };
 
 /** Onboarding sub-goal suggestions — per language. Since these are stored values, the label of the language at selection time is saved. */
 export const SUGGESTED_SUBGOALS: Record<Lang, string[]> = {
-  ko: ['협업', '커뮤니케이션', '제품 기획', '문제 정의', '의사결정', '실행력', '데이터 분석', '리더십'],
-  en: ['Collaborating', 'Communication', 'Product planning', 'Problem framing', 'Decision making', 'Execution', 'Data analysis', 'Leadership'],
+  ko: [
+    '협업',
+    '커뮤니케이션',
+    '제품 기획',
+    '문제 정의',
+    '의사결정',
+    '실행력',
+    '데이터 분석',
+    '리더십',
+  ],
+  en: [
+    'Collaborating',
+    'Communication',
+    'Product planning',
+    'Problem framing',
+    'Decision making',
+    'Execution',
+    'Data analysis',
+    'Leadership',
+  ],
 };

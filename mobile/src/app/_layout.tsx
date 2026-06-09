@@ -62,14 +62,23 @@ function RootNavigator() {
 
   if (loading || (session && goalLoading)) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: LoopColors.canvas }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: LoopColors.canvas,
+        }}
+      >
         <ActivityIndicator color={LoopColors.warm} />
       </View>
     );
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: LoopColors.canvas } }}>
+    <Stack
+      screenOptions={{ headerShown: false, contentStyle: { backgroundColor: LoopColors.canvas } }}
+    >
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="sign-in" />
       <Stack.Screen name="onboarding" />

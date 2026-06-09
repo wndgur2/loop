@@ -41,11 +41,22 @@ type IconProps = {
 };
 
 export const Icon = memo(function Icon({ name, size = 24, color = LoopColors.ink }: IconProps) {
-  const s = { stroke: color, strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' };
+  const s = {
+    stroke: color,
+    strokeWidth: 1.8,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    fill: 'none',
+  };
   const filled = { fill: color, stroke: 'none' as const };
 
   return (
-    <Svg width={size} height={size} viewBox={name === 'loop' ? '0 0 26 25' : '0 0 24 24'} fill="none">
+    <Svg
+      width={size}
+      height={size}
+      viewBox={name === 'loop' ? '0 0 26 25' : '0 0 24 24'}
+      fill="none"
+    >
       {renderIcon(name, s, filled, color)}
     </Svg>
   );
@@ -53,7 +64,13 @@ export const Icon = memo(function Icon({ name, size = 24, color = LoopColors.ink
 
 function renderIcon(
   name: IconName,
-  s: { stroke: ColorValue; strokeWidth: number; strokeLinecap: 'round'; strokeLinejoin: 'round'; fill: string },
+  s: {
+    stroke: ColorValue;
+    strokeWidth: number;
+    strokeLinecap: 'round';
+    strokeLinejoin: 'round';
+    fill: string;
+  },
   filled: { fill: ColorValue; stroke: 'none' },
   color: ColorValue,
 ) {
@@ -69,7 +86,14 @@ function renderIcon(
       return (
         <>
           <Path {...s} strokeWidth={1.6} d="M4 10.5 12 4l8 6.5" />
-          <Path stroke={color} strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" fill={color} d="M5.5 9.3V19a1 1 0 0 0 1 1H10v-5a2 2 0 0 1 4 0v5h3.5a1 1 0 0 0 1-1V9.3" />
+          <Path
+            stroke={color}
+            strokeWidth={1.6}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill={color}
+            d="M5.5 9.3V19a1 1 0 0 0 1 1H10v-5a2 2 0 0 1 4 0v5h3.5a1 1 0 0 0 1-1V9.3"
+          />
         </>
       );
     case 'loop':
@@ -148,8 +172,14 @@ function renderIcon(
     case 'sparkle':
       return (
         <>
-          <Path {...filled} d="M12 4c.5 3.5 1.5 4.5 5 5-3.5.5-4.5 1.5-5 5-.5-3.5-1.5-4.5-5-5 3.5-.5 4.5-1.5 5-5Z" />
-          <Path {...filled} d="M18.5 13.5c.25 1.6.75 2.1 2.3 2.4-1.55.3-2.05.8-2.3 2.4-.25-1.6-.75-2.1-2.3-2.4 1.55-.3 2.05-.8 2.3-2.4Z" />
+          <Path
+            {...filled}
+            d="M12 4c.5 3.5 1.5 4.5 5 5-3.5.5-4.5 1.5-5 5-.5-3.5-1.5-4.5-5-5 3.5-.5 4.5-1.5 5-5Z"
+          />
+          <Path
+            {...filled}
+            d="M18.5 13.5c.25 1.6.75 2.1 2.3 2.4-1.55.3-2.05.8-2.3 2.4-.25-1.6-.75-2.1-2.3-2.4 1.55-.3 2.05-.8 2.3-2.4Z"
+          />
         </>
       );
     case 'target':
@@ -177,7 +207,10 @@ function renderIcon(
     case 'tag':
       return (
         <>
-          <Path {...s} d="M4 11.5V5.5a1.5 1.5 0 0 1 1.5-1.5h6L20 12.5a1.5 1.5 0 0 1 0 2.1l-5.4 5.4a1.5 1.5 0 0 1-2.1 0L4 11.5Z" />
+          <Path
+            {...s}
+            d="M4 11.5V5.5a1.5 1.5 0 0 1 1.5-1.5h6L20 12.5a1.5 1.5 0 0 1 0 2.1l-5.4 5.4a1.5 1.5 0 0 1-2.1 0L4 11.5Z"
+          />
           <Circle {...filled} cx={8.2} cy={8.2} r={1.1} />
         </>
       );

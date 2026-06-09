@@ -53,7 +53,11 @@ export function useCreateGoalWithSubGoals() {
       const supabase = getSupabase();
       const { data: goal, error: goalErr } = await supabase
         .from('goals')
-        .insert({ user_id: input.userId, title: input.title.trim(), description: input.description ?? null })
+        .insert({
+          user_id: input.userId,
+          title: input.title.trim(),
+          description: input.description ?? null,
+        })
         .select()
         .single();
       if (goalErr) throw goalErr;
@@ -83,7 +87,12 @@ export function useAddSubGoal() {
     mutationFn: async (input: { goalId: string; name: string; sortOrder: number }) => {
       const { error } = await getSupabase()
         .from('sub_goals')
-        .insert({ goal_id: input.goalId, name: input.name.trim(), source: 'user_added', sort_order: input.sortOrder });
+        .insert({
+          goal_id: input.goalId,
+          name: input.name.trim(),
+          source: 'user_added',
+          sort_order: input.sortOrder,
+        });
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: qk.subGoals }),

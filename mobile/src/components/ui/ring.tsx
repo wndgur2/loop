@@ -42,7 +42,9 @@ export const Ring = memo(function Ring({
   const progress = useSharedValue(animated ? 0 : clamped);
   useEffect(() => {
     if (animated) {
-      progress.set(withTiming(clamped, { duration: LoopMotion.timing.slow, easing: Easing.out(Easing.cubic) }));
+      progress.set(
+        withTiming(clamped, { duration: LoopMotion.timing.slow, easing: Easing.out(Easing.cubic) }),
+      );
     } else {
       progress.set(clamped);
     }

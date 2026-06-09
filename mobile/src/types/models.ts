@@ -116,13 +116,19 @@ export function toFeedback(r: FeedbackRow): Feedback {
 }
 
 /** Maps feedbacks + takeaways (nested select) rows. */
-export function toFeedbackWithTakeaways(r: FeedbackRow & { takeaways?: TakeawayRow[] | null }): FeedbackWithTakeaways {
-  const takeaways = (r.takeaways ?? [])
-    .map(toTakeaway)
-    .sort((a, b) => a.sortOrder - b.sortOrder);
+export function toFeedbackWithTakeaways(
+  r: FeedbackRow & { takeaways?: TakeawayRow[] | null },
+): FeedbackWithTakeaways {
+  const takeaways = (r.takeaways ?? []).map(toTakeaway).sort((a, b) => a.sortOrder - b.sortOrder);
   return { ...toFeedback(r), takeaways };
 }
 
 export function toChatMessage(r: ChatMessageRow): ChatMessage {
-  return { id: r.id, sessionId: r.session_id, role: r.role, content: r.content, createdAt: r.created_at };
+  return {
+    id: r.id,
+    sessionId: r.session_id,
+    role: r.role,
+    content: r.content,
+    createdAt: r.created_at,
+  };
 }

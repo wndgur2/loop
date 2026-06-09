@@ -15,7 +15,13 @@ import { haptics } from '@/lib/haptics';
 import { Icon } from './icon';
 
 /** Takeaway checkbox — green fill when done, with a subtle pop + check fade-in. Ported from demo .lp-check. */
-export const Checkbox = memo(function Checkbox({ done, onPress }: { done: boolean; onPress?: () => void }) {
+export const Checkbox = memo(function Checkbox({
+  done,
+  onPress,
+}: {
+  done: boolean;
+  onPress?: () => void;
+}) {
   const progress = useSharedValue(done ? 1 : 0);
   const pop = useSharedValue(1);
   const press = useSharedValue(1);
@@ -27,7 +33,11 @@ export const Checkbox = memo(function Checkbox({ done, onPress }: { done: boolea
 
   const boxStyle = useAnimatedStyle(() => ({
     transform: [{ scale: pop.get() * press.get() }],
-    backgroundColor: interpolateColor(progress.get(), [0, 1], ['rgba(47,165,103,0)', LoopColors.good]),
+    backgroundColor: interpolateColor(
+      progress.get(),
+      [0, 1],
+      ['rgba(47,165,103,0)', LoopColors.good],
+    ),
     borderColor: interpolateColor(progress.get(), [0, 1], [LoopColors.line, LoopColors.good]),
   }));
   const checkStyle = useAnimatedStyle(() => ({

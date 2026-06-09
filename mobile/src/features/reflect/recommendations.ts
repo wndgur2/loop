@@ -9,7 +9,14 @@ import type { FeedbackWithTakeaways, Importance } from '@/types/models';
 const IMPORTANCE_WEIGHT: Record<Importance, number> = { high: 3, mid: 2, low: 1 };
 
 export type RetroCard =
-  | { kind: 'today'; feedbackId: string; title: string; subGoalId: string; importance: Importance; days: number }
+  | {
+      kind: 'today';
+      feedbackId: string;
+      title: string;
+      subGoalId: string;
+      importance: Importance;
+      days: number;
+    }
   | { kind: 'repeat'; subGoalId: string; count: number; samples: string[] }
   | { kind: 'area'; subGoalId: string; open: number; total: number; internalized: number };
 
@@ -72,7 +79,13 @@ export function buildRetroCards(feedbacks: FeedbackWithTakeaways[]): RetroCard[]
     .filter(([sub, b]) => b.open >= 1 && !usedSubs.has(sub))
     .sort((a, b) => b[1].open - a[1].open)[0];
   if (area) {
-    cards.push({ kind: 'area', subGoalId: area[0], open: area[1].open, total: area[1].total, internalized: area[1].internalized });
+    cards.push({
+      kind: 'area',
+      subGoalId: area[0],
+      open: area[1].open,
+      total: area[1].total,
+      internalized: area[1].internalized,
+    });
   }
 
   return cards;
