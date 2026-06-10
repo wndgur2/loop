@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
@@ -13,6 +14,7 @@ type Mode = 'sign-in' | 'sign-up';
 
 export default function SignInScreen() {
   const { signIn, signUp, resendConfirmation } = useAuth();
+  const router = useRouter();
   const t = useT();
   const [mode, setMode] = useState<Mode>('sign-in');
   const [email, setEmail] = useState('');
@@ -170,6 +172,30 @@ export default function SignInScreen() {
                 style={styles.submit}
               />
 
+              {/* Play User Data policy: signing up implies agreeing to terms/privacy — keep the docs one tap away. */}
+              {isSignUp && (
+                <View style={styles.consent}>
+                  <LoopText variant="caption" color="ink4" style={styles.consentText}>
+                    {t('signin.consent')}
+                  </LoopText>
+                  <View style={styles.consentLinks}>
+                    <PressScale onPress={() => router.push('/legal/terms')} hitSlop={8}>
+                      <LoopText variant="caption" color="warmDeep">
+                        {t('legal.terms')}
+                      </LoopText>
+                    </PressScale>
+                    <LoopText variant="caption" color="ink4">
+                      ·
+                    </LoopText>
+                    <PressScale onPress={() => router.push('/legal/privacy')} hitSlop={8}>
+                      <LoopText variant="caption" color="warmDeep">
+                        {t('legal.privacy')}
+                      </LoopText>
+                    </PressScale>
+                  </View>
+                </View>
+              )}
+
               <PressScale
                 onPress={() => setMode(isSignUp ? 'sign-in' : 'sign-up')}
                 style={styles.toggle}
@@ -195,5 +221,8 @@ const styles = StyleSheet.create({
   fields: { gap: 12 },
   error: { marginTop: 14 },
   submit: { marginTop: 22 },
+  consent: { marginTop: 14, alignItems: 'center', gap: 6 },
+  consentText: { textAlign: 'center' },
+  consentLinks: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   toggle: { marginTop: 18, alignItems: 'center' },
 });

@@ -4,7 +4,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { ComposerInput, LoopText, Screen, ScreenHeader } from '@/components/ui';
+import { ComposerInput, ConfirmDialog, LoopText, Screen, ScreenHeader } from '@/components/ui';
 import { LoopColors, LoopMotion } from '@/constants/loop-theme';
 import {
   CoachAvatar,
@@ -14,6 +14,7 @@ import {
   UserLine,
 } from '@/features/chat/components';
 import { lastAssistantHasText } from '@/features/chat/messages';
+import { reportAiContent } from '@/features/chat/report';
 import { useLoopiChat } from '@/features/chat/use-loopi-chat';
 import { useT } from '@/lib/i18n';
 import { type SessionMode } from '@/types/models';
@@ -34,11 +35,30 @@ export default function LoopiChatScreen() {
   const [input, setInput] = useState('');
   const scrollRef = useRef<ScrollView>(null);
 
+  // AI content reporting (Play AI-Generated Content policy): long-press a Loopi reply to flag it.
+  const [reportTarget, setReportTarget] = useState<string | null>(null);
+  const [reportBusy, setReportBusy] = useState(false);
+  const [reportResult, setReportResult] = useState<'done' | 'fail' | null>(null);
+
   function send() {
     if (!input.trim()) return;
     const content = input;
     setInput('');
     void chat.sendText(content);
+  }
+
+  async function confirmReport() {
+    if (!reportTarget) return;
+    setReportBusy(true);
+    try {
+      await reportAiContent(chat.getSessionId(), reportTarget);
+      setReportResult('done');
+    } catch {
+      setReportResult('fail');
+    } finally {
+      setReportBusy(false);
+      setReportTarget(null);
+    }
   }
 
   return (
@@ -65,11 +85,14 @@ export default function LoopiChatScreen() {
           <CoachLine
             text={uiMode === 'reflect' ? t('chat.intro.reflect') : t('chat.intro.write')}
           />
+          <LoopText variant="caption" color="ink4" style={styles.aiNotice}>
+            {t('chat.aiNotice')}
+          </LoopText>
           {chat.messages.map((m, i) =>
             m.role === 'user' ? (
               <UserLine key={i} text={m.content} />
             ) : m.content ? (
-              <CoachLine key={i} text={m.content} />
+              <CoachLine key={i} text={m.content} onLongPress={() => setReportTarget(m.content)} />
             ) : null,
           )}
           {/* Show the typing indicator only until the first token (once streaming starts, text is shown instead). */}
@@ -109,6 +132,26 @@ export default function LoopiChatScreen() {
         />
         <View style={styles.bottomSpacer} />
       </KeyboardAvoidingView>
+
+      <ConfirmDialog
+        visible={!!reportTarget}
+        icon="flag"
+        title={t('chat.report.title')}
+        message={t('chat.report.msg')}
+        confirmLabel={t('chat.report.confirm')}
+        cancelLabel={t('common.cancel')}
+        loading={reportBusy}
+        onConfirm={confirmReport}
+        onCancel={() => setReportTarget(null)}
+      />
+      <ConfirmDialog
+        visible={!!reportResult}
+        icon="flag"
+        title={t(reportResult === 'fail' ? 'chat.report.fail.title' : 'chat.report.done.title')}
+        message={t(reportResult === 'fail' ? 'chat.report.fail.msg' : 'chat.report.done.msg')}
+        confirmLabel={t('common.ok')}
+        onConfirm={() => setReportResult(null)}
+      />
     </Screen>
   );
 }
@@ -118,6 +161,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 15 },
   sub: { marginTop: 2 },
   scroll: { paddingHorizontal: 26, paddingTop: 6, paddingBottom: 12, gap: 22 },
+  aiNotice: { marginTop: -12 },
   typing: { alignSelf: 'flex-start' },
   bottomSpacer: { height: 6 },
 });

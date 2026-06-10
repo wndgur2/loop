@@ -1,6 +1,6 @@
 /** Chat-screen building blocks — Loopi/user lines and proposal cards. */
 import { memo } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import { Chip, Icon, ImportanceDots, LoopText, PressScale } from '@/components/ui';
 import { LoopColors, LoopRadius } from '@/constants/loop-theme';
@@ -19,12 +19,20 @@ export const CoachAvatar = memo(function CoachAvatar() {
   );
 });
 
-/** Loopi prompt — a warm-toned sentence without a bubble. */
-export const CoachLine = memo(function CoachLine({ text }: { text: string }) {
+/** Loopi prompt — a warm-toned sentence without a bubble. Long-press reports AI output (Play policy). */
+export const CoachLine = memo(function CoachLine({
+  text,
+  onLongPress,
+}: {
+  text: string;
+  onLongPress?: () => void;
+}) {
   return (
-    <LoopText color="warmDeep" style={styles.coachLine}>
-      {text}
-    </LoopText>
+    <Pressable onLongPress={onLongPress} disabled={!onLongPress}>
+      <LoopText color="warmDeep" style={styles.coachLine}>
+        {text}
+      </LoopText>
+    </Pressable>
   );
 });
 

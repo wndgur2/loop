@@ -41,6 +41,11 @@ const ko = {
   'signin.confirm.resend': '확인 메일 다시 보내기',
   'signin.confirm.resent': '확인 메일을 다시 보냈어요.',
   'signin.confirm.back': '로그인으로 돌아가기',
+  'signin.consent': '가입하면 아래 약관과 개인정보처리방침에 동의하는 것으로 봐요.',
+
+  // legal
+  'legal.privacy': '개인정보처리방침',
+  'legal.terms': '이용약관',
 
   // onboarding
   'ob.step1': '1. 최종 목표',
@@ -130,6 +135,15 @@ const ko = {
   'chat.err.noSubgoal': '저장할 하위 목표가 없어요. 설정에서 먼저 하위 목표를 추가해 주세요.',
   'chat.err.saveFail': '저장에 실패했어요. 잠시 후 다시 시도해 주세요.',
   'chat.err.applyFail': '반영에 실패했어요. 잠시 후 다시 시도해 주세요.',
+  'chat.aiNotice': 'Loopi의 답변은 AI가 만들어요. 부적절한 답변은 길게 눌러 신고할 수 있어요.',
+  'chat.report.title': '이 답변을 신고할까요?',
+  'chat.report.msg':
+    '부적절하거나 불쾌한 AI 답변을 개발팀에 보내요. 신고 내용은 Loopi 개선에 사용돼요.',
+  'chat.report.confirm': '신고',
+  'chat.report.done.title': '신고했어요',
+  'chat.report.done.msg': '검토 후 Loopi 개선에 반영할게요.',
+  'chat.report.fail.title': '신고하지 못했어요',
+  'chat.report.fail.msg': '잠시 후 다시 시도해 주세요.',
 
   // retrospective change summary (apply.ts)
   'retro.internalize': '이 피드백을 내재화 완료로 표시',
@@ -176,6 +190,7 @@ const ko = {
   'settings.section.goal': '최종 목표',
   'settings.section.subgoals': '하위 목표',
   'settings.section.language': '언어',
+  'settings.section.legal': '약관 및 정책',
   'settings.goalPlaceholder': '최종 목표',
   'settings.goalSave': '목표 저장',
   'settings.addSubgoal': '하위 목표 추가',
@@ -241,6 +256,10 @@ const en: Record<TKey, string> = {
   'signin.confirm.resend': 'Resend confirmation email',
   'signin.confirm.resent': 'Confirmation email resent.',
   'signin.confirm.back': 'Back to log in',
+  'signin.consent': 'By signing up, you agree to the terms and privacy policy below.',
+
+  'legal.privacy': 'Privacy Policy',
+  'legal.terms': 'Terms of Service',
 
   'ob.step1': '1. Final goal',
   'ob.goalTitle': 'Where are you headed?',
@@ -325,6 +344,16 @@ const en: Record<TKey, string> = {
   'chat.err.noSubgoal': 'No sub-goal to save to. Add one in Settings first.',
   'chat.err.saveFail': "Couldn't save. Please try again.",
   'chat.err.applyFail': "Couldn't apply. Please try again.",
+  'chat.aiNotice':
+    "Loopi's replies are AI-generated. Long-press a reply to report inappropriate content.",
+  'chat.report.title': 'Report this reply?',
+  'chat.report.msg':
+    'Send this inappropriate or offensive AI reply to the team. Reports are used to improve Loopi.',
+  'chat.report.confirm': 'Report',
+  'chat.report.done.title': 'Reported',
+  'chat.report.done.msg': "We'll review it and use it to improve Loopi.",
+  'chat.report.fail.title': "Couldn't send the report",
+  'chat.report.fail.msg': 'Please try again in a moment.',
 
   'retro.internalize': 'Mark this feedback as internalized',
   'retro.deinternalize': 'Unmark internalized',
@@ -367,6 +396,7 @@ const en: Record<TKey, string> = {
   'settings.section.goal': 'Final goal',
   'settings.section.subgoals': 'Sub-goals',
   'settings.section.language': 'Language',
+  'settings.section.legal': 'Legal',
   'settings.goalPlaceholder': 'Final goal',
   'settings.goalSave': 'Save goal',
   'settings.addSubgoal': 'Add sub-goal',

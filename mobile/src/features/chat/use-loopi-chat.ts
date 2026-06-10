@@ -151,5 +151,7 @@ export function useLoopiChat(mode: SessionMode, initial?: string) {
     acceptWrite,
     acceptRetro,
     dismissProposal: () => setProposal(null),
+    // Getter (not a snapshot): the ref is set lazily on the first send.
+    getSessionId: () => sessionIdRef.current,
   };
 }

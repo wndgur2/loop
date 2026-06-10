@@ -47,7 +47,8 @@ function RootNavigator() {
     const seg0 = segments[0] as string | undefined;
 
     if (!session) {
-      if (seg0 !== 'sign-in') router.replace('/sign-in');
+      // Legal docs stay reachable before sign-in (consent links on the sign-up form).
+      if (seg0 !== 'sign-in' && seg0 !== 'legal') router.replace('/sign-in');
       return;
     }
     if (goalLoading) return;
@@ -86,6 +87,7 @@ function RootNavigator() {
       <Stack.Screen name="feedback/[id]" options={{ presentation: 'card' }} />
       <Stack.Screen name="feedback/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="chat/[mode]" options={{ presentation: 'card' }} />
+      <Stack.Screen name="legal/[doc]" options={{ presentation: 'card' }} />
     </Stack>
   );
 }

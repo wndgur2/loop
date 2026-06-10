@@ -129,6 +129,18 @@ AI 대화 세션. **작성/회고 모드** 구분.
 
 > 회고는 sub_goal로 스코프하지 않고 **전체 피드백을 대상**으로 한다(컨텍스트에 전부 주입). 한 세션이 실제로 어떤 피드백의 상태를 바꿨는지 감사 추적이 필요하면 `retrospective_targets(session_id, feedback_id)` 조인 테이블을 추가한다(MVP 필요 시).
 
+### ai_content_reports
+사용자가 부적절하다고 신고한 Loopi(AI) 응답. Google Play [AI-Generated Content 정책](https://support.google.com/googleplay/android-developer/answer/13985936)의 인앱 신고 요건 대응 — 운영자가 모더레이션·프롬프트 개선에 활용한다.
+
+| 컬럼 | 타입 | 비고 |
+|------|------|------|
+| `id` | uuid (PK) | |
+| `user_id` | uuid (FK→profiles) | 신고자 |
+| `session_id` | uuid (FK→chat_sessions) | nullable — 세션 저장 실패 시에도 신고는 가능. 세션 삭제 시 SET NULL |
+| `message_content` | text | 신고된 AI 응답 원문 (스냅샷) |
+| `reason` | text | nullable — 사용자가 남긴 사유 |
+| `created_at` | timestamptz | |
+
 ---
 
 ## 3. 핵심 enum 값

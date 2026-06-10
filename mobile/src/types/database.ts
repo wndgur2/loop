@@ -28,6 +28,48 @@ export type Database = {
   };
   public: {
     Tables: {
+      ai_content_reports: {
+        Row: {
+          created_at: string;
+          id: string;
+          message_content: string;
+          reason: string | null;
+          session_id: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          message_content: string;
+          reason?: string | null;
+          session_id?: string | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          message_content?: string;
+          reason?: string | null;
+          session_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'ai_content_reports_session_id_fkey';
+            columns: ['session_id'];
+            isOneToOne: false;
+            referencedRelation: 'chat_sessions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'ai_content_reports_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chat_messages: {
         Row: {
           content: string;

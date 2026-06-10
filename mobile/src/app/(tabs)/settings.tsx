@@ -167,6 +167,24 @@ export default function SettingsScreen() {
           </View>
         </Card>
 
+        <SectionLabel>{t('settings.section.legal')}</SectionLabel>
+        <Card radius={20} style={styles.subCard}>
+          {(['privacy', 'terms'] as const).map((doc, i) => (
+            <PressScale
+              key={doc}
+              onPress={() => router.push(`/legal/${doc}`)}
+              scaleTo={LoopMotion.scale.card}
+            >
+              <View style={[styles.subRow, i > 0 && styles.subDivider]}>
+                <LoopText variant="body" color="ink2" style={styles.flex}>
+                  {t(doc === 'privacy' ? 'legal.privacy' : 'legal.terms')}
+                </LoopText>
+                <Icon name="chevron-right" size={18} color={LoopColors.ink4} />
+              </View>
+            </PressScale>
+          ))}
+        </Card>
+
         <LoopText variant="caption" color="ink4" style={styles.tagline}>
           {t('settings.tagline')}
         </LoopText>
