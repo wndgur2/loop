@@ -17,13 +17,15 @@ import { DistRow, MetricTile } from '@/features/dashboard/components';
 import { computeStats } from '@/features/dashboard/stats';
 import { useFeedbacks } from '@/features/feedback/queries';
 import { useSubGoalName } from '@/features/goals/use-sub-goal-name';
+import { usePullToRefresh } from '@/hooks/use-pull-to-refresh';
 import { useT } from '@/lib/i18n';
 import { impLabelKey } from '@/lib/importance';
 import type { Importance } from '@/types/models';
 
 export default function InsightsScreen() {
   const t = useT();
-  const { data: feedbacks = [], isLoading } = useFeedbacks();
+  const { data: feedbacks = [], isLoading, refetch } = useFeedbacks();
+  const refreshControl = usePullToRefresh(refetch);
   // Fade content in only when it replaces the skeleton (mounted while loading);
   // with cached data the entering animation would stack on top of the tab transition.
   const [showedSkeleton] = useState(isLoading);
@@ -35,7 +37,11 @@ export default function InsightsScreen() {
   return (
     <Screen edges={['top']}>
       <TabHeader title={t('dash.title')} />
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+        refreshControl={refreshControl}
+      >
         {isLoading ? (
           <InsightsSkeleton />
         ) : stats.total === 0 ? (

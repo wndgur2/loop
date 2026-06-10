@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { Button, Icon, LoopText, PressScale, Screen, SelectChip, TextField } from '@/components/ui';
@@ -20,6 +20,7 @@ export default function OnboardingScreen() {
   const [selected, setSelected] = useState<string[]>([]);
   const [custom, setCustom] = useState('');
   const [error, setError] = useState<TKey | null>(null);
+  const descriptionRef = useRef<TextInput>(null);
 
   const canSubmit = title.trim().length > 0 && selected.length > 0 && !create.isPending;
 
@@ -73,8 +74,16 @@ export default function OnboardingScreen() {
             {t('ob.goalDesc')}
           </LoopText>
 
-          <TextField value={title} onChangeText={setTitle} placeholder={t('ob.goalPlaceholder')} />
           <TextField
+            value={title}
+            onChangeText={setTitle}
+            placeholder={t('ob.goalPlaceholder')}
+            returnKeyType="next"
+            submitBehavior="submit"
+            onSubmitEditing={() => descriptionRef.current?.focus()}
+          />
+          <TextField
+            ref={descriptionRef}
             value={description}
             onChangeText={setDescription}
             placeholder={t('ob.goalDescPlaceholder')}
@@ -126,6 +135,7 @@ export default function OnboardingScreen() {
               onChangeText={setCustom}
               placeholder={t('ob.addPlaceholder')}
               onSubmitEditing={addCustom}
+              submitBehavior="submit"
               style={styles.customInput}
             />
             <PressScale onPress={addCustom} style={styles.addBtn}>

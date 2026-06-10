@@ -158,6 +158,7 @@ export default function SettingsScreen() {
               onChangeText={setNewSub}
               placeholder={t('settings.addSubgoal')}
               onSubmitEditing={addSub}
+              submitBehavior="submit"
               style={styles.addInput}
             />
             <PressScale onPress={addSub} style={styles.addBtn}>

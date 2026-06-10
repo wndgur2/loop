@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import {
@@ -48,6 +48,7 @@ export default function FeedbackFormScreen() {
   const [takeaways, setTakeaways] = useState<string[]>(['']);
   const [tagsText, setTagsText] = useState('');
   const [error, setError] = useState<TKey | null>(null);
+  const situationRef = useRef<TextInput>(null);
 
   // Initialize the form when the server row arrives (edit mode).
   useSyncFromServer(isEdit ? existing?.id : null, () => {
@@ -113,7 +114,14 @@ export default function FeedbackFormScreen() {
       <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <SectionLabel style={styles.firstLabel}>{t('form.label.title')}</SectionLabel>
-          <TextField value={title} onChangeText={setTitle} placeholder={t('form.ph.title')} />
+          <TextField
+            value={title}
+            onChangeText={setTitle}
+            placeholder={t('form.ph.title')}
+            returnKeyType="next"
+            submitBehavior="submit"
+            onSubmitEditing={() => situationRef.current?.focus()}
+          />
 
           <SectionLabel>{t('form.label.subgoal')}</SectionLabel>
           {subGoals.length === 0 ? (
@@ -150,6 +158,7 @@ export default function FeedbackFormScreen() {
 
           <SectionLabel>{t('form.label.situation')}</SectionLabel>
           <TextField
+            ref={situationRef}
             value={situation}
             onChangeText={setSituation}
             placeholder={t('form.ph.situation')}
@@ -200,6 +209,7 @@ export default function FeedbackFormScreen() {
             onChangeText={setTagsText}
             placeholder={t('form.ph.tags')}
             autoCapitalize="none"
+            returnKeyType="done"
           />
 
           {error && (

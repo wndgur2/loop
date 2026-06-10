@@ -15,7 +15,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { Card } from './card';
-import { LoopColors, LoopRadius } from '@/constants/loop-theme';
+import { LoopColors, LoopMotion, LoopRadius } from '@/constants/loop-theme';
 
 type SkeletonProps = {
   width?: DimensionValue;
@@ -34,7 +34,11 @@ export function Skeleton({
   const pulse = useSharedValue(0.5);
   useEffect(() => {
     pulse.set(
-      withRepeat(withTiming(1, { duration: 900, easing: Easing.inOut(Easing.ease) }), -1, true),
+      withRepeat(
+        withTiming(1, { duration: LoopMotion.timing.pulse, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true,
+      ),
     );
   }, [pulse]);
   const animatedStyle = useAnimatedStyle(() => ({ opacity: pulse.get() }));
@@ -70,6 +74,25 @@ export function FeedbackListSkeleton({ count = 6 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <FeedbackRowSkeleton key={i} />
       ))}
+    </View>
+  );
+}
+
+/** Placeholder matching the reflect tab cards (today card + recommendation cards). */
+export function ReflectSkeleton() {
+  return (
+    <View style={styles.reflectCards}>
+      <Card radius={22} style={styles.reflectCard}>
+        <Skeleton width={96} height={11} radius={6} />
+        <Skeleton width="82%" height={15} radius={7} style={styles.gap10} />
+        <Skeleton width="55%" height={12} radius={6} style={styles.gap8} />
+        <Skeleton width="100%" height={44} radius={14} style={styles.gap12} />
+      </Card>
+      <Card radius={22} style={styles.reflectCard}>
+        <Skeleton width={96} height={11} radius={6} />
+        <Skeleton width="70%" height={14} radius={7} style={styles.gap10} />
+        <Skeleton width="90%" height={12} radius={6} style={styles.gap8} />
+      </Card>
     </View>
   );
 }
@@ -113,6 +136,8 @@ const styles = StyleSheet.create({
   gap8: { marginTop: 8 },
   gap10: { marginTop: 10 },
   gap12: { marginTop: 12 },
+  reflectCards: { gap: 14 },
+  reflectCard: { padding: 18 },
   hero: { padding: 22, flexDirection: 'row', alignItems: 'center', gap: 20 },
   heroText: { flex: 1 },
   tiles: { flexDirection: 'row', gap: 12, marginTop: 12 },

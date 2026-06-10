@@ -117,8 +117,8 @@ export const LoopMotion = {
     press: { damping: 20, stiffness: 340, mass: 0.5 }, // buttons / cards
     pop: { damping: 16, stiffness: 380, mass: 0.5 }, // checkbox toggle
   },
-  /** withTiming durations (ms) */
-  timing: { fast: 140, base: 220, slow: 380 },
+  /** withTiming durations (ms) — pulse is the skeleton shimmer half-cycle */
+  timing: { fast: 140, base: 220, slow: 380, pulse: 900 },
   /** press scale targets — intentionally shallow (subtle); icon is deeper so bare icons read */
   scale: { press: 0.97, card: 0.98, icon: 0.86, squish: 0.88 },
 } as const;

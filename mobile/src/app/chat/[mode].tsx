@@ -2,9 +2,10 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { ComposerInput, LoopText, Screen, ScreenHeader } from '@/components/ui';
-import { LoopColors } from '@/constants/loop-theme';
+import { LoopColors, LoopMotion } from '@/constants/loop-theme';
 import {
   CoachAvatar,
   CoachLine,
@@ -76,21 +77,26 @@ export default function LoopiChatScreen() {
             <ActivityIndicator color={LoopColors.warm} size="small" style={styles.typing} />
           )}
 
+          {/* Proposal cards land mid-conversation — fade them in so the layout shift reads as arrival, not a glitch. */}
           {proposal?.kind === 'create_feedback' && (
-            <CreateProposalCard
-              proposal={proposal}
-              busy={chat.applying}
-              onAccept={() => chat.acceptWrite(proposal)}
-              onDismiss={chat.dismissProposal}
-            />
+            <Animated.View entering={FadeIn.duration(LoopMotion.timing.base)}>
+              <CreateProposalCard
+                proposal={proposal}
+                busy={chat.applying}
+                onAccept={() => chat.acceptWrite(proposal)}
+                onDismiss={chat.dismissProposal}
+              />
+            </Animated.View>
           )}
           {proposal?.kind === 'update_feedback' && (
-            <RetroProposalCard
-              proposal={proposal}
-              busy={chat.applying}
-              onAccept={() => chat.acceptRetro(proposal)}
-              onDismiss={chat.dismissProposal}
-            />
+            <Animated.View entering={FadeIn.duration(LoopMotion.timing.base)}>
+              <RetroProposalCard
+                proposal={proposal}
+                busy={chat.applying}
+                onAccept={() => chat.acceptRetro(proposal)}
+                onDismiss={chat.dismissProposal}
+              />
+            </Animated.View>
           )}
         </ScrollView>
 

@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import {
   Button,
@@ -11,6 +12,7 @@ import {
   type IconName,
   LoopText,
   PressScale,
+  ReflectSkeleton,
   Ring,
   Screen,
   TabHeader,
@@ -20,13 +22,18 @@ import { TabComposer } from '@/features/chat/tab-composer';
 import { useFeedbacks } from '@/features/feedback/queries';
 import { useSubGoalName } from '@/features/goals/use-sub-goal-name';
 import { buildRetroCards, type RetroCard } from '@/features/reflect/recommendations';
+import { usePullToRefresh } from '@/hooks/use-pull-to-refresh';
 import { useT } from '@/lib/i18n';
 import { impLabelKey } from '@/lib/importance';
 
 export default function ReflectScreen() {
   const router = useRouter();
   const t = useT();
-  const { data: feedbacks = [], isLoading } = useFeedbacks();
+  const { data: feedbacks = [], isLoading, refetch } = useFeedbacks();
+  const refreshControl = usePullToRefresh(refetch);
+  // Fade content in only when it replaces the skeleton (mounted while loading);
+  // with cached data the entering animation would stack on top of the tab transition.
+  const [showedSkeleton] = useState(isLoading);
   const subGoalName = useSubGoalName();
 
   const cards = useMemo(() => buildRetroCards(feedbacks), [feedbacks]);
@@ -37,19 +44,35 @@ export default function ReflectScreen() {
       <TabHeader title={t('reflect.title')} />
 
       <KeyboardAvoidingView style={styles.flex} behavior="padding" keyboardVerticalOffset={8}>
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          refreshControl={refreshControl}
+        >
           <LoopText variant="bodyTight" color="ink3" style={styles.subtitle}>
             {t('reflect.subtitle')}
           </LoopText>
 
-          <View style={styles.cards}>
-            {cards.map((card, i) => (
-              <RetroCardView key={i} card={card} subGoalName={subGoalName} onPress={startReflect} />
-            ))}
-            {cards.length === 0 && !isLoading && (
-              <EmptyState title={t('reflect.empty.title')} body={t('reflect.empty.body')} />
-            )}
-          </View>
+          {isLoading ? (
+            <ReflectSkeleton />
+          ) : (
+            <Animated.View
+              entering={showedSkeleton ? FadeIn.duration(LoopMotion.timing.base) : undefined}
+              style={styles.cards}
+            >
+              {cards.map((card, i) => (
+                <RetroCardView
+                  key={i}
+                  card={card}
+                  subGoalName={subGoalName}
+                  onPress={startReflect}
+                />
+              ))}
+              {cards.length === 0 && (
+                <EmptyState title={t('reflect.empty.title')} body={t('reflect.empty.body')} />
+              )}
+            </Animated.View>
+          )}
         </ScrollView>
 
         <TabComposer mode="reflect" placeholder={t('reflect.composer')} />

@@ -19,6 +19,7 @@ import { TabComposer } from '@/features/chat/tab-composer';
 import { FeedbackRow } from '@/features/feedback/components';
 import { useFeedbacks } from '@/features/feedback/queries';
 import { useSubGoalName } from '@/features/goals/use-sub-goal-name';
+import { usePullToRefresh } from '@/hooks/use-pull-to-refresh';
 import { useT } from '@/lib/i18n';
 import type { FeedbackWithTakeaways } from '@/types/models';
 
@@ -26,7 +27,8 @@ import type { FeedbackWithTakeaways } from '@/types/models';
 export default function FeedbackHomeScreen() {
   const router = useRouter();
   const t = useT();
-  const { data: feedbacks = [], isLoading } = useFeedbacks();
+  const { data: feedbacks = [], isLoading, refetch } = useFeedbacks();
+  const refreshControl = usePullToRefresh(refetch);
   const subGoalName = useSubGoalName();
 
   const stats = useMemo(() => computeStats(feedbacks), [feedbacks]);
@@ -79,6 +81,7 @@ export default function FeedbackHomeScreen() {
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
+          refreshControl={refreshControl}
           ListHeaderComponent={isLoading ? null : listHeader}
           ListEmptyComponent={
             isLoading ? (

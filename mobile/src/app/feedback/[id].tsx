@@ -261,7 +261,13 @@ const styles = StyleSheet.create({
   title: { lineHeight: 31, marginBottom: 6 },
   impValue: { flexDirection: 'row', alignItems: 'center', gap: 7 },
   tagsWrap: { flexDirection: 'row', gap: 7, flexWrap: 'wrap' },
-  footer: { flexDirection: 'row', gap: 10, paddingHorizontal: 22, paddingTop: 10 },
+  footer: {
+    flexDirection: 'row',
+    gap: 10,
+    paddingHorizontal: 22,
+    paddingTop: 10,
+    paddingBottom: 6,
+  },
   statusPill: {
     flexDirection: 'row',
     alignItems: 'center',
