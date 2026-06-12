@@ -7,6 +7,7 @@ import { LoopMark } from '@/components/loop-mark';
 import { Button, LoopText, PressScale, Screen, TextField } from '@/components/ui';
 import { authMessageKey } from '@/features/auth/auth-errors';
 import { useAuth } from '@/features/auth/auth-context';
+import { isValidEmail, MIN_PASSWORD_LENGTH } from '@/features/auth/validation';
 import { useT } from '@/lib/i18n';
 import type { TKey } from '@/lib/translations';
 
@@ -34,9 +35,21 @@ export default function SignInScreen() {
   async function submit() {
     setError(null);
     const mail = email.trim();
-    if (!mail || password.length < 6) {
+    if (!mail || !password) {
       setError('signin.err.fields');
       return;
+    }
+    // Only enforce email format / password length on sign-up; sign-in defers to the server
+    // so legacy accounts that predate a stricter policy can still log in.
+    if (isSignUp) {
+      if (!isValidEmail(mail)) {
+        setError('signin.err.email');
+        return;
+      }
+      if (password.length < MIN_PASSWORD_LENGTH) {
+        setError('signin.err.password');
+        return;
+      }
     }
     setBusy(true);
     try {
@@ -105,7 +118,7 @@ export default function SignInScreen() {
               )}
               {error && (
                 <LoopText variant="caption" color="warmDeep" style={styles.error}>
-                  {t(error)}
+                  {t(error, { min: MIN_PASSWORD_LENGTH })}
                 </LoopText>
               )}
               <Button
@@ -149,7 +162,7 @@ export default function SignInScreen() {
                 />
                 <TextField
                   ref={passwordRef}
-                  placeholder={t('field.password')}
+                  placeholder={t('field.password', { min: MIN_PASSWORD_LENGTH })}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry
@@ -161,7 +174,7 @@ export default function SignInScreen() {
 
               {error && (
                 <LoopText variant="caption" color="warmDeep" style={styles.error}>
-                  {t(error)}
+                  {t(error, { min: MIN_PASSWORD_LENGTH })}
                 </LoopText>
               )}
 

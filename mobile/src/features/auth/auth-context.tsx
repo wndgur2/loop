@@ -131,6 +131,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           },
         });
         if (error) throw error;
+        // GoTrue hides "email already in use" to prevent enumeration: instead of an error it
+        // returns an obfuscated user with no identities (and no session) when confirmations are on.
+        // Without this check a duplicate sign-up silently lands on the "check your email" screen
+        // where no mail ever arrives. Surface it as a normal duplicate error.
+        if (data.user && data.user.identities?.length === 0) {
+          throw new Error('User already registered');
+        }
         // When email confirmation is enabled there is no session → awaiting confirmation.
         return { needsConfirmation: !data.session };
       },
