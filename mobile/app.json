@@ -8,10 +8,10 @@
     "scheme": "loop",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.loop.app"
+      "bundleIdentifier": "com.sam.loop"
     },
     "android": {
-      "package": "com.loop.app",
+      "package": "com.sam.loop",
       "adaptiveIcon": {
         "backgroundColor": "#FBF1E8",
         "foregroundImage": "./assets/images/android-icon-foreground.png"
