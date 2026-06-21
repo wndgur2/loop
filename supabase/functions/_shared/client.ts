@@ -16,3 +16,18 @@ export function createUserClient(req: Request): SupabaseClient {
     },
   );
 }
+
+/**
+ * Builds a **service-role** Supabase client (bypasses RLS).
+ * Use ONLY for trusted server-side writes the user must not be able to forge or tamper with —
+ * e.g. subscription entitlement (webhook) and usage metering/quota (CLAUDE.md §6). Since it bypasses
+ * RLS, every query MUST scope by user id explicitly. Never expose this key to the client.
+ * SUPABASE_SERVICE_ROLE_KEY is auto-injected in the Edge runtime.
+ */
+export function createServiceClient(): SupabaseClient {
+  return createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+}

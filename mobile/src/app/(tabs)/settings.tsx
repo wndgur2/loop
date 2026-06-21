@@ -26,6 +26,7 @@ import {
   useSubGoals,
   useUpdateGoal,
 } from '@/features/goals/queries';
+import { SubscriptionSection } from '@/features/subscription/components';
 import { useSyncFromServer } from '@/hooks/use-sync-from-server';
 import { useI18n } from '@/lib/i18n';
 
@@ -168,6 +169,8 @@ export default function SettingsScreen() {
             </PressScale>
           </View>
         </Card>
+
+        <SubscriptionSection />
 
         <SectionLabel>{t('settings.section.legal')}</SectionLabel>
         <Card radius={20} style={styles.subCard}>

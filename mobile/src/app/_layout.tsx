@@ -14,6 +14,7 @@ import { AuthProvider, useAuth } from '@/features/auth/auth-context';
 import { useAuthDeepLink } from '@/features/auth/use-auth-deep-link';
 import { useActiveGoal } from '@/features/goals/queries';
 import { LanguageProvider } from '@/lib/i18n';
+import { loginPurchases, logoutPurchases } from '@/lib/purchases';
 import { queryClient } from '@/lib/query-client';
 
 // Hold the splash until Pretendard is registered so the first frame renders in-brand (no system-font flash).
@@ -61,6 +62,14 @@ function RootNavigator() {
   // Email confirmation link (deep link) → session exchange. Once a session is set, the routing effect below takes over.
   useAuthDeepLink();
 
+  // Identify the RevenueCat customer as the Supabase user so the webhook's app_user_id matches
+  // (no-op on web / Expo Go / when no SDK key — see lib/purchases).
+  const userId = session?.user.id;
+  useEffect(() => {
+    if (userId) void loginPurchases(userId);
+    else void logoutPurchases();
+  }, [userId]);
+
   useEffect(() => {
     if (loading) return;
     const seg0 = segments[0] as string | undefined;
@@ -107,6 +116,7 @@ function RootNavigator() {
       <Stack.Screen name="feedback/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="chat/[mode]" options={{ presentation: 'card' }} />
       <Stack.Screen name="legal/[doc]" options={{ presentation: 'card' }} />
+      <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
     </Stack>
   );
 }

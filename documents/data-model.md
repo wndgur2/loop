@@ -141,6 +141,34 @@ AI 대화 세션. **작성/회고 모드** 구분.
 | `reason` | text | nullable — 사용자가 남긴 사유 |
 | `created_at` | timestamptz | |
 
+### subscriptions — 구독 상태 (결제)
+사용자당 1행. **진실의 원천은 RevenueCat 웹훅 + service_role**이며, 클라이언트에는 **읽기(SELECT)만** 허용한다(insert/update/delete는 revoke). 사용자가 자기 행을 위조해 Pro가 되는 것을 막는다. 정본: [adr-0006](../adrs/adr-0006-payments-revenuecat.md).
+
+| 컬럼 | 타입 | 비고 |
+|------|------|------|
+| `id` | uuid (PK) | |
+| `user_id` | uuid (FK→profiles, UNIQUE) | |
+| `plan` | subscription_plan | `free`(기본) · `pro` |
+| `status` | subscription_status | `active`(기본) · `in_grace` · `expired` · `cancelled` |
+| `rc_app_user_id` | text | RevenueCat app_user_id = Supabase user id |
+| `rc_product_id` | text | nullable |
+| `rc_entitlement` | text | nullable |
+| `current_period_end` | timestamptz | nullable — 다음 갱신/만료 시점 |
+| `will_renew` | boolean | 자동 갱신 여부 (기본 false) |
+| `last_event_id` | text | 웹훅 멱등성 키 (중복 이벤트 무시) |
+| `created_at` / `updated_at` | timestamptz | |
+
+### usage_counters — Loopie 사용량 (주간 게이팅)
+사용자·주별 1행. Loopie(AI) 호출 1턴마다 서버가 증가시킨다. **읽기 전용 클라이언트**(쓰기는 service_role). Pro 혜택 = Loopie 사용량 게이팅(주간 리셋, free=주 N회 / pro=N×20).
+
+| 컬럼 | 타입 | 비고 |
+|------|------|------|
+| `id` | uuid (PK) | |
+| `user_id` | uuid (FK→profiles) | |
+| `period_start` | date | 사용 주의 시작(월요일, UTC). `(user_id, period_start)` UNIQUE |
+| `loopie_turns` | integer | 이번 주 Loopie 호출 수 (기본 0) |
+| `created_at` / `updated_at` | timestamptz | |
+
 ---
 
 ## 3. 핵심 enum 값
@@ -151,6 +179,8 @@ AI 대화 세션. **작성/회고 모드** 구분.
 - **session.mode**: `write` · `retrospective`
 - **session.status**: `active` · `completed` · `abandoned`
 - **message.role**: `user` · `assistant`
+- **subscription.plan**: `free` · `pro`
+- **subscription.status**: `active` · `in_grace` · `expired` · `cancelled`
 
 ---
 
