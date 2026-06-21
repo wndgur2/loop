@@ -44,6 +44,19 @@ export interface ChatResponse {
   proposal: ChatProposal | null;
 }
 
+/**
+ * Thrown when the weekly Loopie quota is exhausted (Edge Function returns HTTP 402). The chat hook
+ * catches this to open the paywall instead of showing a generic connection error.
+ */
+export class LoopieQuotaError extends Error {
+  readonly resetAt: string | null;
+  constructor(resetAt: string | null) {
+    super('quota_exceeded');
+    this.name = 'LoopieQuotaError';
+    this.resetAt = resetAt;
+  }
+}
+
 /** Sends a conversation turn to the Edge Function and receives (assistant reply + optional proposal). */
 export async function invokeLoopie(args: {
   mode: SessionMode;
@@ -104,6 +117,15 @@ export async function streamLoopie(args: {
       stream: true,
     }),
   });
+
+  // Weekly Loopie quota exhausted → surface a typed error so the UI can open the paywall.
+  if (res.status === 402) {
+    const data = (await res.json().catch(() => null)) as {
+      error?: string;
+      resetAt?: string;
+    } | null;
+    if (data?.error === 'quota_exceeded') throw new LoopieQuotaError(data.resetAt ?? null);
+  }
 
   if (!res.ok) {
     throw new Error(loopieErrorMessage(new Error(`stream ${res.status}`)));

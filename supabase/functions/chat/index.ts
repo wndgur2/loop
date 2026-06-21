@@ -4,16 +4,18 @@
 // it only returns a proposal — the client applies it after getting user consent via a confirmation chip.
 
 import { corsHeaders, jsonResponse } from "../_shared/cors.ts";
-import { createUserClient } from "../_shared/client.ts";
+import { createServiceClient, createUserClient } from "../_shared/client.ts";
 import type {
   ChatProposal,
   ChatRequest,
   ChatResponse,
   ChatStreamEvent,
   Importance,
+  QuotaExceededError,
   SessionMode,
 } from "../_shared/types.ts";
 import { buildContext } from "./context.ts";
+import { enforceLoopieQuota } from "./quota.ts";
 import { toolForMode } from "./tools.ts";
 import {
   callLLM,
@@ -53,6 +55,21 @@ Deno.serve(async (req) => {
     }
     if (!Array.isArray(body.messages) || body.messages.length === 0) {
       return jsonResponse({ error: "invalid_messages" }, 400);
+    }
+
+    // Loopie usage gating (weekly). Counts this call server-side with a service-role client so the
+    // user can't tamper with their plan or counter (CLAUDE.md §6). Pro gets a much higher fair-use
+    // limit; free gets the base limit. Both write/retrospective modes count (both are LLM calls).
+    const quota = await enforceLoopieQuota(createServiceClient(), user.id);
+    if (!quota.allowed) {
+      const quotaBody: QuotaExceededError = {
+        error: "quota_exceeded",
+        plan: quota.plan,
+        limit: quota.limit,
+        used: quota.used,
+        resetAt: quota.resetAt,
+      };
+      return jsonResponse(quotaBody, 402);
     }
 
     // Context = full feedback + sub-goals (common to both modes)

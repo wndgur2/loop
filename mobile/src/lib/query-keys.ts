@@ -5,4 +5,7 @@ export const qk = {
   subGoals: ['subGoals'] as const,
   feedbacks: ['feedbacks'] as const,
   feedback: (id: string) => ['feedback', id] as const,
+  subscription: ['subscription'] as const,
+  usage: ['usage'] as const,
+  proPackage: ['proPackage'] as const,
 };

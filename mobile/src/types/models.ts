@@ -11,12 +11,16 @@ export type SubGoalRow = Tables['sub_goals']['Row'];
 export type GoalRow = Tables['goals']['Row'];
 export type ChatSessionRow = Tables['chat_sessions']['Row'];
 export type ChatMessageRow = Tables['chat_messages']['Row'];
+export type SubscriptionRow = Tables['subscriptions']['Row'];
+export type UsageCounterRow = Tables['usage_counters']['Row'];
 
 export type Importance = Database['public']['Enums']['importance'];
 export type SessionMode = Database['public']['Enums']['session_mode'];
 export type SessionStatus = Database['public']['Enums']['session_status'];
 export type MessageRole = Database['public']['Enums']['message_role'];
 export type SubGoalSource = Database['public']['Enums']['sub_goal_source'];
+export type SubscriptionPlan = Database['public']['Enums']['subscription_plan'];
+export type SubscriptionStatus = Database['public']['Enums']['subscription_status'];
 
 export const IMPORTANCE_VALUES: Importance[] = ['high', 'mid', 'low'];
 
@@ -70,6 +74,23 @@ export interface ChatMessage {
   role: MessageRole;
   content: string;
   createdAt: string;
+}
+
+/** Subscription state (source of truth = RevenueCat webhook; client reads only). */
+export interface Subscription {
+  id: string;
+  userId: string;
+  plan: SubscriptionPlan;
+  status: SubscriptionStatus;
+  currentPeriodEnd: string | null;
+  willRenew: boolean;
+}
+
+/** Loopie usage for one weekly window (per-user). */
+export interface Usage {
+  userId: string;
+  periodStart: string;
+  loopieTurns: number;
 }
 
 // ─────────────────────────── mappers ───────────────────────────
@@ -131,4 +152,19 @@ export function toChatMessage(r: ChatMessageRow): ChatMessage {
     content: r.content,
     createdAt: r.created_at,
   };
+}
+
+export function toSubscription(r: SubscriptionRow): Subscription {
+  return {
+    id: r.id,
+    userId: r.user_id,
+    plan: r.plan,
+    status: r.status,
+    currentPeriodEnd: r.current_period_end,
+    willRenew: r.will_renew,
+  };
+}
+
+export function toUsage(r: UsageCounterRow): Usage {
+  return { userId: r.user_id, periodStart: r.period_start, loopieTurns: r.loopie_turns };
 }

@@ -305,6 +305,59 @@ export type Database = {
           },
         ];
       };
+      subscriptions: {
+        Row: {
+          created_at: string;
+          current_period_end: string | null;
+          id: string;
+          last_event_id: string | null;
+          plan: Database['public']['Enums']['subscription_plan'];
+          rc_app_user_id: string | null;
+          rc_entitlement: string | null;
+          rc_product_id: string | null;
+          status: Database['public']['Enums']['subscription_status'];
+          updated_at: string;
+          user_id: string;
+          will_renew: boolean;
+        };
+        Insert: {
+          created_at?: string;
+          current_period_end?: string | null;
+          id?: string;
+          last_event_id?: string | null;
+          plan?: Database['public']['Enums']['subscription_plan'];
+          rc_app_user_id?: string | null;
+          rc_entitlement?: string | null;
+          rc_product_id?: string | null;
+          status?: Database['public']['Enums']['subscription_status'];
+          updated_at?: string;
+          user_id: string;
+          will_renew?: boolean;
+        };
+        Update: {
+          created_at?: string;
+          current_period_end?: string | null;
+          id?: string;
+          last_event_id?: string | null;
+          plan?: Database['public']['Enums']['subscription_plan'];
+          rc_app_user_id?: string | null;
+          rc_entitlement?: string | null;
+          rc_product_id?: string | null;
+          status?: Database['public']['Enums']['subscription_status'];
+          updated_at?: string;
+          user_id?: string;
+          will_renew?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'subscriptions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       takeaways: {
         Row: {
           created_at: string;
@@ -343,6 +396,41 @@ export type Database = {
           },
         ];
       };
+      usage_counters: {
+        Row: {
+          created_at: string;
+          id: string;
+          loopie_turns: number;
+          period_start: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          loopie_turns?: number;
+          period_start: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          loopie_turns?: number;
+          period_start?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'usage_counters_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -356,6 +444,8 @@ export type Database = {
       session_mode: 'write' | 'retrospective';
       session_status: 'active' | 'completed' | 'abandoned';
       sub_goal_source: 'ai_suggested' | 'user_added';
+      subscription_plan: 'free' | 'pro';
+      subscription_status: 'active' | 'in_grace' | 'expired' | 'cancelled';
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -489,6 +579,8 @@ export const Constants = {
       session_mode: ['write', 'retrospective'],
       session_status: ['active', 'completed', 'abandoned'],
       sub_goal_source: ['ai_suggested', 'user_added'],
+      subscription_plan: ['free', 'pro'],
+      subscription_status: ['active', 'in_grace', 'expired', 'cancelled'],
     },
   },
 } as const;

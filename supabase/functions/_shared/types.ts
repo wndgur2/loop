@@ -4,6 +4,25 @@
 export type Importance = "high" | "mid" | "low";
 export type SessionMode = "write" | "retrospective";
 export type ChatRole = "user" | "assistant";
+export type SubscriptionPlan = "free" | "pro";
+export type SubscriptionStatus =
+  | "active"
+  | "in_grace"
+  | "expired"
+  | "cancelled";
+
+/**
+ * 402 response body when the weekly Loopie quota is exhausted. The client recognizes
+ * `error: 'quota_exceeded'` and opens the paywall instead of showing a generic error.
+ */
+export interface QuotaExceededError {
+  error: "quota_exceeded";
+  plan: SubscriptionPlan;
+  limit: number;
+  used: number;
+  /** ISO timestamp when the quota resets (next Monday, UTC). */
+  resetAt: string;
+}
 
 export interface ChatMessage {
   role: ChatRole;

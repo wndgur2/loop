@@ -10,6 +10,7 @@ import {
   type ChatProposal,
   type FeedbackProposal,
   type LoopieMessage,
+  LoopieQuotaError,
   type RetrospectiveProposal,
   streamLoopie,
 } from '@/lib/loopie';
@@ -76,9 +77,18 @@ export function useLoopieChat(mode: SessionMode, initial?: string) {
       haptics.tap();
       if (sessionIdRef.current) void saveMessage(sessionIdRef.current, 'assistant', res.reply);
       if (res.proposal) setProposal(res.proposal);
-    } catch {
-      // If the bubble is empty, replace it with an error message; if some text was already received, keep it.
-      patchLastAssistant((prev) => (prev ? prev : t('chat.err.connect')));
+    } catch (err) {
+      if (err instanceof LoopieQuotaError) {
+        // Weekly free limit hit → nudge to the paywall instead of a generic error.
+        patchLastAssistant((prev) => (prev ? prev : t('chat.err.quota')));
+        router.push({
+          pathname: '/paywall',
+          params: { reason: 'limit', ...(err.resetAt ? { reset: err.resetAt } : {}) },
+        });
+      } else {
+        // If the bubble is empty, replace it with an error message; if some text was already received, keep it.
+        patchLastAssistant((prev) => (prev ? prev : t('chat.err.connect')));
+      }
     } finally {
       setSending(false);
     }
