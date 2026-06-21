@@ -1,0 +1,54 @@
+name: Preview · mobile
+
+# Per-PR Expo preview. On every PR that touches the app, publish the JS/asset
+# bundle as an EAS Update and post a QR-code comment on the PR. Scanning the QR
+# with an installed development build opens *that PR's* version instantly — no
+# store, no native build.
+#
+# Prerequisites (one-time, per test device):
+#   - A development build must be installed: `cd mobile && eas build --profile
+#     development --platform android` (or ios), then install it. That app is the
+#     client the QR loads into.
+#   - The EXPO_TOKEN repo secret (already used by cd-mobile.yml).
+#
+# Note: EAS Update ships JS/assets only. A PR that changes native code, the app
+# version, or a config plugin needs a fresh development build to load.
+on:
+  pull_request:
+    paths:
+      - 'mobile/**'
+
+# Supersede stale preview runs for the same PR.
+concurrency:
+  group: preview-mobile-${{ github.event.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    # Needed to post/update the QR-code comment on the PR.
+    permissions:
+      contents: read
+      pull-requests: write
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - run: npm ci
+
+      - name: Publish preview & comment QR
+        uses: expo/expo-github-action/preview@v8
+        with:
+          working-directory: mobile
+          command: eas update --branch pr-${{ github.event.number }} --message "${{ github.event.pull_request.title }}"
