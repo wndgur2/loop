@@ -1,5 +1,5 @@
-// Request/response contract for the Loopi Edge Function.
-// Canonical source: documents/loopi-spec.md (§4 output schema · §9 retrospective) · evals/runner.ts (ChatOutput)
+// Request/response contract for the Loopie Edge Function.
+// Canonical source: documents/loopie-spec.md (§4 output schema · §9 retrospective) · evals/runner.ts (ChatOutput)
 
 export type Importance = 'high' | 'mid' | 'low'
 export type SessionMode = 'write' | 'retrospective'
@@ -30,7 +30,7 @@ export type ChatStreamEvent =
   | { type: 'done'; reply: string; proposal: ChatProposal | null }
   | { type: 'error' }
 
-/** Output of the write-mode tool `create feedback` (loopi-spec §4 = Canonical Template) */
+/** Output of the write-mode tool `create feedback` (loopie-spec §4 = Canonical Template) */
 export interface FeedbackProposal {
   kind: 'create_feedback'
   title: string
@@ -43,7 +43,7 @@ export interface FeedbackProposal {
   takeaways: { text: string }[]
 }
 
-/** Output of the retrospective-mode tool `retrospective` (loopi-spec §9) — changes are committed after confirmation */
+/** Output of the retrospective-mode tool `retrospective` (loopie-spec §9) — changes are committed after confirmation */
 export interface RetrospectiveProposal {
   kind: 'update_feedback'
   feedback_id: string

@@ -51,7 +51,7 @@ enable_confirmations = false
 # 클라이언트 검증(MIN_PASSWORD_LENGTH, features/auth/validation.ts)과 동기화
 minimum_password_length = 6
 
-# Edge Functions — Loopi(작성/회고). 플랫폼이 JWT를 먼저 검증.
+# Edge Functions — Loopie(작성/회고). 플랫폼이 JWT를 먼저 검증.
 [functions.chat]
 enabled = true
 verify_jwt = true

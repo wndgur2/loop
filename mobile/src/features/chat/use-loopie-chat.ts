@@ -9,10 +9,10 @@ import { useT } from '@/lib/i18n';
 import {
   type ChatProposal,
   type FeedbackProposal,
-  type LoopiMessage,
+  type LoopieMessage,
   type RetrospectiveProposal,
-  streamLoopi,
-} from '@/lib/loopi';
+  streamLoopie,
+} from '@/lib/loopie';
 import { qk } from '@/lib/query-keys';
 import type { SessionMode } from '@/types/models';
 
@@ -21,17 +21,17 @@ import { appendMessage, updateLastAssistant } from './messages';
 import { completeSession, createChatSession, saveMessage } from './session';
 
 /**
- * Conversation state for the Loopi chat screen — streaming send, session
+ * Conversation state for the Loopie chat screen — streaming send, session
  * persistence, and proposal accept/dismiss. Keeps the screen purely visual.
  */
-export function useLoopiChat(mode: SessionMode, initial?: string) {
+export function useLoopieChat(mode: SessionMode, initial?: string) {
   const router = useRouter();
   const t = useT();
   const qc = useQueryClient();
   const { data: subGoals = [] } = useSubGoals();
   const create = useCreateFeedback();
 
-  const [messages, setMessages] = useState<LoopiMessage[]>([]);
+  const [messages, setMessages] = useState<LoopieMessage[]>([]);
   const [sending, setSending] = useState(false);
   const [proposal, setProposal] = useState<ChatProposal | null>(null);
   const [applying, setApplying] = useState(false);
@@ -66,7 +66,7 @@ export function useLoopiChat(mode: SessionMode, initial?: string) {
     // Show an empty bubble first to fill in with the streaming reply.
     showAssistant('');
     try {
-      const res = await streamLoopi({
+      const res = await streamLoopie({
         mode,
         messages: next,
         onDelta: (delta) => patchLastAssistant((prev) => prev + delta),

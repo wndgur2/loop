@@ -1,21 +1,21 @@
 ---
-name: eval-loopi
-description: Loop의 Loopi 프롬프트 품질을 평가한다. 시나리오 묶음을 Loopi에 돌려 eval-rubric 기준으로 채점하고 직전 버전 대비 회귀를 검출한다. Loopi 프롬프트(supabase/functions/chat/prompts)를 수정했거나 "Loopi 평가", "eval 돌리기", "프롬프트 회귀 확인" 요청 시 사용.
+name: eval-loopie
+description: Loop의 Loopie 프롬프트 품질을 평가한다. 시나리오 묶음을 Loopie에 돌려 eval-rubric 기준으로 채점하고 직전 버전 대비 회귀를 검출한다. Loopie 프롬프트(supabase/functions/chat/prompts)를 수정했거나 "Loopie 평가", "eval 돌리기", "프롬프트 회귀 확인" 요청 시 사용.
 ---
 
-# Loopi 품질 평가
+# Loopie 품질 평가
 
-Loopi 품질은 Loop의 차별점이다(PRD 리스크 #2). 프롬프트를 바꿨으면 **머지 전 반드시** 이 평가를 거친다.
+Loopie 품질은 Loop의 차별점이다(PRD 리스크 #2). 프롬프트를 바꿨으면 **머지 전 반드시** 이 평가를 거친다.
 
 ## 언제 쓰나
 - `supabase/functions/chat/prompts/` 의 프롬프트 변경 직후
-- 출력 스키마([loopi-spec.md](../../../documents/loopi-spec.md) 4절) 변경 시
+- 출력 스키마([loopie-spec.md](../../../documents/loopie-spec.md) 4절) 변경 시
 - 모델 버전 업그레이드 시 (회귀 안전망)
 
 ## 절차
-1. 기준 문서를 읽는다: [eval-rubric.md](../../../documents/eval-rubric.md)(채점), [loopi-spec.md](../../../documents/loopi-spec.md)(계약).
+1. 기준 문서를 읽는다: [eval-rubric.md](../../../documents/eval-rubric.md)(채점), [loopie-spec.md](../../../documents/loopie-spec.md)(계약).
 2. [evals/scenarios](../../../evals/scenarios/) 전체(또는 지정 `--id`)를 로드한다.
-3. 각 시나리오를 Loopi에 통과시켜 transcript + 구조화 출력을 얻는다.
+3. 각 시나리오를 Loopie에 통과시켜 transcript + 구조화 출력을 얻는다.
 4. 채점:
    - **D1~D4**(근본원인·실천항목·분류·목표정렬): 출력 + 시나리오 `expect` 비교로 자동.
    - **D5~D6**(보이스·효율): LLM-as-judge. 보이스는 [branding.md](../../../documents/branding.md) 기준.

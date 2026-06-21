@@ -1,4 +1,4 @@
--- ai_content_reports: user reports of inappropriate Loopi (AI) responses.
+-- ai_content_reports: user reports of inappropriate Loopie (AI) responses.
 -- Required by the Google Play AI-Generated Content policy: apps that generate
 -- content with AI must offer in-app reporting/flagging of offensive output.
 -- The reported message text is snapshotted here so the report stays meaningful

@@ -1,8 +1,8 @@
-# evals/ — Loopi 품질 평가 루프
+# evals/ — Loopie 품질 평가 루프
 
-Loop의 차별점은 Loopi 품질이다. 프롬프트는 코드처럼 버전 관리하고, 바꿀 때마다 여기서 회귀를 검증한다.
+Loop의 차별점은 Loopie 품질이다. 프롬프트는 코드처럼 버전 관리하고, 바꿀 때마다 여기서 회귀를 검증한다.
 
-관련: [loopi-spec.md](../documents/loopi-spec.md) · [eval-rubric.md](../documents/eval-rubric.md) · [feature-spec.md](../documents/feature-spec.md)
+관련: [loopie-spec.md](../documents/loopie-spec.md) · [eval-rubric.md](../documents/eval-rubric.md) · [feature-spec.md](../documents/feature-spec.md)
 
 ## 구성
 
@@ -10,7 +10,7 @@ Loop의 차별점은 Loopi 품질이다. 프롬프트는 코드처럼 버전 관
 evals/
 ├── README.md         # 이 문서
 ├── scenarios/        # 입력 시나리오 (JSON 1건 = 1 케이스)
-├── runner.ts         # 시나리오 → Loopi → 구조화 출력 → 채점 → 리포트
+├── runner.ts         # 시나리오 → Loopie → 구조화 출력 → 채점 → 리포트
 └── reports/          # 실행 결과 (gitignore 권장, 요약만 CHANGELOG에)
 ```
 
@@ -48,7 +48,7 @@ npm run eval                 # 전체 시나리오
 npm run eval -- --id meeting-no-opinion   # 단건
 ```
 
-또는 `/eval-loopi` 스킬로 실행 — 결과를 [eval-rubric.md](../documents/eval-rubric.md) 기준으로 채점하고, 직전 버전 대비 델타를 리포트한다.
+또는 `/eval-loopie` 스킬로 실행 — 결과를 [eval-rubric.md](../documents/eval-rubric.md) 기준으로 채점하고, 직전 버전 대비 델타를 리포트한다.
 
 ## 채점
 

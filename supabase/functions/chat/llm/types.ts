@@ -16,7 +16,7 @@ export interface ChatTurn {
   content: string;
 }
 
-/** Single tool definition. input_schema is JSON Schema (loopi-spec structured output contract). */
+/** Single tool definition. input_schema is JSON Schema (loopie-spec structured output contract). */
 export interface ToolDef {
   name: string;
   description: string;

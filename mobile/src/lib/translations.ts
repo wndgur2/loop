@@ -1,6 +1,6 @@
 /**
  * App string dictionary (Korean/English). Keys follow a screen.purpose form.
- * Used via t(key, vars); {var} is substituted at runtime. Canonical tone: warm mentor (loopi-spec).
+ * Used via t(key, vars); {var} is substituted at runtime. Canonical tone: warm mentor (loopie-spec).
  */
 export type Lang = 'ko' | 'en';
 
@@ -22,7 +22,7 @@ const ko = {
   // sign-in
   'signin.title.signin': '다시 오셨네요',
   'signin.title.signup': '되돌아보기를 시작해요',
-  'signin.subtitle': '스스로 남긴 피드백을 Loopi가 목표로 이어드려요.',
+  'signin.subtitle': '스스로 남긴 피드백을 Loopie가 목표로 이어드려요.',
   'field.name': '이름 (선택)',
   'field.email': '이메일',
   'field.password': '비밀번호 ({min}자 이상)',
@@ -70,7 +70,7 @@ const ko = {
   'home.composer': '오늘 마음에 남은 순간이 있나요?',
   'home.empty.title': '첫 피드백을 시작해 보세요',
   'home.empty.body':
-    '아래에 오늘 있었던 일을 적으면 Loopi가 근본 원인과 실천항목을 함께 정리해 드려요.',
+    '아래에 오늘 있었던 일을 적으면 Loopie가 근본 원인과 실천항목을 함께 정리해 드려요.',
   'home.takeawayDone': '{done}/{total} 실행',
   'badge.internalized': '내재화됨',
 
@@ -116,10 +116,10 @@ const ko = {
   'form.err.subgoal': '하위 목표를 하나 선택해 주세요.',
   'form.err.save': '저장에 실패했어요. 잠시 후 다시 시도해 주세요.',
 
-  // chat (Loopi)
+  // chat (Loopie)
   'chat.title.write': '작성',
   'chat.title.reflect': '되새김',
-  'chat.sub': 'Loopi와 대화 중',
+  'chat.sub': 'Loopie와 대화 중',
   'chat.intro.write':
     '오늘 마음에 남은 순간을 들려주세요. 무슨 일이 있었는지부터 편하게 적어 주시면, 근본 원인과 다음 다짐까지 함께 정리해 볼게요.',
   'chat.intro.reflect':
@@ -132,17 +132,17 @@ const ko = {
   'chat.proposal.apply': '반영하기',
   'chat.proposal.dismiss': '아직요',
   'chat.applied': '반영했어요. 차근차근 잘 하고 있어요.',
-  'chat.err.connect': 'Loopi와 연결하지 못했어요. 잠시 후 다시 시도해 주세요.',
+  'chat.err.connect': 'Loopie와 연결하지 못했어요. 잠시 후 다시 시도해 주세요.',
   'chat.err.noSubgoal': '저장할 하위 목표가 없어요. 설정에서 먼저 하위 목표를 추가해 주세요.',
   'chat.err.saveFail': '저장에 실패했어요. 잠시 후 다시 시도해 주세요.',
   'chat.err.applyFail': '반영에 실패했어요. 잠시 후 다시 시도해 주세요.',
-  'chat.aiNotice': 'Loopi의 답변은 AI가 만들어요. 부적절한 답변은 길게 눌러 신고할 수 있어요.',
+  'chat.aiNotice': 'Loopie의 답변은 AI가 만들어요. 부적절한 답변은 길게 눌러 신고할 수 있어요.',
   'chat.report.title': '이 답변을 신고할까요?',
   'chat.report.msg':
-    '부적절하거나 불쾌한 AI 답변을 개발팀에 보내요. 신고 내용은 Loopi 개선에 사용돼요.',
+    '부적절하거나 불쾌한 AI 답변을 개발팀에 보내요. 신고 내용은 Loopie 개선에 사용돼요.',
   'chat.report.confirm': '신고',
   'chat.report.done.title': '신고했어요',
-  'chat.report.done.msg': '검토 후 Loopi 개선에 반영할게요.',
+  'chat.report.done.msg': '검토 후 Loopie 개선에 반영할게요.',
   'chat.report.fail.title': '신고하지 못했어요',
   'chat.report.fail.msg': '잠시 후 다시 시도해 주세요.',
 
@@ -168,7 +168,7 @@ const ko = {
   'reflect.repeat.cta': '패턴 짚어 보기',
   'reflect.area.open': '{open}개 고리가 열려 있어요',
   'reflect.empty.title': '되새길 고리가 아직 없어요',
-  'reflect.empty.body': '피드백을 쌓으면, 되새길 만한 것을 Loopi가 골라 드릴게요.',
+  'reflect.empty.body': '피드백을 쌓으면, 되새길 만한 것을 Loopie가 골라 드릴게요.',
 
   // dashboard
   'dash.title': '대시보드',
@@ -196,7 +196,7 @@ const ko = {
   'settings.goalSave': '목표 저장',
   'settings.addSubgoal': '하위 목표 추가',
   'settings.signout': '로그아웃',
-  'settings.tagline': 'Loop · 피드백을 목표 달성으로, with Loopi',
+  'settings.tagline': 'Loop · 피드백을 목표 달성으로, with Loopie',
   'settings.subgoal.delete.title': '하위 목표 삭제',
   'settings.subgoal.delete.msg': '"{name}"을(를) 삭제할까요?',
   'settings.subgoal.delete.failTitle': '삭제할 수 없어요',
@@ -238,7 +238,7 @@ const en: Record<TKey, string> = {
 
   'signin.title.signin': 'Welcome back',
   'signin.title.signup': 'Start reflecting',
-  'signin.subtitle': 'Loopi turns the feedback you give yourself into progress toward your goal.',
+  'signin.subtitle': 'Loopie turns the feedback you give yourself into progress toward your goal.',
   'field.name': 'Name (optional)',
   'field.email': 'Email',
   'field.password': 'Password ({min}+ characters)',
@@ -283,7 +283,7 @@ const en: Record<TKey, string> = {
   'home.composer': 'A moment that stayed with you today?',
   'home.empty.title': 'Start your first reflection',
   'home.empty.body':
-    'Jot down what happened below and Loopi will draw out the root cause and takeaways with you.',
+    'Jot down what happened below and Loopie will draw out the root cause and takeaways with you.',
   'home.takeawayDone': '{done}/{total} done',
   'badge.internalized': 'Internalized',
 
@@ -329,7 +329,7 @@ const en: Record<TKey, string> = {
 
   'chat.title.write': 'New feedback',
   'chat.title.reflect': 'Reflecting',
-  'chat.sub': 'with Loopi',
+  'chat.sub': 'with Loopie',
   'chat.intro.write':
     "Tell me a moment from today that stayed with you. Start with what happened, and we'll work out the root cause and your next resolve together.",
   'chat.intro.reflect':
@@ -342,18 +342,18 @@ const en: Record<TKey, string> = {
   'chat.proposal.apply': 'Apply',
   'chat.proposal.dismiss': 'Not yet',
   'chat.applied': "Done. You're making steady progress.",
-  'chat.err.connect': "Couldn't reach Loopi. Please try again in a moment.",
+  'chat.err.connect': "Couldn't reach Loopie. Please try again in a moment.",
   'chat.err.noSubgoal': 'No sub-goal to save to. Add one in Settings first.',
   'chat.err.saveFail': "Couldn't save. Please try again.",
   'chat.err.applyFail': "Couldn't apply. Please try again.",
   'chat.aiNotice':
-    "Loopi's replies are AI-generated. Long-press a reply to report inappropriate content.",
+    "Loopie's replies are AI-generated. Long-press a reply to report inappropriate content.",
   'chat.report.title': 'Report this reply?',
   'chat.report.msg':
-    'Send this inappropriate or offensive AI reply to the team. Reports are used to improve Loopi.',
+    'Send this inappropriate or offensive AI reply to the team. Reports are used to improve Loopie.',
   'chat.report.confirm': 'Report',
   'chat.report.done.title': 'Reported',
-  'chat.report.done.msg': "We'll review it and use it to improve Loopi.",
+  'chat.report.done.msg': "We'll review it and use it to improve Loopie.",
   'chat.report.fail.title': "Couldn't send the report",
   'chat.report.fail.msg': 'Please try again in a moment.',
 
@@ -377,7 +377,7 @@ const en: Record<TKey, string> = {
   'reflect.repeat.cta': 'See the pattern',
   'reflect.area.open': '{open} loops still open',
   'reflect.empty.title': 'Nothing to revisit yet',
-  'reflect.empty.body': "As you add feedback, Loopi will surface what's worth revisiting.",
+  'reflect.empty.body': "As you add feedback, Loopie will surface what's worth revisiting.",
 
   'dash.title': 'Insights',
   'dash.empty.title': 'No stats to show yet',
@@ -403,7 +403,7 @@ const en: Record<TKey, string> = {
   'settings.goalSave': 'Save goal',
   'settings.addSubgoal': 'Add sub-goal',
   'settings.signout': 'Log out',
-  'settings.tagline': 'Loop · feedback into progress, with Loopi',
+  'settings.tagline': 'Loop · feedback into progress, with Loopie',
   'settings.subgoal.delete.title': 'Delete sub-goal',
   'settings.subgoal.delete.msg': 'Delete "{name}"?',
   'settings.subgoal.delete.failTitle': "Can't delete",

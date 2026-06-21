@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 /**
  * Haptic feedback helper — platform-safe and fire-and-forget so it never blocks UI.
  * No-op on web (expo-haptics is native-only).
- * The only haptic in the app: a short light tap when a Loopi chat response arrives.
+ * The only haptic in the app: a short light tap when a Loopie chat response arrives.
  */
 const enabled = Platform.OS === 'ios' || Platform.OS === 'android';
 

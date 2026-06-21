@@ -2,7 +2,7 @@
  * Applies a retrospective proposal to the DB — call only after the confirm chip is pressed (no silent changes).
  * Create proposals are applied directly in components via the useCreateFeedback hook.
  */
-import type { RetrospectiveProposal } from '@/lib/loopi';
+import type { RetrospectiveProposal } from '@/lib/loopie';
 import { getSupabase } from '@/lib/supabase';
 import type { TKey } from '@/lib/translations';
 

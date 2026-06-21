@@ -9,7 +9,7 @@ Loop는 민감한 자기성찰 데이터를 다루고 공개 저장소다. **RLS
 
 ## 사전 확인
 1. [documents/data-model.md](../../../documents/data-model.md)를 읽고 엔티티·enum·소유권 관계를 확인한다. 스키마가 이 문서와 어긋나면 **문서를 먼저 갱신**한다.
-2. 변경이 새 enum 값을 요구하면 data-model.md의 3절과 [loopi-spec.md](../../../documents/loopi-spec.md) 출력 스키마를 함께 맞춘다.
+2. 변경이 새 enum 값을 요구하면 data-model.md의 3절과 [loopie-spec.md](../../../documents/loopie-spec.md) 출력 스키마를 함께 맞춘다.
 
 ## 절차
 1. `supabase/migrations/<timestamp>_<설명>.sql` 파일을 만든다.

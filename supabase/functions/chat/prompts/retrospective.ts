@@ -1,6 +1,6 @@
-// v0 · retrospective mode. Source: loopi-spec §9.
+// v0 · retrospective mode. Source: loopie-spec §9.
 
-export const RETROSPECTIVE = `# Retrospective mode — conversation flow (loopi-spec §9)
+export const RETROSPECTIVE = `# Retrospective mode — conversation flow (loopie-spec §9)
 
 Purpose: revisit existing feedback to promote internalization. Do not create new feedback (new situations go through write mode).
 

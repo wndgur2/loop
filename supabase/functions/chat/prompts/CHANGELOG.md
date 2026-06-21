@@ -1,7 +1,7 @@
-# Loopi 프롬프트 변경 이력
+# Loopie 프롬프트 변경 이력
 
-프롬프트는 코드처럼 버전 관리한다. 변경 시 `evals`로 회귀 검증하고(`eval-loopi` 스킬), 점수 변화를 여기 남긴다.
-정본 의도: [loopi-spec.md](../../../../documents/loopi-spec.md) · 채점: [eval-rubric.md](../../../../documents/eval-rubric.md)
+프롬프트는 코드처럼 버전 관리한다. 변경 시 `evals`로 회귀 검증하고(`eval-loopie` 스킬), 점수 변화를 여기 남긴다.
+정본 의도: [loopie-spec.md](../../../../documents/loopie-spec.md) · 채점: [eval-rubric.md](../../../../documents/eval-rubric.md)
 
 ## v0.1 (2026-06-10) — 응답 언어 규칙 명시
 

@@ -1,5 +1,5 @@
 /**
- * Loopi Edge Function client wrapper.
+ * Loopie Edge Function client wrapper.
  * All AI calls go through this function (= Supabase Edge Function `chat`) (CLAUDE.md §6).
  * The contract is 1:1 with supabase/functions/_shared/types.ts.
  */
@@ -9,7 +9,7 @@ import type { Importance, SessionMode } from '@/types/models';
 
 import { getSupabase } from './supabase';
 
-export interface LoopiMessage {
+export interface LoopieMessage {
   role: 'user' | 'assistant';
   content: string;
 }
@@ -45,9 +45,9 @@ export interface ChatResponse {
 }
 
 /** Sends a conversation turn to the Edge Function and receives (assistant reply + optional proposal). */
-export async function invokeLoopi(args: {
+export async function invokeLoopie(args: {
   mode: SessionMode;
-  messages: LoopiMessage[];
+  messages: LoopieMessage[];
   sessionId?: string;
 }): Promise<ChatResponse> {
   const { data, error } = await getSupabase().functions.invoke<ChatResponse>('chat', {
@@ -55,10 +55,10 @@ export async function invokeLoopi(args: {
   });
 
   if (error) {
-    throw new Error(loopiErrorMessage(error));
+    throw new Error(loopieErrorMessage(error));
   }
   if (!data || typeof data.reply !== 'string') {
-    throw new Error('Loopi 응답을 이해하지 못했어요. 잠시 후 다시 시도해 주세요.');
+    throw new Error('Loopie 응답을 이해하지 못했어요. 잠시 후 다시 시도해 주세요.');
   }
   return { reply: data.reply, proposal: data.proposal ?? null };
 }
@@ -70,13 +70,13 @@ type StreamEvent =
   | { type: 'error' };
 
 /**
- * Streams Loopi's reply token by token — receives text as it arrives via `onDelta`,
+ * Streams Loopie's reply token by token — receives text as it arrives via `onDelta`,
  * and returns the final {reply, proposal}. supabase-js's invoke does not expose the
  * streaming body, so we fetch the Edge Function URL directly (expo/fetch = ReadableStream support on RN).
  */
-export async function streamLoopi(args: {
+export async function streamLoopie(args: {
   mode: SessionMode;
-  messages: LoopiMessage[];
+  messages: LoopieMessage[];
   sessionId?: string;
   onDelta: (delta: string) => void;
 }): Promise<ChatResponse> {
@@ -106,7 +106,7 @@ export async function streamLoopi(args: {
   });
 
   if (!res.ok) {
-    throw new Error(loopiErrorMessage(new Error(`stream ${res.status}`)));
+    throw new Error(loopieErrorMessage(new Error(`stream ${res.status}`)));
   }
 
   // Fall back to a non-streaming (JSON) response: if the Edge Function does not yet support
@@ -115,7 +115,7 @@ export async function streamLoopi(args: {
   if (!res.body || !contentType.includes('text/event-stream')) {
     const data = (await res.json().catch(() => null)) as Partial<ChatResponse> | null;
     const reply = data && typeof data.reply === 'string' ? data.reply : '';
-    if (!reply) throw new Error('Loopi 응답을 이해하지 못했어요. 잠시 후 다시 시도해 주세요.');
+    if (!reply) throw new Error('Loopie 응답을 이해하지 못했어요. 잠시 후 다시 시도해 주세요.');
     args.onDelta(reply);
     return { reply, proposal: data?.proposal ?? null };
   }
@@ -141,7 +141,7 @@ export async function streamLoopi(args: {
       reply = ev.reply;
       proposal = ev.proposal;
     } else {
-      throw new Error('Loopi 응답 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.');
+      throw new Error('Loopie 응답 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.');
     }
   };
 
@@ -161,9 +161,9 @@ export async function streamLoopi(args: {
   return { reply, proposal };
 }
 
-function loopiErrorMessage(error: unknown): string {
+function loopieErrorMessage(error: unknown): string {
   const msg = error instanceof Error ? error.message : String(error);
   // Do not leave behind content/personal info. Only a gentle message for the user.
   if (/401|unauthor/i.test(msg)) return '세션이 만료됐어요. 다시 로그인해 주세요.';
-  return 'Loopi와 연결하지 못했어요. 잠시 후 다시 시도해 주세요.';
+  return 'Loopie와 연결하지 못했어요. 잠시 후 다시 시도해 주세요.';
 }

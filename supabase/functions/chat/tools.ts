@@ -1,8 +1,8 @@
 import type { SessionMode } from '../_shared/types.ts';
 
 /**
- * One tool per mode (loopi-spec.md §4 write · §9 retrospective).
- * input_schema maps 1:1 to loopi-spec's structured-output contract.
+ * One tool per mode (loopie-spec.md §4 write · §9 retrospective).
+ * input_schema maps 1:1 to loopie-spec's structured-output contract.
  */
 
 const createFeedbackTool = {

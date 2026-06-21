@@ -1,7 +1,7 @@
 import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 
 /**
- * Loopi context = the user's **full feedback + sub-goals** (loopi-spec §5).
+ * Loopie context = the user's **full feedback + sub-goals** (loopie-spec §5).
  * Queried via the RLS client, so only the user's own data is returned.
  * The returned string is injected as a cached block in the system prompt (prompt caching).
  */

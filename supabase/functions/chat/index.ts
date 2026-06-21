@@ -1,5 +1,5 @@
-// Loopi Edge Function — shared engine for write and retrospective modes, one tool per mode.
-// Canonical source: documents/loopi-spec.md · contract: ../_shared/types.ts
+// Loopie Edge Function — shared engine for write and retrospective modes, one tool per mode.
+// Canonical source: documents/loopie-spec.md · contract: ../_shared/types.ts
 // All AI calls go through this function (CLAUDE.md §6). Changes (create/update) are not committed here;
 // it only returns a proposal — the client applies it after getting user consent via a confirmation chip.
 
@@ -16,7 +16,7 @@ import type {
 import { buildContext } from './context.ts'
 import { toolForMode } from './tools.ts'
 import { callLLM, streamLLM, type ChatTurn, type SystemBlock, type ToolDef } from './llm/index.ts'
-// Prompts are version-controlled as imported modules (loopi-spec §5).
+// Prompts are version-controlled as imported modules (loopie-spec §5).
 // edge-runtime does not bundle non-imported static files, so readTextFile(.md) is not used.
 import { SYSTEM } from './prompts/system.ts'
 import { EXTRACT } from './prompts/extract.ts'

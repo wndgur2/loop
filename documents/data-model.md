@@ -1,7 +1,7 @@
 # Loop — 데이터 모델
 
 작성일: 2026-05-31 · 최종 수정: 2026-06-07 · 상태: Draft v0.3
-관련: [PRD.md](PRD.md) · [feature-spec.md](feature-spec.md) · [loopi-spec.md](loopi-spec.md) · [../CLAUDE.md](../CLAUDE.md)
+관련: [PRD.md](PRD.md) · [feature-spec.md](feature-spec.md) · [loopie-spec.md](loopie-spec.md) · [../CLAUDE.md](../CLAUDE.md)
 
 > 모든 코드 작업의 공통 기반. 새 엔티티/필드를 추가하기 전에 이 문서를 먼저 갱신하세요.
 > DB는 snake_case, 앱(TypeScript)은 camelCase로 매핑합니다.
@@ -29,7 +29,7 @@ profiles (1) ──< chat_sessions ──< chat_messages
 
 - **하위 목표(sub_goal)** 가 피드백의 **category** 역할을 한다. 고정 분류 enum은 없다.
 - **모든 피드백은 반드시 하나의 하위 목표에 속한다**(`sub_goal_id` NOT NULL). 미분류는 없다.
-- **작성·회고는 같은 채팅 엔진**이며 컨텍스트는 둘 다 **전체 피드백**, 모드당 툴 1개([feature-spec.md] "Loopi 채팅 구조").
+- **작성·회고는 같은 채팅 엔진**이며 컨텍스트는 둘 다 **전체 피드백**, 모드당 툴 1개([feature-spec.md] "Loopie 채팅 구조").
 - **하나의 작성(write) 세션**이 대화를 거쳐 툴 `피드백 생성`으로 **하나의 피드백**이 된다.
 - 피드백은 여러 **Takeaway**(실천항목)를 가지며 각 항목의 실행(done)을 추적한다.
 - **회고(retrospective) 세션**은 **전체 피드백을 컨텍스트**로 되짚어(하위목표 스코프 아님) 툴 `회고`로 `internalized`/Takeaway `done`/다짐 텍스트를 갱신한다(새 피드백 생성은 범위 밖).
@@ -73,7 +73,7 @@ profiles (1) ──< chat_sessions ──< chat_messages
 | `created_at` | timestamptz | |
 
 ### feedbacks
-회고 1건 = Canonical Template 1건. Loopi 세션의 결과물 또는 직접 생성.
+회고 1건 = Canonical Template 1건. Loopie 세션의 결과물 또는 직접 생성.
 
 | 컬럼 | 타입 | 비고 |
 |------|------|------|
@@ -130,7 +130,7 @@ AI 대화 세션. **작성/회고 모드** 구분.
 > 회고는 sub_goal로 스코프하지 않고 **전체 피드백을 대상**으로 한다(컨텍스트에 전부 주입). 한 세션이 실제로 어떤 피드백의 상태를 바꿨는지 감사 추적이 필요하면 `retrospective_targets(session_id, feedback_id)` 조인 테이블을 추가한다(MVP 필요 시).
 
 ### ai_content_reports
-사용자가 부적절하다고 신고한 Loopi(AI) 응답. Google Play [AI-Generated Content 정책](https://support.google.com/googleplay/android-developer/answer/13985936)의 인앱 신고 요건 대응 — 운영자가 모더레이션·프롬프트 개선에 활용한다.
+사용자가 부적절하다고 신고한 Loopie(AI) 응답. Google Play [AI-Generated Content 정책](https://support.google.com/googleplay/android-developer/answer/13985936)의 인앱 신고 요건 대응 — 운영자가 모더레이션·프롬프트 개선에 활용한다.
 
 | 컬럼 | 타입 | 비고 |
 |------|------|------|

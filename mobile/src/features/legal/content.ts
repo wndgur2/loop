@@ -26,15 +26,15 @@ const ko: Record<LegalDocId, LegalDocContent> = {
     sections: [
       {
         heading: '1. 수집하는 정보',
-        body: 'Loop는 서비스 제공에 필요한 최소한의 정보만 수집해요.\n\n· 계정 정보: 이메일 주소, 이름(선택)\n· 사용자가 작성한 콘텐츠: 피드백(상황·근본 원인·실천항목), 목표·하위 목표, Loopi와의 대화 내용\n\n광고·분석 SDK를 사용하지 않으며, 위치·연락처·기기 식별자 등은 수집하지 않아요.',
+        body: 'Loop는 서비스 제공에 필요한 최소한의 정보만 수집해요.\n\n· 계정 정보: 이메일 주소, 이름(선택)\n· 사용자가 작성한 콘텐츠: 피드백(상황·근본 원인·실천항목), 목표·하위 목표, Loopie와의 대화 내용\n\n광고·분석 SDK를 사용하지 않으며, 위치·연락처·기기 식별자 등은 수집하지 않아요.',
       },
       {
         heading: '2. 정보를 사용하는 목적',
-        body: '수집한 정보는 다음 목적에만 사용해요.\n\n· 계정 생성·로그인 등 서비스 제공\n· Loopi(AI)가 피드백을 구조화하고 회고를 돕는 핵심 기능 제공\n· 내재화율 등 나만 보는 통계 제공\n\nLoop는 개인정보를 판매하지 않으며, 광고 목적으로 사용하지 않아요.',
+        body: '수집한 정보는 다음 목적에만 사용해요.\n\n· 계정 생성·로그인 등 서비스 제공\n· Loopie(AI)가 피드백을 구조화하고 회고를 돕는 핵심 기능 제공\n· 내재화율 등 나만 보는 통계 제공\n\nLoop는 개인정보를 판매하지 않으며, 광고 목적으로 사용하지 않아요.',
       },
       {
         heading: '3. AI 처리에 대한 안내',
-        body: 'Loopi와의 대화 내용은 AI 응답 생성을 위해 AI 모델 제공자(기본: Google Gemini)에 전송돼요. 전송은 암호화된 연결로 Loop의 서버를 경유하며, AI 제공자의 API 약관에 따라 처리돼요. 부적절한 AI 답변은 앱 안에서 길게 눌러 신고할 수 있고, 신고 내용은 품질 개선에 사용돼요.',
+        body: 'Loopie와의 대화 내용은 AI 응답 생성을 위해 AI 모델 제공자(기본: Google Gemini)에 전송돼요. 전송은 암호화된 연결로 Loop의 서버를 경유하며, AI 제공자의 API 약관에 따라 처리돼요. 부적절한 AI 답변은 앱 안에서 길게 눌러 신고할 수 있고, 신고 내용은 품질 개선에 사용돼요.',
       },
       {
         heading: '4. 제3자 제공 및 처리 위탁',
@@ -64,7 +64,7 @@ const ko: Record<LegalDocId, LegalDocContent> = {
     sections: [
       {
         heading: '1. 서비스 소개',
-        body: 'Loop는 스스로 남긴 피드백을 AI(Loopi)가 구조화해 목표 달성으로 연결하는 자기 회고 서비스예요. 이 약관은 Loop 앱 이용에 적용돼요.',
+        body: 'Loop는 스스로 남긴 피드백을 AI(Loopie)가 구조화해 목표 달성으로 연결하는 자기 회고 서비스예요. 이 약관은 Loop 앱 이용에 적용돼요.',
       },
       {
         heading: '2. 계정',
@@ -76,7 +76,7 @@ const ko: Record<LegalDocId, LegalDocContent> = {
       },
       {
         heading: '4. AI 답변의 한계',
-        body: 'Loopi의 답변은 AI가 생성하며 부정확하거나 부적절할 수 있어요. Loopi는 의료·심리 상담, 위기 개입, 진단을 제공하지 않아요. 중요한 결정은 답변에만 의존하지 말고 스스로 판단해 주세요. 부적절한 답변은 앱 안에서 신고할 수 있어요.',
+        body: 'Loopie의 답변은 AI가 생성하며 부정확하거나 부적절할 수 있어요. Loopie는 의료·심리 상담, 위기 개입, 진단을 제공하지 않아요. 중요한 결정은 답변에만 의존하지 말고 스스로 판단해 주세요. 부적절한 답변은 앱 안에서 신고할 수 있어요.',
       },
       {
         heading: '5. 콘텐츠 권리',
@@ -101,15 +101,15 @@ const en: Record<LegalDocId, LegalDocContent> = {
     sections: [
       {
         heading: '1. What we collect',
-        body: 'Loop collects only what the service needs.\n\n· Account: email address, name (optional)\n· Content you create: feedback (situation, root cause, takeaways), goals and sub-goals, conversations with Loopi\n\nWe use no advertising or analytics SDKs, and we do not collect location, contacts, or device identifiers.',
+        body: 'Loop collects only what the service needs.\n\n· Account: email address, name (optional)\n· Content you create: feedback (situation, root cause, takeaways), goals and sub-goals, conversations with Loopie\n\nWe use no advertising or analytics SDKs, and we do not collect location, contacts, or device identifiers.',
       },
       {
         heading: '2. How we use it',
-        body: 'Your data is used only to:\n\n· Provide the service (account creation, sign-in)\n· Power the core feature — Loopi (AI) structuring your feedback and guiding reflection\n· Show private statistics such as your internalization rate\n\nLoop does not sell personal data and does not use it for advertising.',
+        body: 'Your data is used only to:\n\n· Provide the service (account creation, sign-in)\n· Power the core feature — Loopie (AI) structuring your feedback and guiding reflection\n· Show private statistics such as your internalization rate\n\nLoop does not sell personal data and does not use it for advertising.',
       },
       {
         heading: '3. AI processing',
-        body: 'Your conversations with Loopi are sent to an AI model provider (default: Google Gemini) to generate replies. They travel over encrypted connections via Loop’s server and are handled under the provider’s API terms. You can report an inappropriate AI reply in the app by long-pressing it; reports are used to improve quality.',
+        body: 'Your conversations with Loopie are sent to an AI model provider (default: Google Gemini) to generate replies. They travel over encrypted connections via Loop’s server and are handled under the provider’s API terms. You can report an inappropriate AI reply in the app by long-pressing it; reports are used to improve quality.',
       },
       {
         heading: '4. Sharing and processors',
@@ -139,7 +139,7 @@ const en: Record<LegalDocId, LegalDocContent> = {
     sections: [
       {
         heading: '1. The service',
-        body: 'Loop is a self-reflection service where AI (Loopi) structures the feedback you give yourself and connects it to your goals. These terms govern your use of the Loop app.',
+        body: 'Loop is a self-reflection service where AI (Loopie) structures the feedback you give yourself and connects it to your goals. These terms govern your use of the Loop app.',
       },
       {
         heading: '2. Your account',
@@ -151,7 +151,7 @@ const en: Record<LegalDocId, LegalDocContent> = {
       },
       {
         heading: '4. Limits of AI replies',
-        body: 'Loopi’s replies are AI-generated and may be inaccurate or inappropriate. Loopi does not provide medical or psychological counseling, crisis intervention, or diagnosis. Do not rely on replies alone for important decisions. You can report inappropriate replies in the app.',
+        body: 'Loopie’s replies are AI-generated and may be inaccurate or inappropriate. Loopie does not provide medical or psychological counseling, crisis intervention, or diagnosis. Do not rely on replies alone for important decisions. You can report inappropriate replies in the app.',
       },
       {
         heading: '5. Your content',

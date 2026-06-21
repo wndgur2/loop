@@ -1,17 +1,17 @@
 /**
- * evals/runner.ts — Loopi quality evaluation runner (skeleton)
+ * evals/runner.ts — Loopie quality evaluation runner (skeleton)
  *
- * Scenario → call Loopi → structured output → scoring → report.
+ * Scenario → call Loopie → structured output → scoring → report.
  * Scoring rubric: documents/eval-rubric.md
- * Loopi contract: documents/loopi-spec.md (§4 output schema)
+ * Loopie contract: documents/loopie-spec.md (§4 output schema)
  * Data model: documents/data-model.md · canonical shape: documents/feature-spec.md
  *
  * NOTE: Before project scaffolding, the actual wiring (TODO) is empty.
- *       What we fix now is the "interface contract" — so that the Loopi code
+ *       What we fix now is the "interface contract" — so that the Loopie code
  *       and the eval share the same types.
  */
 
-// --- Scenario / output / scoring types (matching loopi-spec.md, data-model.md) ---
+// --- Scenario / output / scoring types (matching loopie-spec.md, data-model.md) ---
 
 export type Importance = "high" | "mid" | "low";
 export type SessionMode = "write" | "retrospective";
@@ -43,7 +43,7 @@ export interface Scenario {
   };
 }
 
-/** loopi-spec.md §4 structured output contract (write mode artifact = Canonical Template) */
+/** loopie-spec.md §4 structured output contract (write mode artifact = Canonical Template) */
 export interface ChatOutput {
   title: string;
   situation: string; // template ## Feedback
@@ -66,7 +66,7 @@ export interface ScenarioScore {
 
 // --- Runner skeleton ---
 
-/** Calls the Loopi Edge Function to run the conversation. write returns structured output, retrospective returns state-update intent. */
+/** Calls the Loopie Edge Function to run the conversation. write returns structured output, retrospective returns state-update intent. */
 async function runChat(_scenario: Scenario): Promise<{
   transcript: { role: "user" | "assistant"; content: string }[];
   output: ChatOutput | null; // filled only in write mode

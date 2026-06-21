@@ -4,8 +4,15 @@ import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { ComposerInput, ConfirmDialog, LoopText, Screen, ScreenHeader } from '@/components/ui';
-import { LoopColors, LoopMotion } from '@/constants/loop-theme';
+import {
+  ComposerInput,
+  ConfirmDialog,
+  LoopText,
+  Screen,
+  ScreenHeader,
+  LoopColors,
+  LoopMotion,
+} from '@loop/ui';
 import {
   CoachAvatar,
   CoachLine,
@@ -15,27 +22,27 @@ import {
 } from '@/features/chat/components';
 import { lastAssistantHasText } from '@/features/chat/messages';
 import { reportAiContent } from '@/features/chat/report';
-import { useLoopiChat } from '@/features/chat/use-loopi-chat';
+import { useLoopieChat } from '@/features/chat/use-loopie-chat';
 import { useT } from '@/lib/i18n';
 import { type SessionMode } from '@/types/models';
 
 type UiMode = 'write' | 'reflect';
 
-export default function LoopiChatScreen() {
+export default function LoopieChatScreen() {
   const { mode, initial } = useLocalSearchParams<{ mode: UiMode; initial?: string }>();
   const uiMode: UiMode = mode === 'reflect' ? 'reflect' : 'write';
   const serverMode: SessionMode = uiMode === 'reflect' ? 'retrospective' : 'write';
 
   const router = useRouter();
   const t = useT();
-  const chat = useLoopiChat(serverMode, initial);
+  const chat = useLoopieChat(serverMode, initial);
   // Const binding so TS narrows `proposal.kind` inside the JSX callbacks below.
   const { proposal } = chat;
 
   const [input, setInput] = useState('');
   const scrollRef = useRef<ScrollView>(null);
 
-  // AI content reporting (Play AI-Generated Content policy): long-press a Loopi reply to flag it.
+  // AI content reporting (Play AI-Generated Content policy): long-press a Loopie reply to flag it.
   const [reportTarget, setReportTarget] = useState<string | null>(null);
   const [reportBusy, setReportBusy] = useState(false);
   const [reportResult, setReportResult] = useState<'done' | 'fail' | null>(null);

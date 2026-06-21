@@ -16,7 +16,7 @@ quiet dots; an internalized loop gets a soft green check.
 11 screens across 4 sections, each with variations to compare side-by-side:
 
 - **Feedback home** — A·Calm cards · B·Quiet list (crisp) · C·Warm hero
-- **Chat with Loopi** — A·Warm bubbles + quick replies · B·Draft emerging with
+- **Chat with Loopie** — A·Warm bubbles + quick replies · B·Draft emerging with
   confirm-chips (the canonical template fills in live) · C·Quiet journal
 - **Feedback detail** — open loop vs closed (internalized) loop: full template +
   takeaway checklist

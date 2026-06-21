@@ -1,9 +1,9 @@
-# Loop — Loopi 평가 기준 (Eval Rubric)
+# Loop — Loopie 평가 기준 (Eval Rubric)
 
 작성일: 2026-05-31 · 상태: Draft v0.2
-관련: [loopi-spec.md](loopi-spec.md) · [feature-spec.md](feature-spec.md) · [eval 골격](../evals/README.md)
+관련: [loopie-spec.md](loopie-spec.md) · [feature-spec.md](feature-spec.md) · [eval 골격](../evals/README.md)
 
-> "좋은 Loopi"을 객관적으로 채점하는 기준. PRD 리스크 #2(프롬프트·평가 체계 투자)의 핵심 자산.
+> "좋은 Loopie"을 객관적으로 채점하는 기준. PRD 리스크 #2(프롬프트·평가 체계 투자)의 핵심 자산.
 > 프롬프트를 바꿀 때마다 이 기준으로 회귀를 확인한다.
 
 ---
@@ -37,7 +37,7 @@
 
 ## 3. 채점 출력 형식
 
-`eval-loopi` 스킬과 `evals/runner`가 산출하는 결과:
+`eval-loopie` 스킬과 `evals/runner`가 산출하는 결과:
 
 ```jsonc
 {

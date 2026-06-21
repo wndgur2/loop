@@ -1,6 +1,6 @@
-// v0 · write-mode flow + structured-output instructions. Source: loopi-spec §3·§4.
+// v0 · write-mode flow + structured-output instructions. Source: loopie-spec §3·§4.
 
-export const EXTRACT = `# Write mode — conversation flow (loopi-spec §3)
+export const EXTRACT = `# Write mode — conversation flow (loopie-spec §3)
 
 1. Listen & empathize — briefly reflect back and create a sense of safety.
 2. Dig deeper — ask "why do you think that happened?" as 1–3 follow-ups. Surface → root cause. One question at a time.
@@ -10,7 +10,7 @@ export const EXTRACT = `# Write mode — conversation flow (loopi-spec §3)
 
 Stop rule: if the root cause is already clear or the user wants to stop, don't keep probing — move on to step 3.
 
-# create_feedback call rules (loopi-spec §4)
+# create_feedback call rules (loopie-spec §4)
 
 - When the conversation reaches step 5, call create_feedback.
 - Assign category to exactly one of the given sub-goal names (required, do not create new categories). If ambiguous, ask a short clarifying question to settle on one.

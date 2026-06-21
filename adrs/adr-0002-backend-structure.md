@@ -1,11 +1,11 @@
 # ADR 0002 — 백엔드 구조 (DB + Edge Function API)
 
 작성일: 2026-06-07 · 상태: 채택(Accepted)
-관련: [data-model.md](../documents/data-model.md) · [loopi-spec.md](../documents/loopi-spec.md) · [adr-0001](adr-0001-scaffolding.md)
+관련: [data-model.md](../documents/data-model.md) · [loopie-spec.md](../documents/loopie-spec.md) · [adr-0001](adr-0001-scaffolding.md)
 
 ## 맥락
 
-스캐폴딩(ADR-0001) 위에 백엔드 구조를 세웠다. 스키마는 data-model.md에, Loopi API 계약은 loopi-spec.md에 완전히 명세돼 있어 그대로 구현했다. 백엔드는 루트 `supabase/`에 둔다(플랫폼 공유).
+스캐폴딩(ADR-0001) 위에 백엔드 구조를 세웠다. 스키마는 data-model.md에, Loopie API 계약은 loopie-spec.md에 완전히 명세돼 있어 그대로 구현했다. 백엔드는 루트 `supabase/`에 둔다(플랫폼 공유).
 
 ## 결정
 
@@ -20,7 +20,7 @@
 
 ### API (Edge Function)
 
-7. **chat 함수 1개**(`functions/chat`)가 작성·회고를 모두 처리. 차이는 *시스템 프롬프트 + 툴(모드당 1개)*뿐. 컨텍스트는 둘 다 전체 피드백(loopi-spec §5).
+7. **chat 함수 1개**(`functions/chat`)가 작성·회고를 모두 처리. 차이는 *시스템 프롬프트 + 툴(모드당 1개)*뿐. 컨텍스트는 둘 다 전체 피드백(loopie-spec §5).
 8. **레이어 분리**: `_shared/`(cors·client·types), `chat/`(index·claude·context·tools·prompts). 프롬프트는 `prompts/*.md`로 버전 관리(CLAUDE.md §8).
 9. **사용자 스코프 클라이언트**: 요청 JWT로 `createClient` → RLS 적용. service_role 키 미사용. Anthropic 키는 secret(`ANTHROPIC_API_KEY`)에서만.
 10. **확인 후 커밋**: 함수는 DB를 직접 바꾸지 않고 툴 호출 결과를 `proposal`로 반환. 클라이언트가 확인 칩으로 동의를 받아 RLS mutation으로 반영(조용한 변경 금지, CLAUDE.md §6).
@@ -41,10 +41,10 @@ Supabase CLI 2.105 · Deno 2.8 설치 후 로컬 스택으로 검증함:
 ## 남은 한계
 
 - `mobile/src/types/database.ts`는 여전히 빈 placeholder. 운영 프로젝트 연결·마이그레이션 적용 후 `supabase gen types`로 재생성해야 클라이언트 데이터 레이어가 타입화된다.
-- Loopi의 실제 Claude 응답/툴 호출 품질은 `ANTHROPIC_API_KEY` 설정 + `evals`로 별도 검증.
+- Loopie의 실제 Claude 응답/툴 호출 품질은 `ANTHROPIC_API_KEY` 설정 + `evals`로 별도 검증.
 
 ## 다음
 
 - Supabase 프로젝트 연결 → 마이그레이션 적용 → 타입 재생성.
 - 클라이언트 데이터 접근 레이어(`mobile/src/features/*` 쿼리/뮤테이션 훅) — proposal 확인→커밋 흐름 포함.
-- 추천 회고 카드 서버 쿼리(feature-spec F9), 무료/프리미엄 대화량 제한(loopi-spec §6).
+- 추천 회고 카드 서버 쿼리(feature-spec F9), 무료/프리미엄 대화량 제한(loopie-spec §6).
