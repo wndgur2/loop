@@ -2,8 +2,7 @@
 import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Card, LoopText, ProgressBar } from '@/components/ui';
-import { LoopColors } from '@/constants/loop-theme';
+import { Card, LoopText, ProgressBar } from '@loop/ui';
 
 /** Big-number metric card (rate + sub caption). */
 export const MetricTile = memo(function MetricTile({
@@ -20,7 +19,9 @@ export const MetricTile = memo(function MetricTile({
       <LoopText variant="eyebrow" color="ink4">
         {label}
       </LoopText>
-      <LoopText style={styles.tileValue}>{value}</LoopText>
+      <LoopText variant="stat" color="warmDeep" style={styles.tileValue}>
+        {value}
+      </LoopText>
       <LoopText variant="caption" color="ink4" style={styles.tileSub}>
         {sub}
       </LoopText>
@@ -63,14 +64,7 @@ export const DistRow = memo(function DistRow({
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   tile: { flex: 1, padding: 16 },
-  tileValue: {
-    fontSize: 28,
-    lineHeight: 34,
-    fontWeight: '700',
-    letterSpacing: -0.6,
-    marginTop: 8,
-    color: LoopColors.warmDeep,
-  },
+  tileValue: { marginTop: 8 },
   tileSub: { marginTop: 4 },
   distHead: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 6 },
   distCaption: { marginRight: 8 },

@@ -13,8 +13,9 @@ import {
   ScreenHeader,
   SectionLabel,
   TextField,
-} from '@/components/ui';
-import { LoopColors, LoopRadius } from '@/constants/loop-theme';
+  LoopColors,
+  LoopRadius,
+} from '@loop/ui';
 import { useAuth } from '@/features/auth/auth-context';
 import { useSyncFromServer } from '@/hooks/use-sync-from-server';
 import { useI18n } from '@/lib/i18n';

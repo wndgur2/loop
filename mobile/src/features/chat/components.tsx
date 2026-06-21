@@ -2,7 +2,16 @@
 import { memo } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
-import { Chip, Icon, ImportanceDots, LoopText, PressScale, LoopColors, LoopRadius } from '@loop/ui';
+import {
+  Chip,
+  Icon,
+  ImportanceDots,
+  LoopText,
+  PressScale,
+  LoopColors,
+  LoopFont,
+  LoopRadius,
+} from '@loop/ui';
 import { useI18n, useT } from '@/lib/i18n';
 import { impLabelKey } from '@/lib/importance';
 import type { FeedbackProposal, RetrospectiveProposal } from '@/lib/loopie';
@@ -184,7 +193,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  coachLine: { fontSize: 16, fontWeight: '600', lineHeight: 25 },
+  coachLine: { fontFamily: LoopFont.semibold, fontSize: 16, fontWeight: '600', lineHeight: 25 },
   userLine: { paddingLeft: 14, borderLeftWidth: 2, borderLeftColor: LoopColors.warmLine },
   userText: { fontSize: 15, fontWeight: '500', lineHeight: 24 },
   createCard: {

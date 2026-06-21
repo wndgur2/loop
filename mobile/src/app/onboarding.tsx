@@ -2,8 +2,17 @@ import { useRef, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
-import { Button, Icon, LoopText, PressScale, Screen, SelectChip, TextField } from '@/components/ui';
-import { LoopColors, LoopRadius } from '@/constants/loop-theme';
+import {
+  Button,
+  Icon,
+  LoopText,
+  PressScale,
+  Screen,
+  SelectChip,
+  TextField,
+  LoopColors,
+  LoopRadius,
+} from '@loop/ui';
 import { useAuth } from '@/features/auth/auth-context';
 import { useCreateGoalWithSubGoals } from '@/features/goals/queries';
 import { useI18n } from '@/lib/i18n';

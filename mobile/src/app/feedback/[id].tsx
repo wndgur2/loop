@@ -15,8 +15,8 @@ import {
   ScreenHeader,
   SectionLabel,
   Skeleton,
-} from '@/components/ui';
-import { LoopColors } from '@/constants/loop-theme';
+  LoopColors,
+} from '@loop/ui';
 import { TakeawayChecklist } from '@/features/feedback/components';
 import {
   useDeleteFeedback,

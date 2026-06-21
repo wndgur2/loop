@@ -1,5 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
@@ -7,14 +9,31 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { LoopColors } from '@/constants/loop-theme';
+import { LoopColors } from '@loop/ui';
 import { AuthProvider, useAuth } from '@/features/auth/auth-context';
 import { useAuthDeepLink } from '@/features/auth/use-auth-deep-link';
 import { useActiveGoal } from '@/features/goals/queries';
 import { LanguageProvider } from '@/lib/i18n';
 import { queryClient } from '@/lib/query-client';
 
+// Hold the splash until Pretendard is registered so the first frame renders in-brand (no system-font flash).
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
+  // Pretendard static weights — keys must match LoopFont in @loop/ui (Pretendard-Medium/SemiBold/Bold).
+  const [fontsLoaded, fontError] = useFonts({
+    'Pretendard-Medium': require('../../assets/fonts/Pretendard-Medium.ttf'),
+    'Pretendard-SemiBold': require('../../assets/fonts/Pretendard-SemiBold.ttf'),
+    'Pretendard-Bold': require('../../assets/fonts/Pretendard-Bold.ttf'),
+  });
+
+  useEffect(() => {
+    // Reveal the app once fonts are ready; don't block forever if a font fails to decode.
+    if (fontsLoaded || fontError) SplashScreen.hideAsync();
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) return null;
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardProvider>

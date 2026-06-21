@@ -12,12 +12,13 @@ import {
   type IconName,
   LoopText,
   PressScale,
-  ReflectSkeleton,
   Ring,
   Screen,
   TabHeader,
-} from '@/components/ui';
-import { LoopColors, LoopMotion } from '@/constants/loop-theme';
+  LoopColors,
+  LoopMotion,
+} from '@loop/ui';
+import { ReflectSkeleton } from '@/components/skeletons';
 import { TabComposer } from '@/features/chat/tab-composer';
 import { useFeedbacks } from '@/features/feedback/queries';
 import { useSubGoalName } from '@/features/goals/use-sub-goal-name';
