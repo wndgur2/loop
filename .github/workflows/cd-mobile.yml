@@ -1,0 +1,68 @@
+name: CD · mobile
+
+# Manual-only mobile deploys. Pick the action when you trigger it:
+#
+#   ota             — push a JS/asset update to installed apps (no store, instant).
+#                     ONLY valid for changes within the current app version /
+#                     runtimeVersion. Native or version changes need a build.
+#   build           — produce a production AAB on EAS, but don't submit.
+#   build-and-submit — production AAB + upload to the Play internal track.
+#
+# A store release should be a deliberate choice, so nothing here runs on merge.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'What to deploy'
+        type: choice
+        default: ota
+        options:
+          - ota
+          - build
+          - build-and-submit
+
+concurrency:
+  group: cd-mobile
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - run: npm ci
+
+      # --- OTA: ship JS/assets to the production channel, no native build ---
+      - name: OTA update
+        if: ${{ inputs.action == 'ota' }}
+        run: eas update --branch production --message "${{ github.event.head_commit.message || github.sha }}" --non-interactive
+
+      # --- Build paths: recreate the gitignored Play key for submit ---
+      - name: Write Play service account key
+        if: ${{ inputs.action == 'build-and-submit' }}
+        run: echo "$PLAY_SERVICE_ACCOUNT_JSON" > play-service-account.json
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+
+      - name: Build (production AAB)
+        if: ${{ inputs.action == 'build' || inputs.action == 'build-and-submit' }}
+        run: eas build --platform android --profile production --non-interactive --wait
+
+      - name: Submit to Play (internal)
+        if: ${{ inputs.action == 'build-and-submit' }}
+        run: eas submit --platform android --profile production --latest --non-interactive
