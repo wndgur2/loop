@@ -105,6 +105,9 @@ npm run format         # prettier --write . (.prettierignore로 *.md 제외)
 npm run format:check   # prettier --check . (CI/검증용)
 
 # 빌드 — EAS (eas.json: development / preview / production)
+# ⚠️ npm workspaces 모노레포다. @loop/ui(packages/*)가 EAS 빌드에서 해석되는지
+#    다음 릴리스 전 `eas build --profile preview`로 반드시 한 번 검증할 것
+#    (모노레포 모듈 해석이 로컬 Metro와 다를 수 있음 — 미검증 시 릴리스 빌드가 깨질 수 있다). adr-0005
 eas build --profile preview --platform android   # 예: 내부 배포 APK
 
 # 테스트 — 아직 미설정 (jest-expo 도입 예정)
