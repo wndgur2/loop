@@ -37,4 +37,6 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: deno check supabase/functions/chat/index.ts
+      # The monorepo root package.json puts Deno in node_modules-resolution
+      # mode, so let Deno auto-install the function's npm deps for the check.
+      - run: deno check --node-modules-dir=auto supabase/functions/chat/index.ts
