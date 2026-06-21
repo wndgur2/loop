@@ -49,4 +49,7 @@ jobs:
         uses: expo/expo-github-action/preview@v8
         with:
           working-directory: mobile
-          command: eas update --branch pr-${{ github.event.number }} --message "${{ github.event.pull_request.title }}"
+          # --environment preview injects the EXPO_PUBLIC_* vars (Supabase URL/anon key, auth
+          # redirect) into the bundle at publish time. Without it the app throws "환경변수가 없습니다"
+          # because EXPO_PUBLIC_* are inlined when bundling, not read at runtime.
+          command: eas update --branch pr-${{ github.event.number }} --environment preview --message "${{ github.event.pull_request.title }}"
