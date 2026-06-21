@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: 'What to deploy'
+        description: "What to deploy"
         type: choice
         default: ota
         options:

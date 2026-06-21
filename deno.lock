@@ -1,0 +1,74 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@supabase/supabase-js@2": "2.107.0"
+  },
+  "jsr": {
+    "@supabase/supabase-js@2.107.0": {
+      "integrity": "e28d6ef6e79200417b4838a0051066c44170a1de7cccc8b00a671947b72ba0e3"
+    }
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@types/react@~19.2.2",
+        "npm:eslint-config-expo@^56.0.4",
+        "npm:eslint@^9.39.4",
+        "npm:lucide-react-native@^1.21.0",
+        "npm:prettier@^3.8.3",
+        "npm:typescript@~6.0.3"
+      ],
+      "overrides": {
+        "react": "19.2.3",
+        "react-dom": "19.2.3",
+        "react-native": "0.85.3",
+        "react-native-reanimated": "4.3.1",
+        "react-native-svg": "15.15.4",
+        "react-native-safe-area-context": "5.7.0",
+        "react-native-worklets": "0.8.3"
+      }
+    },
+    "members": {
+      "mobile": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@expo/metro-runtime@~56.0.14",
+            "npm:@react-native-async-storage/async-storage@2.2.0",
+            "npm:@supabase/supabase-js@^2.107.0",
+            "npm:@tanstack/react-query@^5.101.0",
+            "npm:@types/react@~19.2.2",
+            "npm:eslint-config-expo@^56.0.4",
+            "npm:eslint@^9.39.4",
+            "npm:expo-constants@~56.0.17",
+            "npm:expo-dev-client@~56.0.20",
+            "npm:expo-font@~56.0.5",
+            "npm:expo-haptics@~56.0.3",
+            "npm:expo-linking@~56.0.13",
+            "npm:expo-router@~56.2.9",
+            "npm:expo-splash-screen@~56.0.10",
+            "npm:expo-status-bar@~56.0.4",
+            "npm:expo-system-ui@~56.0.5",
+            "npm:expo-updates@~56.0.18",
+            "npm:expo@~56.0.9",
+            "npm:lucide-react-native@^1.21.0",
+            "npm:prettier@^3.8.3",
+            "npm:react-dom@19.2.3",
+            "npm:react-native-gesture-handler@~2.31.1",
+            "npm:react-native-keyboard-controller@1.21.6",
+            "npm:react-native-reanimated@4.3.1",
+            "npm:react-native-safe-area-context@5.7",
+            "npm:react-native-screens@4.25.2",
+            "npm:react-native-svg@15.15.4",
+            "npm:react-native-url-polyfill@3",
+            "npm:react-native-web@0.21",
+            "npm:react-native-worklets@0.8.3",
+            "npm:react-native@0.85.3",
+            "npm:react@19.2.3",
+            "npm:typescript@~6.0.3",
+            "npm:zod@^4.4.3"
+          ]
+        }
+      }
+    }
+  }
+}

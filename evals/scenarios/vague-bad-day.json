@@ -2,9 +2,7 @@
   "id": "vague-bad-day",
   "mode": "write",
   "description": "짧고 모호한 입력 — 파고들기(D1)·대화 효율(D6)·그래도 하나의 하위목표를 배정하는지(D4) 검증",
-  "user_turns": [
-    "오늘 그냥 별로였어요."
-  ],
+  "user_turns": ["오늘 그냥 별로였어요."],
   "goal_context": {
     "goal": "Product Owner 달성",
     "sub_goals": ["collaborating", "engineering", "product planning"]

@@ -16,7 +16,7 @@ name: Preview · mobile
 on:
   pull_request:
     paths:
-      - 'mobile/**'
+      - "mobile/**"
 
 # Supersede stale preview runs for the same PR.
 concurrency:

@@ -1,4 +1,4 @@
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2';
+import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
 /**
  * Loopie context = the user's **full feedback + sub-goals** (loopie-spec §5).
@@ -7,37 +7,42 @@ import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2';
  */
 export async function buildContext(supabase: SupabaseClient): Promise<string> {
   const [{ data: subGoals }, { data: feedbacks }] = await Promise.all([
-    supabase.from('sub_goals').select('id, name').order('sort_order'),
+    supabase.from("sub_goals").select("id, name").order("sort_order"),
     supabase
-      .from('feedbacks')
-      .select('id, title, situation, root_cause, importance, internalized, sub_goal_id, tags, takeaways(id, text, done)')
-      .order('created_at', { ascending: false }),
+      .from("feedbacks")
+      .select(
+        "id, title, situation, root_cause, importance, internalized, sub_goal_id, tags, takeaways(id, text, done)",
+      )
+      .order("created_at", { ascending: false }),
   ]);
 
   const subGoalLines = (subGoals ?? [])
     .map((g) => `- ${g.name} (id: ${g.id})`)
-    .join('\n');
+    .join("\n");
 
   const feedbackBlocks = (feedbacks ?? [])
     .map((f) => {
       const takeaways = (f.takeaways ?? [])
-        .map((t: { text: string; done: boolean }) => `  - [${t.done ? 'x' : ' '}] ${t.text}`)
-        .join('\n');
+        .map(
+          (t: { text: string; done: boolean }) =>
+            `  - [${t.done ? "x" : " "}] ${t.text}`,
+        )
+        .join("\n");
       return [
         `### ${f.title} (id: ${f.id})`,
         `category(sub_goal_id): ${f.sub_goal_id} · importance: ${f.importance} · internalized: ${f.internalized}`,
         `situation: ${f.situation}`,
         `root_cause: ${f.root_cause}`,
-        takeaways ? `takeaways:\n${takeaways}` : 'takeaways: (none)',
-      ].join('\n');
+        takeaways ? `takeaways:\n${takeaways}` : "takeaways: (none)",
+      ].join("\n");
     })
-    .join('\n\n');
+    .join("\n\n");
 
   return [
     "## User's sub-goals (= category candidates, assign exactly one of these)",
-    subGoalLines || '(none yet)',
-    '',
+    subGoalLines || "(none yet)",
+    "",
     "## User's full feedback (basis for repetition detection & revisiting)",
-    feedbackBlocks || '(none yet)',
-  ].join('\n');
+    feedbackBlocks || "(none yet)",
+  ].join("\n");
 }
