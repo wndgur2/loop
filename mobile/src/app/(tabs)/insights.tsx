@@ -5,14 +5,16 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 import {
   Card,
   EmptyState,
-  InsightsSkeleton,
   LoopText,
   Ring,
   Screen,
   SectionLabel,
   TabHeader,
-} from '@/components/ui';
-import { LoopColors, LoopMotion } from '@/constants/loop-theme';
+  LoopColors,
+  LoopFont,
+  LoopMotion,
+} from '@loop/ui';
+import { InsightsSkeleton } from '@/components/skeletons';
 import { DistRow, MetricTile } from '@/features/dashboard/components';
 import { computeStats } from '@/features/dashboard/stats';
 import { useFeedbacks } from '@/features/feedback/queries';
@@ -53,7 +55,7 @@ export default function InsightsScreen() {
             {/* Internalization rate hero */}
             <Card radius={24} style={styles.hero}>
               <Ring value={stats.internalizationRate} size={132} stroke={10} animated>
-                <LoopText style={styles.heroPct}>
+                <LoopText variant="display">
                   {pct}
                   <LoopText style={styles.heroPctUnit}>%</LoopText>
                 </LoopText>
@@ -149,8 +151,12 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   scroll: { paddingHorizontal: 22, paddingBottom: 24 },
   hero: { padding: 22, flexDirection: 'row', alignItems: 'center', gap: 20 },
-  heroPct: { fontSize: 32, lineHeight: 38, fontWeight: '700', letterSpacing: -0.8 },
-  heroPctUnit: { fontSize: 16, color: LoopColors.ink4, fontWeight: '700' },
+  heroPctUnit: {
+    fontFamily: LoopFont.bold,
+    fontSize: 16,
+    color: LoopColors.ink4,
+    fontWeight: '700',
+  },
   heroEyebrow: { marginTop: 2 },
   heroSub: { marginTop: 8 },
   tiles: { flexDirection: 'row', gap: 12, marginTop: 12 },

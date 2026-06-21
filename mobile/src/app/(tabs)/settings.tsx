@@ -14,8 +14,10 @@ import {
   SelectChip,
   TabHeader,
   TextField,
-} from '@/components/ui';
-import { LoopColors, LoopMotion, LoopRadius } from '@/constants/loop-theme';
+  LoopColors,
+  LoopMotion,
+  LoopRadius,
+} from '@loop/ui';
 import { useAuth } from '@/features/auth/auth-context';
 import {
   useActiveGoal,

@@ -4,8 +4,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Icon, usePressScale } from '@/components/ui';
-import { LoopColors, LoopMotion } from '@/constants/loop-theme';
+import { Icon, usePressScale, LoopColors, LoopFont, LoopMotion } from '@loop/ui';
 import { useT } from '@/lib/i18n';
 
 /** Height of the tab bar content (icon + label) area. The bottom safe area is added separately via inset. */
@@ -70,7 +69,12 @@ export default function TabsLayout() {
           paddingTop: 8,
           paddingBottom: insets.bottom,
         },
-        tabBarLabelStyle: { fontSize: 10.5, fontWeight: '600', letterSpacing: 0.1 },
+        tabBarLabelStyle: {
+          fontFamily: LoopFont.semibold,
+          fontSize: 10.5,
+          fontWeight: '600',
+          letterSpacing: 0.1,
+        },
         sceneStyle: { backgroundColor: LoopColors.canvas },
         tabBarButton: (props) => <SquishTabButton {...props} />,
       }}

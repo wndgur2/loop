@@ -5,15 +5,16 @@ import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import {
   EmptyState,
-  FeedbackListSkeleton,
   Icon,
   LoopText,
   PressScale,
   ProgressBar,
   Screen,
   TabHeader,
-} from '@/components/ui';
-import { LoopColors, LoopRadius } from '@/constants/loop-theme';
+  LoopColors,
+  LoopRadius,
+} from '@loop/ui';
+import { FeedbackListSkeleton } from '@/components/skeletons';
 import { computeStats } from '@/features/dashboard/stats';
 import { TabComposer } from '@/features/chat/tab-composer';
 import { FeedbackRow } from '@/features/feedback/components';
