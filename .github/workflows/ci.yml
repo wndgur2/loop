@@ -12,19 +12,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  mobile:
-    name: mobile (typecheck · lint · format)
+  app:
+    name: app (typecheck · lint · format)
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: mobile
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: mobile/package-lock.json
+          cache-dependency-path: package-lock.json
+      # npm workspaces: install + run checks from the repo root. Root scripts
+      # fan out across the @loop/ui and loop (mobile) workspaces.
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
