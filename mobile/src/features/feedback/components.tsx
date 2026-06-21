@@ -1,8 +1,7 @@
 import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Checkbox, Icon, LoopText, PressScale } from '@/components/ui';
-import { LoopColors, LoopMotion } from '@/constants/loop-theme';
+import { Checkbox, Icon, LoopText, PressScale, LoopColors, LoopMotion } from '@loop/ui';
 import { relativeTime } from '@/lib/date';
 import { useI18n, useT } from '@/lib/i18n';
 import type { FeedbackWithTakeaways, Importance, Takeaway } from '@/types/models';

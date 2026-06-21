@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { RefreshControl } from 'react-native';
 
-import { LoopColors } from '@/constants/loop-theme';
+import { LoopColors } from '@loop/ui';
 
 /**
  * Pull-to-refresh element for list/scroll screens backed by a query.

@@ -1,0 +1,37 @@
+{
+  "name": "loop-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "mobile",
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "npm run start --workspace loop",
+    "android": "npm run android --workspace loop",
+    "ios": "npm run ios --workspace loop",
+    "web": "npm run web --workspace loop",
+    "typecheck": "npm run typecheck --workspace @loop/ui && npm run typecheck --workspace loop",
+    "lint": "npm run lint --workspace @loop/ui && npm run lint --workspace loop",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.2",
+    "eslint": "^9.39.4",
+    "eslint-config-expo": "^56.0.4",
+    "lucide-react-native": "^1.21.0",
+    "prettier": "^3.8.3",
+    "typescript": "~6.0.3"
+  },
+  "comment:overrides": "Pin the shared RN runtime to the app's versions so the @loop/ui peer deps dedupe to a single copy (otherwise '*' peers pull latest and TS sees two react-native type identities).",
+  "overrides": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.85.3",
+    "react-native-reanimated": "4.3.1",
+    "react-native-svg": "15.15.4",
+    "react-native-safe-area-context": "5.7.0",
+    "react-native-worklets": "0.8.3"
+  }
+}

@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { LoopText, Screen, ScreenHeader } from '@/components/ui';
+import { LoopText, Screen, ScreenHeader } from '@loop/ui';
 import { LEGAL_DOCS, type LegalDocId } from '@/features/legal/content';
 import { useI18n } from '@/lib/i18n';
 

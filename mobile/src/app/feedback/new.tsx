@@ -14,8 +14,9 @@ import {
   SectionLabel,
   SelectChip,
   TextField,
-} from '@/components/ui';
-import { LoopColors, LoopMotion } from '@/constants/loop-theme';
+  LoopColors,
+  LoopMotion,
+} from '@loop/ui';
 import {
   type FeedbackInput,
   useCreateFeedback,

@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 
-import { ComposerInput } from '@/components/ui';
+import { ComposerInput } from '@loop/ui';
 
 /**
  * Shared chat input at the bottom of the feedback/retrospective tabs.

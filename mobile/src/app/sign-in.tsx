@@ -3,8 +3,7 @@ import { useRef, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
-import { LoopMark } from '@/components/loop-mark';
-import { Button, LoopText, PressScale, Screen, TextField } from '@/components/ui';
+import { LoopMark, Button, LoopText, PressScale, Screen, TextField } from '@loop/ui';
 import { authMessageKey } from '@/features/auth/auth-errors';
 import { useAuth } from '@/features/auth/auth-context';
 import { isValidEmail, MIN_PASSWORD_LENGTH } from '@/features/auth/validation';
