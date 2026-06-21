@@ -16,7 +16,7 @@ name: Preview · mobile
 on:
   pull_request:
     paths:
-      - 'mobile/**'
+      - "mobile/**"
 
 # Supersede stale preview runs for the same PR.
 concurrency:
@@ -30,25 +30,26 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    defaults:
-      run:
-        working-directory: mobile
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: mobile/package-lock.json
+          cache-dependency-path: package-lock.json
       - uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
+      # npm workspaces: install from the repo root so @loop/ui and mobile both resolve.
       - run: npm ci
 
       - name: Publish preview & comment QR
         uses: expo/expo-github-action/preview@v8
         with:
           working-directory: mobile
-          command: eas update --branch pr-${{ github.event.number }} --message "${{ github.event.pull_request.title }}"
+          # --environment preview injects the EXPO_PUBLIC_* vars (Supabase URL/anon key, auth
+          # redirect) into the bundle at publish time. Without it the app throws "환경변수가 없습니다"
+          # because EXPO_PUBLIC_* are inlined when bundling, not read at runtime.
+          command: eas update --branch pr-${{ github.event.number }} --environment preview --message "${{ github.event.pull_request.title }}"

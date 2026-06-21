@@ -7,34 +7,37 @@
 
 :root {
   /* --- Loop warm accent (the only chromatic color in the UI) --------- */
-  --loop-warm:       #DD8A4F;  /* primary — warm clay/honey */
-  --loop-warm-hover: #CD7A3E;
-  --loop-warm-deep:  #B06A33;  /* text/icon on light */
-  --loop-warm-press: #9E5C2A;
-  --loop-warm-soft:  #FBF1E8;  /* tinted surface */
-  --loop-warm-soft2: #F5E4D4;  /* chip / fill */
-  --loop-warm-line:  #EAD3BD;  /* hairline on warm */
-  --loop-ring-track: #EFE6DC;  /* progress ring track */
+  --loop-warm: #dd8a4f; /* primary — warm clay/honey */
+  --loop-warm-hover: #cd7a3e;
+  --loop-warm-deep: #b06a33; /* text/icon on light */
+  --loop-warm-press: #9e5c2a;
+  --loop-warm-soft: #fbf1e8; /* tinted surface */
+  --loop-warm-soft2: #f5e4d4; /* chip / fill */
+  --loop-warm-line: #ead3bd; /* hairline on warm */
+  --loop-ring-track: #efe6dc; /* progress ring track */
 
   /* calm positive (internalized / done) — softened from system green */
-  --loop-good:      #2FA567;
-  --loop-good-soft: #E7F4ED;
+  --loop-good: #2fa567;
+  --loop-good-soft: #e7f4ed;
 
   /* warm-tinted canvas (calmer than Wanted cool #F7F7F8) */
-  --loop-canvas:    #FAF8F5;
-  --loop-surface:   #FFFFFF;
+  --loop-canvas: #faf8f5;
+  --loop-surface: #ffffff;
 
   /* warm-leaning neutrals for text (kept close to Wanted) */
-  --loop-ink:       #1F1D1B;
-  --loop-ink-2:     rgba(40, 36, 33, 0.78);
-  --loop-ink-3:     rgba(48, 43, 39, 0.56);
-  --loop-ink-4:     rgba(48, 43, 39, 0.34);
-  --loop-line:      rgba(60, 50, 42, 0.12);
+  --loop-ink: #1f1d1b;
+  --loop-ink-2: rgba(40, 36, 33, 0.78);
+  --loop-ink-3: rgba(48, 43, 39, 0.56);
+  --loop-ink-4: rgba(48, 43, 39, 0.34);
+  --loop-line: rgba(60, 50, 42, 0.12);
   --loop-line-soft: rgba(60, 50, 42, 0.07);
-  --loop-fill:      rgba(60, 50, 42, 0.05);
+  --loop-fill: rgba(60, 50, 42, 0.05);
 }
 
-* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
 
 body {
   margin: 0;
@@ -69,8 +72,14 @@ body {
   color: var(--loop-ink);
   z-index: 20;
 }
-.lp-status .lp-time { font-variant-numeric: tabular-nums; }
-.lp-status-glyphs { display: flex; align-items: center; gap: 7px; }
+.lp-status .lp-time {
+  font-variant-numeric: tabular-nums;
+}
+.lp-status-glyphs {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
 
 /* home indicator */
 .lp-home-ind {
@@ -82,13 +91,18 @@ body {
 }
 .lp-home-ind::after {
   content: "";
-  width: 134px; height: 5px;
+  width: 134px;
+  height: 5px;
   border-radius: 9999px;
   background: rgba(31, 29, 27, 0.82);
 }
 
 /* scroll body (visual only — no actual scrolling on canvas) */
-.lp-body { flex: 1; overflow: hidden; position: relative; }
+.lp-body {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
 
 /* bottom tab bar */
 .lp-tabbar {
@@ -102,20 +116,35 @@ body {
 }
 .lp-tab {
   flex: 1;
-  border: none; background: none; cursor: pointer;
+  border: none;
+  background: none;
+  cursor: pointer;
   padding: 4px 0 2px;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
-.lp-tab span { font-size: 10.5px; font-weight: 600; letter-spacing: 0.01em; }
+.lp-tab span {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
 
 /* chat composer (shared by home + retro) */
 .lp-composer {
   flex: none;
   padding: 10px 16px 8px;
-  background: linear-gradient(to top, var(--loop-canvas) 60%, rgba(250,248,245,0));
+  background: linear-gradient(
+    to top,
+    var(--loop-canvas) 60%,
+    rgba(250, 248, 245, 0)
+  );
 }
 .lp-composer-inner {
-  display: flex; align-items: center; gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   background: var(--loop-surface);
   border: 1px solid var(--loop-line);
   border-radius: 9999px;
@@ -123,33 +152,69 @@ body {
   box-shadow: var(--shadow-strong);
 }
 .lp-composer-inner input {
-  flex: 1; border: none; outline: none; background: none;
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
   font-family: var(--font-sans);
-  font-size: 14.5px; font-weight: 500;
+  font-size: 14.5px;
+  font-weight: 500;
   color: var(--loop-ink);
 }
-.lp-composer-inner input::placeholder { color: var(--loop-ink-4); }
+.lp-composer-inner input::placeholder {
+  color: var(--loop-ink-4);
+}
 .lp-send {
-  flex: none; width: 38px; height: 38px; border-radius: 9999px; border: none;
-  background: var(--loop-warm); color: #fff; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  border: none;
+  background: var(--loop-warm);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* generic pill / chip */
 .lp-chip {
-  display: inline-flex; align-items: center; gap: 5px;
-  height: 26px; padding: 0 11px; border-radius: 9999px;
-  font-size: 12px; font-weight: 600; letter-spacing: 0.005em;
-  background: var(--loop-fill); color: var(--loop-ink-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 11px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  background: var(--loop-fill);
+  color: var(--loop-ink-2);
   white-space: nowrap;
 }
 
 /* importance dots */
-.lp-imp { display: inline-flex; align-items: center; gap: 3px; }
-.lp-imp i { width: 5px; height: 5px; border-radius: 9999px; background: var(--loop-line); }
-.lp-imp.high i { background: var(--loop-warm); }
-.lp-imp.mid i:nth-child(-n+2) { background: var(--loop-ink-4); }
-.lp-imp.low i:nth-child(1) { background: var(--loop-ink-4); }
+.lp-imp {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.lp-imp i {
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--loop-line);
+}
+.lp-imp.high i {
+  background: var(--loop-warm);
+}
+.lp-imp.mid i:nth-child(-n + 2) {
+  background: var(--loop-ink-4);
+}
+.lp-imp.low i:nth-child(1) {
+  background: var(--loop-ink-4);
+}
 
 /* card */
 .lp-card {
@@ -161,19 +226,34 @@ body {
 
 /* section eyebrow */
 .lp-eyebrow {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--loop-ink-4);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--loop-ink-4);
 }
 
 /* hide scrollbars inside mock bodies */
-.lp-scroll { overflow: hidden; }
-.lp-scroll::-webkit-scrollbar { display: none; }
+.lp-scroll {
+  overflow: hidden;
+}
+.lp-scroll::-webkit-scrollbar {
+  display: none;
+}
 
 /* checkbox (takeaway) */
 .lp-check {
-  width: 22px; height: 22px; border-radius: 7px; flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  flex: none;
   border: 1.7px solid var(--loop-line);
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #fff;
 }
-.lp-check.done { background: var(--loop-good); border-color: var(--loop-good); }
+.lp-check.done {
+  background: var(--loop-good);
+  border-color: var(--loop-good);
+}

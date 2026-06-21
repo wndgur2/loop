@@ -5,37 +5,45 @@
 // User deletion is a privileged operation that requires the admin API (service_role), so it must go through the server (CLAUDE.md §6).
 // The service_role key is used only inside this function, and the deletion target is fixed to the token-verified self (user.id).
 
-import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
-import { createUserClient } from '../_shared/client.ts'
-import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
+import { createUserClient } from "../_shared/client.ts";
+import { corsHeaders, jsonResponse } from "../_shared/cors.ts";
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-  if (req.method !== 'POST') return jsonResponse({ error: 'method_not_allowed' }, 405)
+  if (req.method === "OPTIONS")
+    return new Response("ok", { headers: corsHeaders });
+  if (req.method !== "POST")
+    return jsonResponse({ error: "method_not_allowed" }, 405);
 
   try {
     // Verify the user via token (RLS-applied user client).
-    const token = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '')
-    const supabase = createUserClient(req)
+    const token = (req.headers.get("Authorization") ?? "").replace(
+      /^Bearer\s+/i,
+      "",
+    );
+    const supabase = createUserClient(req);
     const {
       data: { user },
-    } = await supabase.auth.getUser(token)
-    if (!user) return jsonResponse({ error: 'unauthorized' }, 401)
+    } = await supabase.auth.getUser(token);
+    if (!user) return jsonResponse({ error: "unauthorized" }, 401);
 
     // Admin-delete only by the user's own id (other users can never be deleted).
     const admin = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
       { auth: { persistSession: false, autoRefreshToken: false } },
-    )
-    const { error } = await admin.auth.admin.deleteUser(user.id)
-    if (error) throw error
+    );
+    const { error } = await admin.auth.admin.deleteUser(user.id);
+    if (error) throw error;
 
-    return jsonResponse({ ok: true })
+    return jsonResponse({ ok: true });
   } catch (err) {
     // Do not log message bodies or personal data (CLAUDE.md §6).
-    console.error('delete-account error:', err instanceof Error ? err.message : 'unknown')
-    return jsonResponse({ error: 'internal_error' }, 500)
+    console.error(
+      "delete-account error:",
+      err instanceof Error ? err.message : "unknown",
+    );
+    return jsonResponse({ error: "internal_error" }, 500);
   }
-})
+});

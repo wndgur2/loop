@@ -17,187 +17,187 @@
      =================================================================== */
 
   /* Common */
-  --atomic-common-100: #FFFFFF;
-  --atomic-common-0:   #000000;
+  --atomic-common-100: #ffffff;
+  --atomic-common-0: #000000;
 
   /* Neutral (pure grey) */
-  --atomic-neutral-99: #F7F7F7;
-  --atomic-neutral-95: #DCDCDC;
-  --atomic-neutral-90: #C4C4C4;
-  --atomic-neutral-80: #B0B0B0;
-  --atomic-neutral-70: #9B9B9B;
-  --atomic-neutral-60: #8A8A8A;
+  --atomic-neutral-99: #f7f7f7;
+  --atomic-neutral-95: #dcdcdc;
+  --atomic-neutral-90: #c4c4c4;
+  --atomic-neutral-80: #b0b0b0;
+  --atomic-neutral-70: #9b9b9b;
+  --atomic-neutral-60: #8a8a8a;
   --atomic-neutral-50: #737373;
-  --atomic-neutral-40: #5C5C5C;
+  --atomic-neutral-40: #5c5c5c;
   --atomic-neutral-30: #474747;
   --atomic-neutral-20: #303030;
   --atomic-neutral-10: #171717;
-  --atomic-neutral-0:  #000000;
+  --atomic-neutral-0: #000000;
 
   /* Cool Neutral (blue-tinted grey — the system default neutral) */
-  --atomic-coolNeutral-99: #F7F7F8;
-  --atomic-coolNeutral-98: #F4F4F5;
-  --atomic-coolNeutral-97: #EAEBEC;
-  --atomic-coolNeutral-96: #E1E2E4;
-  --atomic-coolNeutral-95: #DBDCDF;
-  --atomic-coolNeutral-90: #C2C4C8;
-  --atomic-coolNeutral-80: #AEB0B6;
-  --atomic-coolNeutral-70: #989BA2;
-  --atomic-coolNeutral-60: #878A93;
-  --atomic-coolNeutral-50: #70737C;
-  --atomic-coolNeutral-40: #5A5C63;
-  --atomic-coolNeutral-30: #46474C;
-  --atomic-coolNeutral-25: #3E3F43;
-  --atomic-coolNeutral-23: #37383C;
-  --atomic-coolNeutral-22: #37383C;
-  --atomic-coolNeutral-20: #2E2F33;
-  --atomic-coolNeutral-17: #292A2D;
+  --atomic-coolNeutral-99: #f7f7f8;
+  --atomic-coolNeutral-98: #f4f4f5;
+  --atomic-coolNeutral-97: #eaebec;
+  --atomic-coolNeutral-96: #e1e2e4;
+  --atomic-coolNeutral-95: #dbdcdf;
+  --atomic-coolNeutral-90: #c2c4c8;
+  --atomic-coolNeutral-80: #aeb0b6;
+  --atomic-coolNeutral-70: #989ba2;
+  --atomic-coolNeutral-60: #878a93;
+  --atomic-coolNeutral-50: #70737c;
+  --atomic-coolNeutral-40: #5a5c63;
+  --atomic-coolNeutral-30: #46474c;
+  --atomic-coolNeutral-25: #3e3f43;
+  --atomic-coolNeutral-23: #37383c;
+  --atomic-coolNeutral-22: #37383c;
+  --atomic-coolNeutral-20: #2e2f33;
+  --atomic-coolNeutral-17: #292a2d;
   --atomic-coolNeutral-15: #212225;
   --atomic-coolNeutral-10: #171719;
-  --atomic-coolNeutral-7:  #141415;
-  --atomic-coolNeutral-5:  #0F0F10;
-  --atomic-coolNeutral-0:  #000000;
+  --atomic-coolNeutral-7: #141415;
+  --atomic-coolNeutral-5: #0f0f10;
+  --atomic-coolNeutral-0: #000000;
 
   /* Blue — PRIMARY brand hue */
-  --atomic-blue-99: #F7FBFF;
-  --atomic-blue-95: #EAF2FE;
-  --atomic-blue-90: #C9DEFE;
-  --atomic-blue-80: #9EC5FF;
-  --atomic-blue-70: #69A5FF;
-  --atomic-blue-65: #4F95FF;
-  --atomic-blue-60: #3385FF;
-  --atomic-blue-55: #1A75FF;
-  --atomic-blue-50: #0066FF;  /* ★ Wanted Blue — primary */
-  --atomic-blue-45: #005EEB;
-  --atomic-blue-40: #0054D1;
-  --atomic-blue-30: #003E9C;
+  --atomic-blue-99: #f7fbff;
+  --atomic-blue-95: #eaf2fe;
+  --atomic-blue-90: #c9defe;
+  --atomic-blue-80: #9ec5ff;
+  --atomic-blue-70: #69a5ff;
+  --atomic-blue-65: #4f95ff;
+  --atomic-blue-60: #3385ff;
+  --atomic-blue-55: #1a75ff;
+  --atomic-blue-50: #0066ff; /* ★ Wanted Blue — primary */
+  --atomic-blue-45: #005eeb;
+  --atomic-blue-40: #0054d1;
+  --atomic-blue-30: #003e9c;
   --atomic-blue-20: #002966;
   --atomic-blue-10: #001536;
-  --atomic-blue-0:  #000000;
+  --atomic-blue-0: #000000;
 
   /* Red */
-  --atomic-red-99: #FFFAFA;
-  --atomic-red-95: #FEECEC;
-  --atomic-red-90: #FED5D5;
-  --atomic-red-80: #FFB5B5;
-  --atomic-red-70: #FF8C8C;
-  --atomic-red-60: #FF6363;
-  --atomic-red-50: #FF4242;
-  --atomic-red-40: #E52222;
-  --atomic-red-30: #B20C0C;
+  --atomic-red-99: #fffafa;
+  --atomic-red-95: #feecec;
+  --atomic-red-90: #fed5d5;
+  --atomic-red-80: #ffb5b5;
+  --atomic-red-70: #ff8c8c;
+  --atomic-red-60: #ff6363;
+  --atomic-red-50: #ff4242;
+  --atomic-red-40: #e52222;
+  --atomic-red-30: #b20c0c;
   --atomic-red-20: #750404;
-  --atomic-red-10: #3B0101;
+  --atomic-red-10: #3b0101;
 
   /* Green */
-  --atomic-green-99: #F2FFF6;
-  --atomic-green-95: #D9FFE6;
-  --atomic-green-90: #ACFCC7;
-  --atomic-green-80: #7DF5A5;
-  --atomic-green-70: #49E57D;
-  --atomic-green-60: #1ED45A;
-  --atomic-green-50: #00BF40;
+  --atomic-green-99: #f2fff6;
+  --atomic-green-95: #d9ffe6;
+  --atomic-green-90: #acfcc7;
+  --atomic-green-80: #7df5a5;
+  --atomic-green-70: #49e57d;
+  --atomic-green-60: #1ed45a;
+  --atomic-green-50: #00bf40;
   --atomic-green-40: #009632;
-  --atomic-green-30: #006E25;
+  --atomic-green-30: #006e25;
   --atomic-green-20: #004517;
-  --atomic-green-10: #00240C;
+  --atomic-green-10: #00240c;
 
   /* Orange */
-  --atomic-orange-99: #FFFCF7;
-  --atomic-orange-95: #FEF4E6;
-  --atomic-orange-90: #FEE6C6;
-  --atomic-orange-80: #FFD49C;
-  --atomic-orange-70: #FFC06E;
-  --atomic-orange-60: #FFA938;
-  --atomic-orange-50: #FF9200;
-  --atomic-orange-40: #D47800;
-  --atomic-orange-39: #D17600;
-  --atomic-orange-30: #9C5800;
-  --atomic-orange-20: #663A00;
-  --atomic-orange-10: #361E00;
+  --atomic-orange-99: #fffcf7;
+  --atomic-orange-95: #fef4e6;
+  --atomic-orange-90: #fee6c6;
+  --atomic-orange-80: #ffd49c;
+  --atomic-orange-70: #ffc06e;
+  --atomic-orange-60: #ffa938;
+  --atomic-orange-50: #ff9200;
+  --atomic-orange-40: #d47800;
+  --atomic-orange-39: #d17600;
+  --atomic-orange-30: #9c5800;
+  --atomic-orange-20: #663a00;
+  --atomic-orange-10: #361e00;
 
   /* Red Orange */
-  --atomic-redOrange-99: #FFFAF7;
-  --atomic-redOrange-95: #FEEEE5;
-  --atomic-redOrange-90: #FEDBC6;
-  --atomic-redOrange-80: #FFC09C;
-  --atomic-redOrange-70: #FF9C63;
-  --atomic-redOrange-60: #FF7B2E;
-  --atomic-redOrange-50: #FF5E00;
-  --atomic-redOrange-48: #F55A00;
-  --atomic-redOrange-40: #CC4B00;
+  --atomic-redOrange-99: #fffaf7;
+  --atomic-redOrange-95: #feeee5;
+  --atomic-redOrange-90: #fedbc6;
+  --atomic-redOrange-80: #ffc09c;
+  --atomic-redOrange-70: #ff9c63;
+  --atomic-redOrange-60: #ff7b2e;
+  --atomic-redOrange-50: #ff5e00;
+  --atomic-redOrange-48: #f55a00;
+  --atomic-redOrange-40: #cc4b00;
   --atomic-redOrange-30: #943600;
-  --atomic-redOrange-20: #5C2200;
-  --atomic-redOrange-10: #2E1100;
+  --atomic-redOrange-20: #5c2200;
+  --atomic-redOrange-10: #2e1100;
 
   /* Lime */
-  --atomic-lime-99: #F8FFF2;
-  --atomic-lime-95: #E6FFD4;
-  --atomic-lime-90: #CCFCA9;
-  --atomic-lime-80: #AEF779;
-  --atomic-lime-70: #88F03E;
-  --atomic-lime-60: #6BE016;
-  --atomic-lime-50: #58CF04;
-  --atomic-lime-40: #48AD00;
-  --atomic-lime-37: #429E00;
-  --atomic-lime-30: #347D00;
+  --atomic-lime-99: #f8fff2;
+  --atomic-lime-95: #e6ffd4;
+  --atomic-lime-90: #ccfca9;
+  --atomic-lime-80: #aef779;
+  --atomic-lime-70: #88f03e;
+  --atomic-lime-60: #6be016;
+  --atomic-lime-50: #58cf04;
+  --atomic-lime-40: #48ad00;
+  --atomic-lime-37: #429e00;
+  --atomic-lime-30: #347d00;
   --atomic-lime-20: #225200;
   --atomic-lime-10: #112900;
 
   /* Cyan */
-  --atomic-cyan-99: #F7FEFF;
-  --atomic-cyan-95: #DEFAFF;
-  --atomic-cyan-90: #B5F4FF;
-  --atomic-cyan-80: #8AEDFF;
-  --atomic-cyan-70: #57DFF7;
-  --atomic-cyan-60: #28D0ED;
-  --atomic-cyan-50: #00BDDE;
-  --atomic-cyan-40: #0098B2;
-  --atomic-cyan-30: #006F82;
+  --atomic-cyan-99: #f7feff;
+  --atomic-cyan-95: #defaff;
+  --atomic-cyan-90: #b5f4ff;
+  --atomic-cyan-80: #8aedff;
+  --atomic-cyan-70: #57dff7;
+  --atomic-cyan-60: #28d0ed;
+  --atomic-cyan-50: #00bdde;
+  --atomic-cyan-40: #0098b2;
+  --atomic-cyan-30: #006f82;
   --atomic-cyan-20: #004854;
-  --atomic-cyan-10: #00252B;
+  --atomic-cyan-10: #00252b;
 
   /* Light Blue (Sky) */
-  --atomic-lightBlue-99: #F7FDFF;
-  --atomic-lightBlue-95: #E5F6FE;
-  --atomic-lightBlue-90: #C4ECFE;
-  --atomic-lightBlue-80: #A1E1FF;
-  --atomic-lightBlue-70: #70D2FF;
-  --atomic-lightBlue-60: #3DC2FF;
-  --atomic-lightBlue-50: #00AEFF;
-  --atomic-lightBlue-40: #008DCF;
+  --atomic-lightBlue-99: #f7fdff;
+  --atomic-lightBlue-95: #e5f6fe;
+  --atomic-lightBlue-90: #c4ecfe;
+  --atomic-lightBlue-80: #a1e1ff;
+  --atomic-lightBlue-70: #70d2ff;
+  --atomic-lightBlue-60: #3dc2ff;
+  --atomic-lightBlue-50: #00aeff;
+  --atomic-lightBlue-40: #008dcf;
   --atomic-lightBlue-30: #006796;
   --atomic-lightBlue-20: #004261;
   --atomic-lightBlue-10: #002130;
 
   /* Violet — secondary brand accent */
-  --atomic-violet-99: #FBFAFF;
-  --atomic-violet-95: #F0ECFE;
-  --atomic-violet-90: #DBD3FE;
-  --atomic-violet-80: #C0B0FF;
-  --atomic-violet-70: #9E86FC;
-  --atomic-violet-60: #7D5EF7;
-  --atomic-violet-50: #6541F2;  /* ★ Wanted Violet */
-  --atomic-violet-45: #5B37ED;
-  --atomic-violet-40: #4F29E5;
-  --atomic-violet-30: #3A16C9;
-  --atomic-violet-20: #23098F;
-  --atomic-violet-10: #11024D;
+  --atomic-violet-99: #fbfaff;
+  --atomic-violet-95: #f0ecfe;
+  --atomic-violet-90: #dbd3fe;
+  --atomic-violet-80: #c0b0ff;
+  --atomic-violet-70: #9e86fc;
+  --atomic-violet-60: #7d5ef7;
+  --atomic-violet-50: #6541f2; /* ★ Wanted Violet */
+  --atomic-violet-45: #5b37ed;
+  --atomic-violet-40: #4f29e5;
+  --atomic-violet-30: #3a16c9;
+  --atomic-violet-20: #23098f;
+  --atomic-violet-10: #11024d;
 
   /* Purple */
-  --atomic-purple-99: #FEFBFF;
-  --atomic-purple-95: #F9EDFF;
-  --atomic-purple-90: #F2D6FF;
-  --atomic-purple-80: #E9BAFF;
-  --atomic-purple-70: #DE96FF;
-  --atomic-purple-60: #D478FF;
-  --atomic-purple-50: #CB59FF;
-  --atomic-purple-40: #AD36E3;
-  --atomic-purple-30: #861CB8;
-  --atomic-purple-20: #580A7D;
+  --atomic-purple-99: #fefbff;
+  --atomic-purple-95: #f9edff;
+  --atomic-purple-90: #f2d6ff;
+  --atomic-purple-80: #e9baff;
+  --atomic-purple-70: #de96ff;
+  --atomic-purple-60: #d478ff;
+  --atomic-purple-50: #cb59ff;
+  --atomic-purple-40: #ad36e3;
+  --atomic-purple-30: #861cb8;
+  --atomic-purple-20: #580a7d;
   --atomic-purple-10: #290247;
 
   /* Pink (shares ramp shape with purple in the file) */
-  --atomic-pink-50: #FF4FC3;
+  --atomic-pink-50: #ff4fc3;
 
   /* ===================================================================
      2. SEMANTIC COLOR TOKENS  (light theme)
@@ -205,78 +205,84 @@
      =================================================================== */
 
   /* Primary (brand action) */
-  --color-primary-normal: var(--atomic-blue-50);   /* #0066FF */
-  --color-primary-strong: var(--atomic-blue-45);   /* #005EEB */
-  --color-primary-heavy:  var(--atomic-blue-40);   /* #0054D1 */
+  --color-primary-normal: var(--atomic-blue-50); /* #0066FF */
+  --color-primary-strong: var(--atomic-blue-45); /* #005EEB */
+  --color-primary-heavy: var(--atomic-blue-40); /* #0054D1 */
 
   /* Label (text on light surfaces) */
-  --color-label-normal:      #171719;                 /* coolNeutral-10 */
-  --color-label-strong:      #000000;                 /* common-0 */
-  --color-label-neutral:     rgba(46, 47, 51, 0.88);  /* coolNeutral-22 @88% */
-  --color-label-alternative: rgba(55, 56, 60, 0.61);  /* coolNeutral-25 @61% */
-  --color-label-assistive:   rgba(55, 56, 60, 0.28);  /* coolNeutral-25 @28% */
-  --color-label-disable:     rgba(55, 56, 60, 0.16);  /* coolNeutral-25 @16% */
+  --color-label-normal: #171719; /* coolNeutral-10 */
+  --color-label-strong: #000000; /* common-0 */
+  --color-label-neutral: rgba(46, 47, 51, 0.88); /* coolNeutral-22 @88% */
+  --color-label-alternative: rgba(55, 56, 60, 0.61); /* coolNeutral-25 @61% */
+  --color-label-assistive: rgba(55, 56, 60, 0.28); /* coolNeutral-25 @28% */
+  --color-label-disable: rgba(55, 56, 60, 0.16); /* coolNeutral-25 @16% */
 
   /* Background */
-  --color-background-normal:      #FFFFFF;            /* common-100 */
-  --color-background-alternative: #F7F7F8;            /* coolNeutral-99 */
-  --color-background-elevated:    #FFFFFF;
-  --color-background-dimmer:      rgba(0, 0, 0, 0.52);
+  --color-background-normal: #ffffff; /* common-100 */
+  --color-background-alternative: #f7f7f8; /* coolNeutral-99 */
+  --color-background-elevated: #ffffff;
+  --color-background-dimmer: rgba(0, 0, 0, 0.52);
 
   /* Line / border */
-  --color-line-normal:       rgba(112, 115, 124, 0.22); /* coolNeutral-50 @22% */
-  --color-line-neutral:      rgba(112, 115, 124, 0.16);
-  --color-line-alternative:  rgba(112, 115, 124, 0.08);
+  --color-line-normal: rgba(112, 115, 124, 0.22); /* coolNeutral-50 @22% */
+  --color-line-neutral: rgba(112, 115, 124, 0.16);
+  --color-line-alternative: rgba(112, 115, 124, 0.08);
 
   /* Fill (component surfaces) */
-  --color-fill-normal:      rgba(112, 115, 124, 0.08);
-  --color-fill-strong:      rgba(112, 115, 124, 0.16);
+  --color-fill-normal: rgba(112, 115, 124, 0.08);
+  --color-fill-strong: rgba(112, 115, 124, 0.16);
   --color-fill-alternative: rgba(112, 115, 124, 0.05);
 
   /* Status */
-  --color-status-positive:   var(--atomic-green-50);  /* #00BF40 */
+  --color-status-positive: var(--atomic-green-50); /* #00BF40 */
   --color-status-cautionary: var(--atomic-orange-50); /* #FF9200 */
-  --color-status-negative:   var(--atomic-red-50);    /* #FF4242 */
+  --color-status-negative: var(--atomic-red-50); /* #FF4242 */
 
   /* Inverse (text/fill on dark surfaces) */
   --color-inverse-background: #171719;
-  --color-inverse-label:      #FFFFFF;
-  --color-inverse-primary:    var(--atomic-blue-60);  /* #3385FF */
+  --color-inverse-label: #ffffff;
+  --color-inverse-primary: var(--atomic-blue-60); /* #3385FF */
 
   /* Accent backgrounds (subtle tinted chips) */
   --color-accent-redOrange: var(--atomic-redOrange-50);
-  --color-accent-violet:    var(--atomic-violet-50);
+  --color-accent-violet: var(--atomic-violet-50);
 
   /* ===================================================================
      3. ELEVATION / SHADOW  (light theme)
      Two-layer soft shadows tinted rgb(23,23,23).
      =================================================================== */
   --shadow-emphasize: 0 1px 2px -1px rgba(23, 23, 23, 0.1);
-  --shadow-strong:    0 4px 6px -1px rgba(23, 23, 23, 0.06), 0 2px 4px -2px rgba(23, 23, 23, 0.06);
-  --shadow-heavy:     0 10px 15px -3px rgba(23, 23, 23, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.07);
-  --shadow-overlay:   0 16px 24px -6px rgba(23, 23, 23, 0.08), 0 6px 10px -4px rgba(23, 23, 23, 0.08);
-  --shadow-modal:     0 24px 38px -10px rgba(23, 23, 23, 0.12), 0 10px 15px -5px rgba(23, 23, 23, 0.1);
+  --shadow-strong:
+    0 4px 6px -1px rgba(23, 23, 23, 0.06), 0 2px 4px -2px rgba(23, 23, 23, 0.06);
+  --shadow-heavy:
+    0 10px 15px -3px rgba(23, 23, 23, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.07);
+  --shadow-overlay:
+    0 16px 24px -6px rgba(23, 23, 23, 0.08),
+    0 6px 10px -4px rgba(23, 23, 23, 0.08);
+  --shadow-modal:
+    0 24px 38px -10px rgba(23, 23, 23, 0.12),
+    0 10px 15px -5px rgba(23, 23, 23, 0.1);
 
   /* ===================================================================
      4. RADIUS  — Wanted uses generous, consistent rounding
      =================================================================== */
-  --radius-xs:   4px;
-  --radius-sm:   8px;
-  --radius-md:   10px;
-  --radius-lg:   12px;   /* default button / small card */
-  --radius-xl:   16px;
-  --radius-2xl:  20px;
-  --radius-3xl:  24px;   /* large card / inner panel */
-  --radius-4xl:  32px;   /* hero container */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px; /* default button / small card */
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px; /* large card / inner panel */
+  --radius-4xl: 32px; /* hero container */
   --radius-full: 9999px; /* pills, avatars, chips */
 
   /* ===================================================================
      5. SPACING  — 4px base grid
      =================================================================== */
-  --space-2:  2px;
-  --space-4:  4px;
-  --space-6:  6px;
-  --space-8:  8px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
   --space-10: 10px;
   --space-12: 12px;
   --space-16: 16px;
@@ -292,8 +298,9 @@
      Family + the full 18-step scale (7 hierarchies).
      letter-spacing values are em (font tracks tighten as size grows).
      =================================================================== */
-  --font-sans: "Pretendard JP Variable", "Pretendard Variable", "Pretendard JP",
-               -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-sans:
+    "Pretendard JP Variable", "Pretendard Variable", "Pretendard JP",
+    -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-brand: "Wanted Sans Variable", "Wanted Sans", var(--font-sans);
   --font-mono: "SF Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
@@ -308,22 +315,79 @@
    SEMANTIC TYPE CLASSES  — apply directly, e.g. <h1 class="display-1">
    size / line-height / letter-spacing per the Figma type sheet.
    --------------------------------------------------------------------- */
-.display-1 { font: var(--fw-bold) 56px/1.286 var(--font-sans); letter-spacing: -0.031em; }
-.display-2 { font: var(--fw-bold) 40px/1.3   var(--font-sans); letter-spacing: -0.0282em; }
-.display-3 { font: var(--fw-bold) 36px/1.334 var(--font-sans); letter-spacing: -0.027em; }
-.title-1   { font: var(--fw-bold) 32px/1.375 var(--font-sans); letter-spacing: -0.0253em; }
-.title-2   { font: var(--fw-bold) 28px/1.358 var(--font-sans); letter-spacing: -0.0236em; }
-.title-3   { font: var(--fw-bold) 24px/1.334 var(--font-sans); letter-spacing: -0.023em; }
-.heading-1 { font: var(--fw-semibold) 22px/1.364 var(--font-sans); letter-spacing: -0.0194em; }
-.heading-2 { font: var(--fw-semibold) 20px/1.4   var(--font-sans); letter-spacing: -0.012em; }
-.headline-1{ font: var(--fw-semibold) 18px/1.445 var(--font-sans); letter-spacing: -0.002em; }
-.headline-2{ font: var(--fw-semibold) 17px/1.412 var(--font-sans); letter-spacing: 0em; }
-.body-1    { font: var(--fw-medium) 16px/1.5   var(--font-sans); letter-spacing: 0.0057em; }
-.body-1-reading { font: var(--fw-medium) 16px/1.625 var(--font-sans); letter-spacing: 0.0057em; }
-.body-2    { font: var(--fw-medium) 15px/1.467 var(--font-sans); letter-spacing: 0.0096em; }
-.body-2-reading { font: var(--fw-medium) 15px/1.6 var(--font-sans); letter-spacing: 0.0096em; }
-.label-1   { font: var(--fw-semibold) 14px/1.429 var(--font-sans); letter-spacing: 0.0145em; }
-.label-1-reading { font: var(--fw-medium) 14px/1.571 var(--font-sans); letter-spacing: 0.0145em; }
-.label-2   { font: var(--fw-semibold) 13px/1.385 var(--font-sans); letter-spacing: 0.0194em; }
-.caption-1 { font: var(--fw-medium) 12px/1.334 var(--font-sans); letter-spacing: 0.0252em; }
-.caption-2 { font: var(--fw-medium) 11px/1.273 var(--font-sans); letter-spacing: 0.0311em; }
+.display-1 {
+  font: var(--fw-bold) 56px/1.286 var(--font-sans);
+  letter-spacing: -0.031em;
+}
+.display-2 {
+  font: var(--fw-bold) 40px/1.3 var(--font-sans);
+  letter-spacing: -0.0282em;
+}
+.display-3 {
+  font: var(--fw-bold) 36px/1.334 var(--font-sans);
+  letter-spacing: -0.027em;
+}
+.title-1 {
+  font: var(--fw-bold) 32px/1.375 var(--font-sans);
+  letter-spacing: -0.0253em;
+}
+.title-2 {
+  font: var(--fw-bold) 28px/1.358 var(--font-sans);
+  letter-spacing: -0.0236em;
+}
+.title-3 {
+  font: var(--fw-bold) 24px/1.334 var(--font-sans);
+  letter-spacing: -0.023em;
+}
+.heading-1 {
+  font: var(--fw-semibold) 22px/1.364 var(--font-sans);
+  letter-spacing: -0.0194em;
+}
+.heading-2 {
+  font: var(--fw-semibold) 20px/1.4 var(--font-sans);
+  letter-spacing: -0.012em;
+}
+.headline-1 {
+  font: var(--fw-semibold) 18px/1.445 var(--font-sans);
+  letter-spacing: -0.002em;
+}
+.headline-2 {
+  font: var(--fw-semibold) 17px/1.412 var(--font-sans);
+  letter-spacing: 0em;
+}
+.body-1 {
+  font: var(--fw-medium) 16px/1.5 var(--font-sans);
+  letter-spacing: 0.0057em;
+}
+.body-1-reading {
+  font: var(--fw-medium) 16px/1.625 var(--font-sans);
+  letter-spacing: 0.0057em;
+}
+.body-2 {
+  font: var(--fw-medium) 15px/1.467 var(--font-sans);
+  letter-spacing: 0.0096em;
+}
+.body-2-reading {
+  font: var(--fw-medium) 15px/1.6 var(--font-sans);
+  letter-spacing: 0.0096em;
+}
+.label-1 {
+  font: var(--fw-semibold) 14px/1.429 var(--font-sans);
+  letter-spacing: 0.0145em;
+}
+.label-1-reading {
+  font: var(--fw-medium) 14px/1.571 var(--font-sans);
+  letter-spacing: 0.0145em;
+}
+.label-2 {
+  font: var(--fw-semibold) 13px/1.385 var(--font-sans);
+  letter-spacing: 0.0194em;
+}
+.caption-1 {
+  font: var(--fw-medium) 12px/1.334 var(--font-sans);
+  letter-spacing: 0.0252em;
+}
+.caption-2 {
+  font: var(--fw-medium) 11px/1.273 var(--font-sans);
+  letter-spacing: 0.0311em;
+}

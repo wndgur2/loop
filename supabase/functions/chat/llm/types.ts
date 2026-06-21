@@ -6,13 +6,13 @@
  * other provider adapters ignore it and just concatenate the text.
  */
 export interface SystemBlock {
-  type: 'text';
+  type: "text";
   text: string;
-  cache_control?: { type: 'ephemeral' };
+  cache_control?: { type: "ephemeral" };
 }
 
 export interface ChatTurn {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
 }
 
@@ -40,8 +40,8 @@ export interface LLMCallArgs {
  * Tool input (JSON) may be sent incrementally, but partial parsing is risky, so it is only completed and returned in `final`.
  */
 export type LLMStreamEvent =
-  | { type: 'text'; text: string }
-  | { type: 'final'; result: LLMResult };
+  | { type: "text"; text: string }
+  | { type: "final"; result: LLMResult };
 
 /** The single method a provider adapter implements. The input/output contract is provider-agnostic. */
 export interface LLMProvider {
@@ -58,14 +58,14 @@ export async function* sseData(res: Response): AsyncGenerator<string> {
   const reader = res.body?.getReader();
   if (!reader) return;
   const decoder = new TextDecoder();
-  let buffer = '';
+  let buffer = "";
 
   // Events are separated by blank lines. Line breaks differ per provider (Gemini uses CRLF = \r\n\r\n,
   // Anthropic/OpenAI use \n\n), so accept both — handling only one would split nothing and yield zero events.
   const BOUNDARY = /\r\n\r\n|\n\n|\r\r/;
   function* emit(block: string): Generator<string> {
     for (const line of block.split(/\r\n|\n|\r/)) {
-      if (line.startsWith('data:')) {
+      if (line.startsWith("data:")) {
         const payload = line.slice(5).trim();
         if (payload) yield payload;
       }
@@ -92,7 +92,9 @@ export function safeJson(raw: string): Record<string, unknown> {
   if (!raw) return {};
   try {
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : {};
+    return parsed && typeof parsed === "object"
+      ? (parsed as Record<string, unknown>)
+      : {};
   } catch {
     return {};
   }
@@ -100,15 +102,20 @@ export function safeJson(raw: string): Record<string, unknown> {
 
 /** Flattens the system blocks into a single string (for providers without cache_control). */
 export function flattenSystem(system: SystemBlock[]): string {
-  return system.map((b) => b.text).join('\n\n');
+  return system.map((b) => b.text).join("\n\n");
 }
 
 /**
  * Model selection priority: provider-specific env ({PROVIDER}_MODEL) → shared CHAT_MODEL → default.
  * Per-provider env lets you configure all three providers and switch by changing only LLM_PROVIDER.
  */
-export function resolveModel(providerEnvKey: string, defaultModel: string): string {
-  return Deno.env.get(providerEnvKey) ?? Deno.env.get('CHAT_MODEL') ?? defaultModel;
+export function resolveModel(
+  providerEnvKey: string,
+  defaultModel: string,
+): string {
+  return (
+    Deno.env.get(providerEnvKey) ?? Deno.env.get("CHAT_MODEL") ?? defaultModel
+  );
 }
 
 /** Shared: on a failed response, expose only the status code, no body or personal data (CLAUDE.md §6). */

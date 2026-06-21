@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2';
+import { createClient, type SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
 /**
  * Builds a **user-scoped** Supabase client from the request's Authorization (JWT).
@@ -6,10 +6,10 @@ import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2';
  * The service_role key is not used (split into a separate admin client only when needed).
  */
 export function createUserClient(req: Request): SupabaseClient {
-  const authHeader = req.headers.get('Authorization') ?? '';
+  const authHeader = req.headers.get("Authorization") ?? "";
   return createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_ANON_KEY')!,
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_ANON_KEY")!,
     {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },

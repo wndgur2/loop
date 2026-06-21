@@ -1,50 +1,140 @@
 <!doctype html>
 <html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>이용약관 · Loop</title>
-<style>:root{--bg:#fbf1e8;--card:#fffaf4;--ink:#2b2320;--muted:#7a6f66;--accent:#dd8a4f;--line:#ece0d4}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);line-height:1.7;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
--webkit-font-smoothing:antialiased}
-.wrap{max-width:720px;margin:0 auto;padding:32px 20px 80px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--accent);text-decoration:none;margin-bottom:8px}
-.brand .dot{width:18px;height:18px;border-radius:50%;border:3px solid var(--accent)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 26px;margin-top:20px}
-h1{font-size:24px;margin:0 0 4px}h2{font-size:18px;margin:28px 0 8px}
-.eff{color:var(--muted);font-size:14px;margin:0 0 8px}p,li{font-size:15px}a{color:var(--accent)}
-ul{padding-left:20px}footer{color:var(--muted);font-size:13px;margin-top:32px;text-align:center}</style>
-</head>
-<body>
-<div class="wrap">
-<div class="brand"><span class="dot"></span>Loop</div>
-<div class="card">
-<h1>Loop 이용약관 (Terms of Service)</h1>
-<p class="eff">시행일: 2026년 6월 11일</p>
-<h2>1. 서비스 소개</h2>
-<p>Loop는 스스로 남긴 피드백을 AI(Loopie)가 구조화해 목표 달성으로 연결하는 자기 회고 서비스입니다. 이 약관은 Loop 앱 이용에 적용됩니다.</p>
-<h2>2. 계정</h2>
-<p>계정은 본인만 사용해야 하며, 로그인 정보를 안전하게 관리할 책임은 이용자에게 있습니다. 설정에서 언제든지 계정을 삭제할 수 있습니다.</p>
-<h2>3. 허용되지 않는 사용</h2>
-<ul>
-<li>법령 위반, 타인의 권리 침해</li>
-<li>서비스·AI를 악용한 유해 콘텐츠 생성 시도</li>
-<li>서비스의 보안을 우회하거나 시스템에 부하를 주는 행위</li>
-</ul>
-<h2>4. AI 답변의 한계</h2>
-<p>Loopie의 답변은 AI가 생성하며 부정확하거나 부적절할 수 있습니다. Loopie는 의료·심리 상담, 위기 개입, 진단을 제공하지 않습니다. 중요한 결정은 답변에만 의존하지 마세요. 부적절한 답변은 앱 안에서 신고할 수 있습니다.</p>
-<h2>5. 콘텐츠 권리</h2>
-<p>이용자가 작성한 피드백·목표·대화의 권리는 이용자에게 있습니다. Loop는 서비스 제공(저장, AI 처리, 통계 표시)에 필요한 범위에서만 콘텐츠를 처리합니다.</p>
-<h2>6. 서비스 변경과 책임</h2>
-<p>서비스는 사전 고지 후 변경되거나 중단될 수 있습니다. 법이 허용하는 범위에서, Loop는 무료 제공 기능에 대해 간접 손해에 책임지지 않습니다.</p>
-<h2>7. 약관 변경 및 문의</h2>
-<p>약관이 변경되면 앱 내 고지로 알립니다. 이 약관은 대한민국 법을 따릅니다.</p>
-<ul>
-<li>문의: dkandjsl@gmail.com</li>
-</ul>
-</div>
-<footer>© 2026 Loop · dkandjsl@gmail.com</footer>
-</div>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>이용약관 · Loop</title>
+    <style>
+      :root {
+        --bg: #fbf1e8;
+        --card: #fffaf4;
+        --ink: #2b2320;
+        --muted: #7a6f66;
+        --accent: #dd8a4f;
+        --line: #ece0d4;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.7;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 32px 20px 80px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--accent);
+        text-decoration: none;
+        margin-bottom: 8px;
+      }
+      .brand .dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 3px solid var(--accent);
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 28px 26px;
+        margin-top: 20px;
+      }
+      h1 {
+        font-size: 24px;
+        margin: 0 0 4px;
+      }
+      h2 {
+        font-size: 18px;
+        margin: 28px 0 8px;
+      }
+      .eff {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 0 0 8px;
+      }
+      p,
+      li {
+        font-size: 15px;
+      }
+      a {
+        color: var(--accent);
+      }
+      ul {
+        padding-left: 20px;
+      }
+      footer {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 32px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="brand"><span class="dot"></span>Loop</div>
+      <div class="card">
+        <h1>Loop 이용약관 (Terms of Service)</h1>
+        <p class="eff">시행일: 2026년 6월 11일</p>
+        <h2>1. 서비스 소개</h2>
+        <p>
+          Loop는 스스로 남긴 피드백을 AI(Loopie)가 구조화해 목표 달성으로
+          연결하는 자기 회고 서비스입니다. 이 약관은 Loop 앱 이용에 적용됩니다.
+        </p>
+        <h2>2. 계정</h2>
+        <p>
+          계정은 본인만 사용해야 하며, 로그인 정보를 안전하게 관리할 책임은
+          이용자에게 있습니다. 설정에서 언제든지 계정을 삭제할 수 있습니다.
+        </p>
+        <h2>3. 허용되지 않는 사용</h2>
+        <ul>
+          <li>법령 위반, 타인의 권리 침해</li>
+          <li>서비스·AI를 악용한 유해 콘텐츠 생성 시도</li>
+          <li>서비스의 보안을 우회하거나 시스템에 부하를 주는 행위</li>
+        </ul>
+        <h2>4. AI 답변의 한계</h2>
+        <p>
+          Loopie의 답변은 AI가 생성하며 부정확하거나 부적절할 수 있습니다.
+          Loopie는 의료·심리 상담, 위기 개입, 진단을 제공하지 않습니다. 중요한
+          결정은 답변에만 의존하지 마세요. 부적절한 답변은 앱 안에서 신고할 수
+          있습니다.
+        </p>
+        <h2>5. 콘텐츠 권리</h2>
+        <p>
+          이용자가 작성한 피드백·목표·대화의 권리는 이용자에게 있습니다. Loop는
+          서비스 제공(저장, AI 처리, 통계 표시)에 필요한 범위에서만 콘텐츠를
+          처리합니다.
+        </p>
+        <h2>6. 서비스 변경과 책임</h2>
+        <p>
+          서비스는 사전 고지 후 변경되거나 중단될 수 있습니다. 법이 허용하는
+          범위에서, Loop는 무료 제공 기능에 대해 간접 손해에 책임지지 않습니다.
+        </p>
+        <h2>7. 약관 변경 및 문의</h2>
+        <p>
+          약관이 변경되면 앱 내 고지로 알립니다. 이 약관은 대한민국 법을
+          따릅니다.
+        </p>
+        <ul>
+          <li>문의: dkandjsl@gmail.com</li>
+        </ul>
+      </div>
+      <footer>© 2026 Loop · dkandjsl@gmail.com</footer>
+    </div>
+  </body>
 </html>

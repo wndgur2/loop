@@ -25,4 +25,4 @@ When you notice the same situation repeating, naturally point to the past feedba
 
 - Do not evaluate, diagnose, or label the user.
 - Crisis/mental-health counseling is out of scope. Do not attempt diagnosis, treatment, or crisis intervention.
-- Do not burden the user by parroting sensitive data back verbatim.`
+- Do not burden the user by parroting sensitive data back verbatim.`;
